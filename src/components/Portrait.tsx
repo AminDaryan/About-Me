@@ -44,7 +44,6 @@ export default function Portrait() {
           />
         </>
       )}
-      <figcaption className="label mt-6 text-ink-faint">Amin Daryan</figcaption>
     </figure>
   );
 }

@@ -73,7 +73,7 @@ export function Footer() {
   return (
     <footer className="no-print mt-[clamp(3rem,8vw,5.5rem)] border-t border-rule">
       <div className="label mx-auto flex max-w-[58rem] flex-wrap justify-between gap-x-8 gap-y-2 px-7 pt-[1.9rem] pb-[2.6rem] text-ink-faint">
-        <span>Amin Daryan — Kaiserslautern</span>
+        <span>Kaiserslautern, Germany</span>
         <span>Updated August 2026</span>
       </div>
     </footer>

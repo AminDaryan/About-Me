@@ -40,6 +40,8 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    /* Clear the sticky masthead when jumping to an anchor. */
+    scroll-padding-top: 5rem;
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -175,6 +175,14 @@ function Arm({ speed }: { speed: number }) {
   );
 }
 
+/* Sampling the pose across the whole animation gives a bounding sphere of
+   radius 1.03 centred 0.972 above the base (the arm reaches 1.94 up at full
+   extension). Lifting the arm by exactly that much puts the sphere's centre on
+   the world origin, which is also what the parallax rotates about — so no pose
+   and no pointer position can swing the arm out of frame, rather than merely
+   being unlikely to. */
+const SPHERE_CENTRE_Y = 0.972;
+
 function Rig({ parallax }: { parallax: boolean }) {
   const root = useRef<THREE.Group>(null);
 
@@ -182,13 +190,13 @@ function Rig({ parallax }: { parallax: boolean }) {
     const g = root.current;
     if (!g || !parallax) return;
     // Ease toward the pointer rather than tracking it, so it feels like weight.
-    g.rotation.y += (state.pointer.x * 0.3 - g.rotation.y) * 0.045;
-    g.rotation.x += (-state.pointer.y * 0.11 - g.rotation.x) * 0.045;
+    g.rotation.y += (state.pointer.x * 0.24 - g.rotation.y) * 0.045;
+    g.rotation.x += (-state.pointer.y * 0.08 - g.rotation.x) * 0.045;
   });
 
   return (
     <group ref={root}>
-      <group position={[0, -0.78, 0]}>
+      <group position={[0, -SPHERE_CENTRE_Y, 0]}>
         <Ground />
         <Arm speed={parallax ? 1 : 0} />
       </group>
@@ -205,9 +213,11 @@ export default function ArmScene() {
     <Canvas
       dpr={[1, 2]}
       gl={{ antialias: true, alpha: true }}
-      camera={{ position: [2.1, 1.45, 2.85], fov: 32 }}
+      // Distance 4.3 along the same view direction. The sphere needs 3.73 at
+      // this fov; the old 3.71 sat just under it, hence the occasional clip.
+      camera={{ position: [2.36, 1.63, 3.2], fov: 32 }}
       style={{ background: "transparent" }}
-      onCreated={({ camera }) => camera.lookAt(0, 0.02, 0)}
+      onCreated={({ camera }) => camera.lookAt(0, 0, 0)}
       frameloop={reduced ? "demand" : "always"}
     >
       <Rig parallax={!reduced} />
