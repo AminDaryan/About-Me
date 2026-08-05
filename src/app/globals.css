@@ -1,26 +1,200 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ==========================================================================
+   Amin Daryan — "Paper & ink"
+   Warm ground, one serif, hairline rules, no cards, no shadows.
+   Single light theme by deliberate choice: the page reads as a printed page,
+   and a printed page does not have a dark mode.
+   ========================================================================== */
+
+@theme {
+  --color-paper: #faf7f2;
+  --color-paper-deep: #f4eee4;
+  --color-ink: #1f1d1a;
+  --color-ink-soft: #57514a;
+  --color-ink-faint: #8c837a;
+  --color-rule: #ded5c8;
+  --color-rule-soft: #e9e2d7;
+  --color-accent: #a65a43;
+  --color-accent-deep: #83422f;
+
+  /* No web fonts. This stack resolves to Iowan Old Style, Palatino or Georgia
+     depending on the visitor's OS — which avoids loading Google Fonts (ruled a
+     GDPR violation in Germany) and dodges the Playfair-Display "template" look. */
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+    "URW Palladio L", Georgia, Cambria, "Times New Roman", serif;
+
+  --text-display: clamp(2.9rem, 7.5vw, 4.6rem);
+  --text-title: clamp(2.4rem, 5.5vw, 3.6rem);
+  --text-section: clamp(1.5rem, 3vw, 1.95rem);
+
+  --spacing-measure: 36rem;
+  --spacing-margin-col: 10.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: 1.0625rem;
+    line-height: 1.72;
+    font-feature-settings: "kern" 1, "liga" 1, "onum" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* A whisper of paper grain. Fixed, non-interactive, very low opacity. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E");
+  }
+
+  h1, h2, h3, h4 {
+    font-weight: 400;
+    line-height: 1.18;
+    letter-spacing: -0.012em;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 1px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* -- Links: a hairline that warms on hover ----------------------------- */
+  .link {
+    background-image: linear-gradient(var(--color-rule), var(--color-rule));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 100% 1px;
+    transition: background-size 0.28s ease, color 0.28s ease;
+  }
+  .link:hover,
+  .link:focus-visible {
+    color: var(--color-accent-deep);
+    background-image: linear-gradient(var(--color-accent), var(--color-accent));
+  }
+
+  /* -- Letterspaced labels: the workhorse of this design ------------------ */
+  .label {
+    font-size: 0.7rem;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+    line-height: 1.6;
+    font-feature-settings: "kern" 1, "lnum" 1;
+  }
+
+  /* -- The leaf grid ------------------------------------------------------
+     Marginal notes sit in a left column on wide screens, the way a printed
+     monograph sets its glosses; they fold above the text on narrow ones.   */
+  .leaf > .note {
+    display: block;
+    max-width: var(--spacing-measure);
+    margin: 0 0 0.9rem;
+    padding-left: 0.9rem;
+    border-left: 1px solid var(--color-rule);
+    font-size: 0.83rem;
+    line-height: 1.6;
+    color: var(--color-ink-faint);
+    font-style: italic;
+  }
+
+  @media (min-width: 64rem) {
+    .leaf {
+      display: grid;
+      grid-template-columns: var(--spacing-margin-col) minmax(0, var(--spacing-measure));
+      column-gap: 3.5rem;
+      /* Each block is its own grid row, so without this the paragraphs butt
+         together and lose the rhythm they have everywhere else. */
+      row-gap: 1.35rem;
+      align-items: start;
+    }
+    .leaf > * { grid-column: 2; }
+    .leaf > .note {
+      grid-column: 1;
+      margin: 0.45rem 0 0;
+      padding-left: 0;
+      border-left: 0;
+      text-align: right;
+    }
+  }
+
+  /* -- Drop cap ---------------------------------------------------------- */
+  .drop-cap::first-letter {
+    float: left;
+    font-size: 3.75em;
+    line-height: 0.8;
+    padding: 0.06em 0.09em 0 0;
+    color: var(--color-accent);
+  }
+
+  /* -- Motion: text settles in. Nothing bounces, nothing slides sideways. - */
+  .settle {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .settle.is-in {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.85s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.85s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .settle { opacity: 1; transform: none; }
+    .settle.is-in { transition: none; }
+  }
+
+  /* -- Body copy rhythm --------------------------------------------------- */
+  .copy > p { margin-bottom: 1.35em; }
+  .copy > p:last-child { margin-bottom: 0; }
+}
+
+/* ------------------------------------------------------------------ print -- */
+
+@media print {
+  body { background: #fff; color: #000; font-size: 10.5pt; line-height: 1.45; }
+  body::before { display: none; }
+
+  .no-print { display: none !important; }
+  .settle { opacity: 1 !important; transform: none !important; }
+  .leaf { display: block !important; }
+  .link { background: none !important; color: #000 !important; }
+
+  /* Close the generous screen rhythm up to something that fits on paper. */
+  section { padding-top: 0.35rem !important; padding-bottom: 0.35rem !important; }
+  .entry { break-inside: avoid; padding: 0.55rem 0 !important; }
+  h1, h2, h3 { break-after: avoid; }
+
+  /* The fleuron is a screen flourish; on paper a plain rule reads better. */
+  .divider { margin: 0.6rem 0 !important; }
+  .divider-mark { display: none !important; }
 }
