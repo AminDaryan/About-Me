@@ -48,11 +48,11 @@ export function SectionTitle({
   );
 }
 
-/** A marginal gloss. Sits in the left column of `.leaf` on wide screens. */
-export function Note({ children }: { children: ReactNode }) {
-  return <div className="note">{children}</div>;
-}
-
+/**
+ * Holds a run of blocks alongside their marginal glosses. A gloss is any child
+ * carrying `.note` — in practice `<Settle className="note">` — which the CSS
+ * lifts into the left margin on wide screens and folds inline on narrow ones.
+ */
 export function Leaf({ children }: { children: ReactNode }) {
   return <div className="leaf">{children}</div>;
 }

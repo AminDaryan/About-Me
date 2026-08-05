@@ -210,18 +210,3 @@ export function control(K: number[], s: State, xRef: number): number {
   for (let i = 0; i < 6; i++) u -= K[i] * (s[i] - (i === 0 ? xRef : 0));
   return Math.max(-UMAX, Math.min(UMAX, u));
 }
-
-/** Cartesian positions of the joints, for drawing. */
-export function joints(s: State, p: Params) {
-  const [x, t1, t2] = s;
-  const cart: [number, number] = [x, 0];
-  const elbow: [number, number] = [
-    x + p.l1 * Math.sin(t1),
-    p.l1 * Math.cos(t1),
-  ];
-  const tip: [number, number] = [
-    elbow[0] + p.l2 * Math.sin(t2),
-    elbow[1] + p.l2 * Math.cos(t2),
-  ];
-  return { cart, elbow, tip };
-}
