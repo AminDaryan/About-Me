@@ -2,6 +2,7 @@ import Link from "next/link";
 import Settle from "@/components/Settle";
 import Portrait from "@/components/Portrait";
 import Email from "@/components/Email";
+import { Envelope } from "@/components/ink";
 import { ArmFigure } from "@/components/three/mounts";
 import { Divider, Leaf, SectionTitle, Wrap } from "@/components/ui";
 
@@ -228,31 +229,33 @@ export default function Home() {
                 especially from groups with doctoral openings.
               </p>
             </Settle>
+            {/* The email is the one action that matters here, so it gets the
+                weight. Everything else is a footnote to it. */}
             <Settle delay={0.08}>
-              <ul className="mt-6 list-none p-0 text-[1.08rem]">
-                <li className="py-2">
-                  <Email />
-                </li>
-                <li className="py-2">
+              <div className="mt-9 flex items-center gap-4 border-t border-rule pt-7">
+                <Envelope className="shrink-0 text-ink-faint" />
+                <Email className="text-[clamp(1.2rem,2.6vw,1.55rem)] break-all" />
+              </div>
+            </Settle>
+
+            <Settle delay={0.14}>
+              <ul className="label mt-7 flex flex-wrap gap-x-8 gap-y-3 border-t border-rule-soft p-0 pt-5 text-ink-faint">
+                <li>
                   <a
                     className="link"
                     href="https://www.linkedin.com/in/amin-daryan/"
                     rel="me noopener"
                   >
-                    linkedin.com/in/amin-daryan
+                    LinkedIn
                   </a>
                 </li>
-                <li className="py-2">
+                <li>
                   <Link className="link" href="/cv">
                     Curriculum vitae
                   </Link>
                 </li>
+                <li>References on request</li>
               </ul>
-            </Settle>
-            <Settle>
-              <p className="mt-7 text-[0.9rem] text-ink-soft">
-                References available on request.
-              </p>
             </Settle>
           </div>
         </Wrap>

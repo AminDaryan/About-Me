@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Settle from "@/components/Settle";
+import { Bow, Sabre } from "@/components/ink";
 import { Callout, Divider, Leaf, SectionTitle, Wrap } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -104,7 +105,11 @@ export default function Beyond() {
             <SectionTitle num="II">Playing</SectionTitle>
           </Settle>
           <Leaf>
-            <Settle className="note">The bow, the sabre, the horse.</Settle>
+            <Settle className="note">
+              The bow, the sabre, the horse.
+              <Bow className="mt-6" />
+              <Sabre className="mt-5" />
+            </Settle>
             <Settle>
               <p className="max-w-measure">
                 Archery, the sabre and horse riding reward the same discipline,
