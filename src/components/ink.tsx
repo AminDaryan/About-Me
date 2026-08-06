@@ -36,7 +36,10 @@ function InkFigure({
             key={d}
             d={d}
             pathLength={1}
-            style={{ animationDelay: `${i * 0.09}s` }}
+            // 0.22s apart, not 0.09: at the tighter stagger every stroke is in
+            // flight at once and the figure assembles as a cloud of fragments
+            // rather than being drawn.
+            style={{ animationDelay: `${i * 0.22}s` }}
           />
         ))}
       </svg>
@@ -46,11 +49,18 @@ function InkFigure({
 
 /** A bow at rest with an arrow nocked.
  *
- *  Drawn at rest, not at full draw: a pulled string is a second curve mirroring
- *  the limb, and the two close into a symmetrical lens that reads as a leaf.
- *  One curve against one straight chord is what says "bow". The arrow's ends
- *  are deliberately dissimilar — a point at one, slashed fletching at the
- *  other — so it cannot be mistaken for a dimension line. */
+ *  Drawn at rest, not at full draw: pulling the string adds a second curve
+ *  mirroring the limb and the two close into a symmetrical lens that reads as
+ *  a leaf. One curve against one dead-straight chord is what says "bow".
+ *
+ *  The arrow runs leftward because that is where it actually goes — the string
+ *  is on the archer's side, the limb bows toward the target, and the arrow
+ *  flies out through the grip. Drawn pointing the other way it reads as a
+ *  dimension line across the shape.
+ *
+ *  Shaft, point and barbs are one path so the head grows out of the shaft as
+ *  it draws. Split into separate paths, the head begins before the shaft has
+ *  reached it and hangs in mid-air. */
 export function Bow({ className }: { className?: string }) {
   return (
     <InkFigure
@@ -59,16 +69,14 @@ export function Bow({ className }: { className?: string }) {
       viewBox="0 0 120 200"
       width={116}
       paths={[
-        // limb — deep enough that the curve, not the chord, is what you read
-        "M 74 10 C 36 56, 36 144, 74 190",
-        // string, dead straight
-        "M 74 10 L 74 190",
-        // arrow shaft
-        "M 22 100 L 108 100",
-        // point
-        "M 108 100 L 94 94 M 108 100 L 94 106",
-        // fletching, slashed across the shaft rather than mirrored as a head
-        "M 28 92 L 36 108 M 38 92 L 46 108",
+        // limb
+        "M 76 10 C 26 58, 26 142, 76 190",
+        // string
+        "M 76 10 L 76 190",
+        // arrow: nock, shaft, then both barbs of the point
+        "M 84 100 L 14 100 L 27 94 M 14 100 L 27 106",
+        // fletching
+        "M 68 92 L 74 108 M 75 92 L 81 108",
       ]}
     />
   );

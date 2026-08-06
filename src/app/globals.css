@@ -195,11 +195,13 @@
     stroke-linejoin: round;
     vector-effect: non-scaling-stroke;
     stroke-dasharray: 1;
-    stroke-dashoffset: 1;
+    /* Just past the dash/gap boundary, not exactly on it: a round cap landing
+       on the boundary renders a stray dot on a path yet to be drawn. */
+    stroke-dashoffset: 1.02;
   }
 
   .ink.is-in svg path {
-    animation: ink-draw 1.15s cubic-bezier(0.33, 0.1, 0.2, 1) forwards;
+    animation: ink-draw 1s cubic-bezier(0.33, 0.1, 0.2, 1) forwards;
   }
 
   @keyframes ink-draw {
