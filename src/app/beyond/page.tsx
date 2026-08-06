@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Settle from "@/components/Settle";
-import { Bow, Sabre } from "@/components/ink";
+import { Bow } from "@/components/ink";
 import { Callout, Divider, Leaf, SectionTitle, Wrap } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -105,10 +105,13 @@ export default function Beyond() {
             <SectionTitle num="II">Playing</SectionTitle>
           </Settle>
           <Leaf>
+            {/* One figure per block. Two stacked here ran to ~370px against a
+                175px paragraph, and because .leaf is a grid the row grows to
+                the taller cell — inflating the gap before the next paragraph.
+                The sabre returns when this prose is split to give it its own. */}
             <Settle className="note">
               The bow, the sabre, the horse.
               <Bow className="mt-6" />
-              <Sabre className="mt-5" />
             </Settle>
             <Settle>
               <p className="max-w-measure">

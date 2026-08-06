@@ -44,27 +44,31 @@ function InkFigure({
   );
 }
 
-/** A recurve bow at full draw: limb, string pulled to the nock, arrow away. */
+/** A bow at rest with an arrow nocked.
+ *
+ *  Drawn at rest, not at full draw: a pulled string is a second curve mirroring
+ *  the limb, and the two close into a symmetrical lens that reads as a leaf.
+ *  One curve against one straight chord is what says "bow". The arrow's ends
+ *  are deliberately dissimilar — a point at one, slashed fletching at the
+ *  other — so it cannot be mistaken for a dimension line. */
 export function Bow({ className }: { className?: string }) {
   return (
     <InkFigure
       className={className}
-      label="A drawn bow"
-      viewBox="0 0 130 210"
-      width={68}
+      label="A bow and arrow"
+      viewBox="0 0 120 200"
+      width={116}
       paths={[
-        // limb, belly facing the archer
-        "M 88 14 C 50 56, 50 154, 88 196",
-        // string, drawn back to the nock
-        "M 88 14 L 112 105 L 88 196",
-        // arrow, pointing away
-        "M 108 105 L 26 105",
+        // limb — deep enough that the curve, not the chord, is what you read
+        "M 74 10 C 36 56, 36 144, 74 190",
+        // string, dead straight
+        "M 74 10 L 74 190",
+        // arrow shaft
+        "M 22 100 L 108 100",
         // point
-        "M 26 105 L 36 100 M 26 105 L 36 110",
-        // fletching
-        "M 106 105 L 97 99 M 106 105 L 97 111",
-        // grip
-        "M 55 94 C 50 99, 50 111, 55 116",
+        "M 108 100 L 94 94 M 108 100 L 94 106",
+        // fletching, slashed across the shaft rather than mirrored as a head
+        "M 28 92 L 36 108 M 38 92 L 46 108",
       ]}
     />
   );
@@ -89,19 +93,21 @@ export function Sabre({ className }: { className?: string }) {
     <InkFigure
       className={className}
       label="A sabre"
-      viewBox="0 0 210 120"
-      width={118}
+      viewBox="0 0 160 120"
+      width={150}
       paths={[
-        // blade
-        "M 30 74 C 80 30, 140 22, 186 26",
-        // the point, turned back a touch
-        "M 186 26 L 176 33",
-        // grip
-        "M 32 76 L 52 92",
-        // knuckle guard, swept
-        "M 30 74 C 10 78, 6 96, 20 104 C 32 110, 46 104, 52 94",
-        // pommel
-        "M 51.5 95 a 3.5 3.5 0 1 0 7 0 a 3.5 3.5 0 1 0 -7 0",
+        // Blade: two converging edges meeting at the point. A single hairline
+        // reads as wire and needs the width to say "blade".
+        "M 54 66 C 88 38, 122 22, 150 18",
+        "M 62 78 C 92 58, 124 34, 150 18",
+        // Crossguard — a bar, not the closed knuckle bow, which at this size
+        // became a loop big enough to swallow the blade.
+        "M 34 50 L 72 88",
+        // Grip and pommel, both deliberately oversized against the blade. A
+        // sabre's identity lives in its hilt, and at true proportion the hilt
+        // is ~20% of the length, which here is too little to survive.
+        "M 24 92 L 58 72",
+        "M 12 96 a 8 8 0 1 0 16 0 a 8 8 0 1 0 -16 0",
       ]}
     />
   );
