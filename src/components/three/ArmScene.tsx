@@ -13,9 +13,9 @@ import * as THREE from "three";
    joint frames, which is forward kinematics done the way a scene graph
    already wants to do it. */
 
-const INK = "#1f1d1a";
-const RULE = "#ded5c8";
-const ACCENT = "#a65a43";
+const INK = "#23201a";
+const RULE = "#d0cdbd";
+const ACCENT = "#9c5039";
 
 const BASE = 0.28;
 const L1 = 0.85;

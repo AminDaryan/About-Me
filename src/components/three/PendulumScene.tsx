@@ -25,9 +25,9 @@ import {
    simulation itself. Only the *controller* is designed on the linearisation,
    which is what LQR means. Drag to move the cart's target; nudge to disturb. */
 
-const INK = "#1f1d1a";
-const RULE = "#ded5c8";
-const ACCENT = "#a65a43";
+const INK = "#23201a";
+const RULE = "#d0cdbd";
+const ACCENT = "#9c5039";
 
 const DT = 1 / 300; // integrator step
 

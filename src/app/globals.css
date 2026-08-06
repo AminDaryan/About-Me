@@ -8,15 +8,23 @@
    ========================================================================== */
 
 @theme {
-  --color-paper: #faf7f2;
-  --color-paper-deep: #f4eee4;
-  --color-ink: #1f1d1a;
+  /* Ground: Fedrigoni Splendorgel Avorio. Everything below is derived from it
+     by mixing ink into the sheet at fixed ratios — 4% for the panel, 7% for the
+     soft rule, 13% for the rule — so the hairlines keep the same relative
+     presence they had on the old near-white. Swapping only --color-paper would
+     have put the rules within a few percent of the ground and erased them. */
+  --color-paper: #eae7d5;
+  --color-paper-deep: #e2dfcd;
+  --color-ink: #23201a;
   --color-ink-soft: #57514a;
-  --color-ink-faint: #8c837a;
-  --color-rule: #ded5c8;
-  --color-rule-soft: #e9e2d7;
-  --color-accent: #a65a43;
-  --color-accent-deep: #83422f;
+  /* Raised from #8c837a: on this ground that was 2.9:1, which is too thin for
+     small letterspaced caps. This is 4.6:1. */
+  --color-ink-faint: #6f6555;
+  --color-rule: #d0cdbd;
+  --color-rule-soft: #dcd9c8;
+  /* Darkened from #a65a43 for the same reason — 4.1:1 became 4.7:1. */
+  --color-accent: #9c5039;
+  --color-accent-deep: #7d3c28;
 
   /* No web fonts. This stack resolves to Iowan Old Style, Palatino or Georgia
      depending on the visitor's OS — which avoids loading Google Fonts (ruled a
@@ -71,34 +79,32 @@
     z-index: 100;
     pointer-events: none;
     mix-blend-mode: multiply;
-    opacity: 0.06;
+    opacity: 0.09;
     background-image:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='420' height='420' filter='url(%23m)' opacity='0.6'/%3E%3C/svg%3E");
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.035' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23f)' opacity='0.75'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='420' height='420' filter='url(%23m)' opacity='0.55'/%3E%3C/svg%3E");
     background-size:
       140px 140px,
+      300px 300px,
       420px 420px;
   }
 
-  /* Laid lines and the lit-sheet vignette. Kept off the grain layer so it can
-     blend normally — multiplying a vignette turns the edges muddy. */
+  /* The lit-sheet vignette, kept off the texture layer so it can blend
+     normally — multiplying a vignette turns the edges muddy.
+     No laid lines: Splendorgel is a wove sheet with a felt tooth, and parallel
+     laid lines would be the wrong paper entirely. */
   body::after {
     content: "";
     position: fixed;
     inset: 0;
     z-index: 100;
     pointer-events: none;
-    background-image:
-      repeating-linear-gradient(
-        90deg,
-        rgba(31, 29, 26, 0.02) 0 1px,
-        transparent 1px 22px
-      ),
-      radial-gradient(
-        125% 105% at 50% 38%,
-        transparent 58%,
-        rgba(124, 98, 62, 0.07) 100%
-      );
+    background-image: radial-gradient(
+      125% 105% at 50% 38%,
+      transparent 55%,
+      rgba(104, 84, 52, 0.09) 100%
+    );
   }
 
   h1, h2, h3, h4 {
