@@ -235,6 +235,14 @@
     color: var(--color-accent);
   }
 
+  /* On a phone the measure is short enough that a four-line drop cap eats a
+     third of the width from the lines beside it. */
+  @media (max-width: 40rem) {
+    .drop-cap::first-letter {
+      font-size: 3em;
+    }
+  }
+
   /* -- Motion: text settles in. Nothing bounces, nothing slides sideways. - */
   .settle {
     opacity: 0;

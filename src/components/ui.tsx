@@ -12,7 +12,9 @@ export function Wrap({
   className?: string;
 }) {
   return (
-    <div className={`mx-auto w-full max-w-[58rem] px-7 ${className}`}>
+    /* Tighter gutters on phones: at 28px a side the measure fell to 37
+       characters, which is under the comfortable range. */
+    <div className={`mx-auto w-full max-w-[58rem] px-5 sm:px-7 ${className}`}>
       {children}
     </div>
   );
@@ -72,7 +74,7 @@ export function Callout({ children }: { children: ReactNode }) {
 export function Footer() {
   return (
     <footer className="no-print mt-[clamp(3rem,8vw,5.5rem)] border-t border-rule">
-      <div className="label mx-auto flex max-w-[58rem] flex-wrap justify-between gap-x-8 gap-y-2 px-7 pt-[1.9rem] pb-[2.6rem] text-ink-faint">
+      <div className="label mx-auto flex max-w-[58rem] flex-wrap justify-between gap-x-8 gap-y-2 px-5 pt-[1.9rem] pb-[2.6rem] text-ink-faint sm:px-7">
         <span>Kaiserslautern, Germany</span>
         <span>Updated August 2026</span>
       </div>

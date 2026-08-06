@@ -20,7 +20,7 @@ export default function Masthead() {
 
   return (
     <header className="no-print sticky top-0 z-50 border-b border-rule bg-paper">
-      <div className="mx-auto flex max-w-[58rem] items-center justify-between gap-x-4 px-7 py-4 sm:gap-x-8">
+      <div className="mx-auto flex max-w-[58rem] items-center justify-between gap-x-4 px-5 py-4 sm:gap-x-8 sm:px-7">
         <Link
           href="/"
           aria-label="Home"
