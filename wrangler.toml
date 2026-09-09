@@ -1,0 +1,18 @@
+# Cloudflare Pages project configuration.
+#
+# Every route on this site prerenders to static HTML, so there is no Next.js
+# server to run: `output: "export"` in next.config.ts writes a plain folder to
+# ./out and Pages serves it. That is the smallest possible attack surface —
+# no runtime, no compute, nothing to exploit server-side.
+#
+# `pages_build_output_dir` is what makes this a Pages project rather than a
+# Worker. With it set, the deploy command is:
+#
+#     npx wrangler pages deploy
+#
+# NOT `npx wrangler deploy`, which is the Workers command and is why the last
+# deploy failed — it looked for a Worker entry point that does not exist here.
+
+name = "amin-daryan-site"
+pages_build_output_dir = "out"
+compatibility_date = "2026-09-09"

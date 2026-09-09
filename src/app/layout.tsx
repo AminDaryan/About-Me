@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Masthead from "@/components/Masthead";
+import { SITE_URL } from "@/lib/site";
 import { Footer } from "@/components/ui";
 import "./globals.css";
 
@@ -7,8 +8,11 @@ import "./globals.css";
    visitor already has, so the site ships no webfont at all. */
 
 export const metadata: Metadata = {
-  // Once this is live, set the real origin so Open Graph URLs resolve
-  // absolutely: metadataBase: new URL("https://your-domain.com"),
+  // Every relative URL below, and every page's canonical, resolves
+  // against this. Set NEXT_PUBLIC_SITE_URL in the Cloudflare Pages
+  // project settings; see src/lib/site.ts.
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: "/" },
   title: {
     default: "Amin Daryan — Robotics & Machine Perception",
     template: "%s — Amin Daryan",
@@ -18,6 +22,10 @@ export const metadata: Metadata = {
   authors: [{ name: "Amin Daryan" }],
   openGraph: {
     type: "profile",
+    // No `url` here on purpose: child pages inherit this whole
+    // object, so a value would put the site root in og:url on /cv
+    // and /research. The canonical link states each page's own URL.
+    siteName: "Amin Daryan",
     title: "Amin Daryan — Robotics & Machine Perception",
     description:
       "Machine perception for robots that have to operate where the world stops being tidy. Kaiserslautern, Germany.",

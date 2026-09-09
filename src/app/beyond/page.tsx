@@ -5,6 +5,7 @@ import { Bow } from "@/components/ink";
 import { Callout, Divider, Leaf, SectionTitle, Wrap } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/beyond" },
   title: "Beyond",
   description:
     "Away from the lab — philosophy, history, linguistics and psychology; the bow, the sabre, the horse, the chessboard and the dance floor.",

@@ -5,6 +5,7 @@ import Email from "@/components/Email";
 import { Divider, Entries, SectionTitle, Wrap } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/cv" },
   title: "Curriculum Vitae",
   description:
     "Curriculum vitae of Amin Daryan — M.Sc. Automation and Control, RPTU Kaiserslautern. Research at Fraunhofer IOSB and DFKI; engineering at SAP, JHELY and DelGate.",

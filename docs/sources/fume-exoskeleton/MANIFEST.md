@@ -45,7 +45,7 @@ safe, and every fact the notes rely on is quoted with a locator.
 The byline prints all three authors' institutional email addresses. They are
 already public on the IEEE record and in the proceedings, so they stay in the
 source copy, but they are **not** repeated in the notes and must not reach the
-website. Amin's own address on the byline, `amindarian@gmail.com`, matches the
+website. Amin's own address on the byline, matches the
 one the site publishes.
 
 ## Not present

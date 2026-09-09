@@ -1,0 +1,64 @@
+# Cloudflare Pages security headers.
+#
+# These live here, not in next.config.ts, because `output: "export"` produces a
+# folder of static files and Next's headers() only runs when Next is serving.
+# Anything configured there would silently do nothing. Cloudflare Pages reads
+# this file from the build output root.
+#
+# Verify after deploying — a header that is not actually being served is worse
+# than none, because it looks handled.
+
+/*
+  # Stop the browser guessing a MIME type and executing something as script.
+  X-Content-Type-Options: nosniff
+
+  # Clickjacking. frame-ancestors is the modern control; X-Frame-Options is
+  # kept for browsers that predate CSP level 2. No page here needs framing.
+  X-Frame-Options: DENY
+
+  # Send the origin cross-site but the full path same-site. Keeps the referring
+  # URL out of third-party logs without breaking same-site analytics we do not
+  # have anyway.
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # This site needs none of these. Denying them means a future compromised or
+  # mistaken script cannot silently ask for them either.
+  Permissions-Policy: accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=(), xr-spatial-tracking=()
+
+  # Process isolation: severs the window.opener relationship and blocks
+  # cross-origin reads of these documents.
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+
+  # Force HTTPS for a year. Deliberately no `preload` — preloading is a
+  # hard-to-reverse commitment baked into browser binaries, and it should be an
+  # explicit decision, not a side effect of a security pass.
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+  # Content Security Policy.
+  #
+  # 'unsafe-inline' in script-src is a known, accepted weakness: a static export
+  # cannot mint a per-request nonce, and Next's inline hydration bootstrap
+  # changes hash on every build, so hashing is not maintainable either. This is
+  # defence in depth rather than XSS prevention — acceptable here only because
+  # the site takes no user input, has no API, no cookies, no auth and loads no
+  # third-party code. If any of those change, revisit this line first.
+  #
+  # data: in img-src is required: the paper texture in globals.css is three
+  # inline SVG background images.
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+
+# Hashed build assets are immutable by construction, so they can be cached hard.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Next emits React flight payloads (/cv.txt, /__next.*.txt) beside each page.
+# The browser needs them for client-side navigation; a search engine indexing
+# them would file near-duplicate, unreadable copies of every page. Keep them
+# fetchable but out of the index — X-Robots-Tag rather than a robots.txt
+# Disallow, because blocking the fetch would break in-page navigation.
+/*.txt
+  X-Robots-Tag: noindex
+
+/__next*
+  X-Robots-Tag: noindex

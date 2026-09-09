@@ -13,6 +13,7 @@ import {
 } from "@/components/ui";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/research" },
   title: "Research",
   description:
     "Environment perception for off-road autonomous driving with diffusion models, explainable AI at Fraunhofer IOSB, gaze-enabled activity classification at DFKI, and lower-limb exoskeleton control.",
@@ -274,8 +275,8 @@ export default function Research() {
           </Settle>
           <Settle>
             <p>
-              <Link className="link" href="/experience">
-                The engineering side of the story →
+              <Link className="link" href="/cv">
+                The full record — degrees, posts, publications →
               </Link>
             </p>
           </Settle>

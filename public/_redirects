@@ -1,0 +1,5 @@
+# /experience was folded into /cv — it duplicated seven of its nine records.
+# 301 rather than 404 so any existing link or search-engine impression is
+# carried across instead of dropped.
+/experience     /cv     301
+/experience/*   /cv     301

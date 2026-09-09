@@ -47,3 +47,6 @@ next-env.d.ts
 # and any notes derived from them. See docs/README.md.
 /docs/sources/**/private/
 /docs/notes/private/
+
+# static export output
+/out/

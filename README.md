@@ -25,31 +25,54 @@ image.
 
 ## Before you go live
 
-1. Set the real origin in `src/app/layout.tsx` so link previews resolve:
-   ```ts
-   metadataBase: new URL("https://your-domain.com"),
-   ```
-2. Add an `openGraph.images` entry once you have a share image.
+1. Set `NEXT_PUBLIC_SITE_URL` in the Cloudflare Pages project — see Deploying
+   below. Nothing else needs the origin; it is read from one place.
+2. Add an `openGraph.images` entry once you have a share image. Note that
+   whatever you choose appears in every link preview of this site, so the
+   portrait is a decision rather than a default.
 
 ## Deploying
 
-**Vercel or Netlify** — connect the repo, or drag the folder onto the
-dashboard. Nothing to configure.
+**Cloudflare Pages.** `next.config.ts` sets `output: "export"`, so `yarn build`
+writes a folder of static files to `./out` and Pages serves it — no Node
+runtime, nothing to exploit server-side. `wrangler.toml` names the project and
+points `pages_build_output_dir` at `out`.
 
-**GitHub Pages** (or any host that just serves files) — uncomment
-`output: "export"` in `next.config.ts`, run `yarn build`, and publish the
-generated `out/` folder.
+Set these in the Pages project:
+
+| Setting | Value |
+| --- | --- |
+| Build command | `yarn build` |
+| Build output directory | `out` |
+| Deploy command | `npx wrangler pages deploy` — **not** `npx wrangler deploy` |
+| `NEXT_PUBLIC_SITE_URL` | the site's real origin, no trailing slash |
+
+`wrangler deploy` is the *Workers* command. It looks for a Worker entry point,
+finds none, and fails; that is what broke the last deploy.
+
+`NEXT_PUBLIC_SITE_URL` is read at build time and feeds `metadataBase`, every
+canonical link, `sitemap.xml` and `robots.txt` (see `src/lib/site.ts`). Until it
+is set, those all point at `https://example.invalid` — deliberately obvious
+rather than quietly wrong.
+
+**Two things live outside Next because an export cannot serve them.**
+`public/_headers` carries the security headers and `public/_redirects` carries
+the `/experience` → `/cv` redirect. `headers()` and `redirects()` in
+`next.config.ts` are applied by the Next *server*, which is not running here, so
+configuring them there would silently do nothing.
 
 ---
 
 ## Structure
 
 ```
-src/app/                one folder per route: /, /research, /experience, /cv, /beyond
+src/app/                one folder per route: /, /research, /cv, /beyond
+                        plus robots.ts and sitemap.ts, emitted as static files
 src/components/         Masthead, Portrait, Email, Settle, and ui.tsx (Entry, Divider, …)
 src/components/three/   the two WebGL figures
 src/lib/dip.ts          double inverted pendulum dynamics + LQR
-public/                 portrait.jpg (add this), favicon.svg
+public/                 portrait.jpg, favicon.svg, and _headers /
+                        _redirects, which Cloudflare Pages reads
 docs/                   the evidence behind every claim on the site — read docs/README.md
 ```
 
@@ -112,8 +135,14 @@ cart travel.
   dodges the Playfair-Display look that reads as "template".
 - **Light theme only**, deliberately. The page is meant to read as a printed
   page, and a printed page has no dark mode.
-- **Email is assembled at runtime** (`src/components/Email.tsx`) so the plain
-  address never appears in the served HTML for scrapers.
+- **Email is base64-decoded in the browser** (`src/components/Email.tsx`). The
+  previous version concatenated string literals and this file claimed the plain
+  address never reached the client; it did — the bundler folds constant
+  expressions, and `grep` found the finished address in two JS chunks. `atob`
+  runs at runtime and cannot be folded, so the literal is genuinely absent now.
+  It still only defeats naive scraping: the no-JS fallback spells the address
+  out in an `[at]` form, and anyone who runs the page sees it. Obfuscation is
+  not protection.
 - **Motion respects `prefers-reduced-motion`** — both the scroll reveal and both
   WebGL scenes.
 - **All colour and type lives in `@theme`** at the top of `globals.css`. Change
