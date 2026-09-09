@@ -49,7 +49,7 @@ export default function Home() {
               </Settle>
               <Settle delay={0.08}>
                 <h1 className="mt-2 text-display tracking-[-0.028em]">
-                  Amin Daryan
+                  Amin Dariani
                 </h1>
               </Settle>
               <Settle delay={0.16}>
@@ -235,10 +235,10 @@ export default function Home() {
               <div className="mt-9 border-t border-rule pt-7">
                 <a
                   className="link text-[clamp(1.2rem,2.6vw,1.55rem)] break-all"
-                  href="https://www.linkedin.com/in/amin-daryan/"
+                  href="https://www.linkedin.com/in/amin-Dariani/"
                   rel="me noopener"
                 >
-                  linkedin.com/in/amin-daryan
+                  linkedin.com/in/amin-Dariani
                 </a>
               </div>
             </Settle>

@@ -1,6 +1,6 @@
-# amin-daryan-site
+# amin-Dariani-site
 
-Personal academic site for Amin Daryan. Next.js 16 (App Router) · React 19 ·
+Personal academic site for Amin Dariani. Next.js 16 (App Router) · React 19 ·
 TypeScript · Tailwind v4 · react-three-fiber.
 
 ```bash

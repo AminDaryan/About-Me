@@ -32,7 +32,7 @@ export default function Portrait() {
           <img
             ref={imgRef}
             src="/portrait.jpg"
-            alt="Portrait of Amin Daryan"
+            alt="Portrait of Amin Dariani"
             width={400}
             height={400}
             onError={() => setMissing(true)}

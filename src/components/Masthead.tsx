@@ -27,7 +27,7 @@ export default function Masthead() {
         >
           <span className="block size-[7px] rotate-45 bg-accent transition-transform duration-500 group-hover:rotate-[135deg]" />
           <span className="hidden text-[0.78rem] tracking-[0.24em] whitespace-nowrap uppercase transition-colors group-hover:text-accent-deep sm:inline">
-            Amin Daryan
+            Amin Dariani
           </span>
         </Link>
 

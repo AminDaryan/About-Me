@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/cv" },
   title: "Curriculum Vitae",
   description:
-    "Curriculum vitae of Amin Daryan — M.Sc. Automation and Control, RPTU Kaiserslautern. Research at Fraunhofer IOSB and DFKI; engineering at SAP, JHELY and DelGate.",
+    "Curriculum vitae of Amin Dariani — M.Sc. Automation and Control, RPTU Kaiserslautern. Research at Fraunhofer IOSB and DFKI; engineering at SAP, JHELY and DelGate.",
 };
 
 export default function CV() {
@@ -19,7 +19,7 @@ export default function CV() {
             <p className="label text-ink-faint">Curriculum Vitae</p>
           </Settle>
           <Settle delay={0.08}>
-            <h1 className="mt-2 text-title">Amin Daryan</h1>
+            <h1 className="mt-2 text-title">Amin Dariani</h1>
           </Settle>
           <Settle delay={0.16}>
             <div className="mt-6 max-w-measure">
@@ -27,10 +27,10 @@ export default function CV() {
                 Kaiserslautern, Germany ·{" "}
                 <a
                   className="link"
-                  href="https://www.linkedin.com/in/amin-daryan/"
+                  href="https://www.linkedin.com/in/amin-Dariani/"
                   rel="me noopener"
                 >
-                  linkedin.com/in/amin-daryan
+                  linkedin.com/in/amin-Dariani
                 </a>
               </p>
               <p className="no-print mt-3 text-[0.9rem] text-ink-soft">

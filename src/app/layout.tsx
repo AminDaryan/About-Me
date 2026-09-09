@@ -14,19 +14,19 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
   title: {
-    default: "Amin Daryan — Robotics & Machine Perception",
-    template: "%s — Amin Daryan",
+    default: "Amin Dariani — Robotics & Machine Perception",
+    template: "%s — Amin Dariani",
   },
   description:
-    "Amin Daryan — M.Sc. student in Automation and Control at RPTU Kaiserslautern, working on environment perception for off-road autonomous driving, explainable AI, and human-centred robotics.",
-  authors: [{ name: "Amin Daryan" }],
+    "Amin Dariani — M.Sc. student in Automation and Control at RPTU Kaiserslautern, working on environment perception for off-road autonomous driving, explainable AI, and human-centred robotics.",
+  authors: [{ name: "Amin Dariani" }],
   openGraph: {
     type: "profile",
     // No `url` here on purpose: child pages inherit this whole
     // object, so a value would put the site root in og:url on /cv
     // and /research. The canonical link states each page's own URL.
-    siteName: "Amin Daryan",
-    title: "Amin Daryan — Robotics & Machine Perception",
+    siteName: "Amin Dariani",
+    title: "Amin Dariani — Robotics & Machine Perception",
     description:
       "Machine perception for robots that have to operate where the world stops being tidy. Kaiserslautern, Germany.",
   },
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 const PERSON_LD = {
   "@context": "https://schema.org",
   "@type": "Person",
-  name: "Amin Daryan",
+  name: "Amin Dariani",
   alternateName: "Amin Amir Baglouee Dariani",
   jobTitle: "Researcher, Robotics and Machine Perception",
   description:
@@ -66,7 +66,7 @@ const PERSON_LD = {
     "Control engineering",
     "Computer vision",
   ],
-  sameAs: ["https://www.linkedin.com/in/amin-daryan/"],
+  sameAs: ["https://www.linkedin.com/in/amin-Dariani/"],
 };
 
 export default function RootLayout({
