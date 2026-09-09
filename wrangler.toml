@@ -14,4 +14,5 @@
 # deploy failed — it looked for a Worker entry point that does not exist here.
 
 name = "amin-dariani-site"
+pages_build_output_dir = "out"
 compatibility_date = "2026-09-09"
