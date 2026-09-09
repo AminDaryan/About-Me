@@ -40,13 +40,15 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# reference media kept beside the docs but deliberately untracked — see docs/README.md
-/docs/sources/**/media/
 
-# Personal data that must never reach a public remote — transcripts, ID documents,
-# and any notes derived from them. See docs/README.md.
-/docs/sources/**/private/
-/docs/notes/private/
 
 # static export output
 /out/
+
+
+# The evidence directory stays on disk and off this public remote. It quotes
+# and summarises unpublished reports — including their weaknesses — and that
+# level of detail is Amin's to share, not anyone's who clones the repo. Only
+# the README explaining the convention is tracked.
+/docs/*
+!/docs/README.md

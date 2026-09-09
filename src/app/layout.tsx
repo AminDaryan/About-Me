@@ -9,8 +9,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   // Every relative URL below, and every page's canonical, resolves
-  // against this. Set NEXT_PUBLIC_SITE_URL in the Cloudflare Pages
-  // project settings; see src/lib/site.ts.
+  // against this. The live origin is the default in src/lib/site.ts;
+  // NEXT_PUBLIC_SITE_URL overrides it for a preview deployment.
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
   title: {

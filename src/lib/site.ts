@@ -6,18 +6,16 @@
  * wrong does not break the build — it silently emits canonicals and Open Graph
  * URLs pointing at the wrong host, which is worse.
  *
- * Set NEXT_PUBLIC_SITE_URL in the Cloudflare Pages project settings (Settings →
- * Environment variables, Production). It is read at build time, not at request
+ * The default is the live origin, so a plain `yarn build` is correct without
+ * any environment configuration. NEXT_PUBLIC_SITE_URL overrides it for a
+ * preview deployment or a rename; it is read at build time, not at request
  * time, so a change needs a redeploy.
  *
  * No trailing slash — every consumer here appends its own path.
  */
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.invalid"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://amindariani.com"
 ).replace(/\/+$/, "");
-
-/** True when SITE_URL is still the placeholder, so callers can behave sensibly. */
-export const SITE_URL_IS_PLACEHOLDER = SITE_URL.endsWith("example.invalid");
 
 /** Every indexable route, in navigation order. Feeds the sitemap. */
 export const ROUTES = ["/", "/research", "/cv", "/beyond"] as const;

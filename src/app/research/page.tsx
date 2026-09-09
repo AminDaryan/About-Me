@@ -111,24 +111,22 @@ export default function Research() {
                 intent.
               </p>
               <p>
-                A HoloLens 2 supplied the eye tracking. The obvious route — the
-                published toolchain belonging to the work I was building on —
-                sampled at 10 Hz, a third of what the literature assumes, so I
-                built the capture application on Unity and ARETT instead. Ten
-                volunteers then performed four activities in the DFKI smart
-                factory: walking, waiting, gluing parts with a glue gun, and
-                assembling them. Walking and waiting are the awkward pair, and
-                they were chosen for exactly that — nobody is looking at anything
-                in particular, so the gaze is at its least structured.
+                A HoloLens 2 supplied the eye tracking, through a capture
+                application I built after the obvious off-the-shelf route turned
+                out to sample too slowly to be useful. Volunteers performed four
+                ordinary industrial activities in the DFKI smart factory —
+                walking, waiting, using a tool, assembling. Walking and waiting
+                are the awkward pair, and they were chosen for exactly that:
+                nobody is looking at anything in particular, so the gaze is at
+                its least structured.
               </p>
               <p>
-                Nineteen features out of the blinks, the fixations and their
-                dispersion; four classifiers over them. Extra trees came out
-                ahead, at 99.3% on the most demanding split. The more instructive
-                result is that the LSTM I added to the three inherited methods
-                lost, and kept losing — the dataset is ten people, which is not
-                what a recurrent model wants, and synthetically over-sampling to
-                fake more of it made the accuracy worse rather than better.
+                Features drawn from the blinks and the fixations fed a set of
+                classifiers. The more instructive result is the one that failed:
+                the recurrent model I added to the inherited methods lost, and
+                kept losing. The dataset is small, which is not what such a model
+                wants, and manufacturing more of it synthetically made things
+                worse rather than better.
               </p>
             </Entry>
             <Entry
@@ -146,13 +144,11 @@ export default function Research() {
               <p>
                 Pose is the interesting half. A custom-trained YOLO detector
                 finds the cuboid in the colour frame; corners taken from inside
-                that box are solved against a CAD model of the object with PnP
-                under a plane constraint, the cuboid being known to lie on the
-                table; and the estimate is steadied across frames by discarding
-                the interquartile outliers before averaging. Planning runs
-                through MoveIt, and falls back through four OMPL planners with
-                growing timeouts when the first cannot reach the pose — which,
-                for the poses this task produces, is often.
+                that box are solved against a CAD model of the object with PnP,
+                and the estimate is steadied over several frames before the
+                planner is allowed to act on it. Motion planning runs through
+                MoveIt, with fallbacks for the poses a single planner cannot
+                reach — which, for this task, is often.
               </p>
               <p>
                 The instructive part of a project like this is never the detector
@@ -167,10 +163,8 @@ export default function Research() {
             >
               <p>
                 Motion control for FUME, a reconfigurable lower-limb exoskeleton
-                for paraplegic users built in the lab — six degrees of freedom,
-                the ankles passive, the whole machine confined to the sagittal
-                plane. Alongside it, technical documentation for a 6R industrial
-                manipulator.
+                for paraplegic users built in the lab. Alongside it, technical
+                documentation for a 6R industrial manipulator.
               </p>
               <p>
                 The inertia of a machine like that you can write down. The
@@ -179,9 +173,8 @@ export default function Research() {
                 adaptive tracking built on a generalised fuzzy hyperbolic model,
                 chosen because it is cheap enough to run in real time on a plant
                 that is nonlinear, multi-input and permanently disturbed. It ran
-                on the robot itself rather than in simulation, and beat a tuned
-                PID on both tracking error and energy at all four actuated
-                joints.
+                on the robot itself rather than in simulation, and outperformed a
+                tuned PID.
               </p>
               <p>
                 This is the work that made me a researcher: a control problem

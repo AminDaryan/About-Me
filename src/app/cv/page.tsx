@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Settle from "@/components/Settle";
 import Entry from "@/components/Entry";
-import Email from "@/components/Email";
 import { Divider, Entries, SectionTitle, Wrap } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -25,7 +24,7 @@ export default function CV() {
           <Settle delay={0.16}>
             <div className="mt-6 max-w-measure">
               <p className="text-ink-soft">
-                Kaiserslautern, Germany · <Email /> ·{" "}
+                Kaiserslautern, Germany ·{" "}
                 <a
                   className="link"
                   href="https://www.linkedin.com/in/amin-daryan/"

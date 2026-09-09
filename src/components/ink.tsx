@@ -82,19 +82,6 @@ export function Bow({ className }: { className?: string }) {
   );
 }
 
-/** A small envelope, for the one place on the site that wants a mark. */
-export function Envelope({ className }: { className?: string }) {
-  return (
-    <InkFigure
-      className={className}
-      label=""
-      viewBox="0 0 40 28"
-      width={28}
-      paths={["M 3 4 L 37 4 L 37 24 L 3 24 Z", "M 3 4 L 20 16 L 37 4"]}
-    />
-  );
-}
-
 /** A sabre: one long curved blade, a swept knuckle guard, grip and pommel. */
 export function Sabre({ className }: { className?: string }) {
   return (

@@ -25,9 +25,7 @@ image.
 
 ## Before you go live
 
-1. Set `NEXT_PUBLIC_SITE_URL` in the Cloudflare Pages project — see Deploying
-   below. Nothing else needs the origin; it is read from one place.
-2. Add an `openGraph.images` entry once you have a share image. Note that
+1. Add an `openGraph.images` entry once you have a share image. Note that
    whatever you choose appears in every link preview of this site, so the
    portrait is a decision rather than a default.
 
@@ -45,15 +43,14 @@ Set these in the Pages project:
 | Build command | `yarn build` |
 | Build output directory | `out` |
 | Deploy command | `npx wrangler pages deploy` — **not** `npx wrangler deploy` |
-| `NEXT_PUBLIC_SITE_URL` | the site's real origin, no trailing slash |
 
 `wrangler deploy` is the *Workers* command. It looks for a Worker entry point,
 finds none, and fails; that is what broke the last deploy.
 
-`NEXT_PUBLIC_SITE_URL` is read at build time and feeds `metadataBase`, every
-canonical link, `sitemap.xml` and `robots.txt` (see `src/lib/site.ts`). Until it
-is set, those all point at `https://example.invalid` — deliberately obvious
-rather than quietly wrong.
+The origin is `https://amindariani.com`, set once in `src/lib/site.ts` and used
+for `metadataBase`, every canonical link, `sitemap.xml` and `robots.txt`. No
+environment variable is needed; `NEXT_PUBLIC_SITE_URL` overrides it for a
+preview deployment.
 
 **Two things live outside Next because an export cannot serve them.**
 `public/_headers` carries the security headers and `public/_redirects` carries
@@ -68,7 +65,7 @@ configuring them there would silently do nothing.
 ```
 src/app/                one folder per route: /, /research, /cv, /beyond
                         plus robots.ts and sitemap.ts, emitted as static files
-src/components/         Masthead, Portrait, Email, Settle, and ui.tsx (Entry, Divider, …)
+src/components/         Masthead, Portrait, Settle, and ui.tsx (Entry, Divider, …)
 src/components/three/   the two WebGL figures
 src/lib/dip.ts          double inverted pendulum dynamics + LQR
 public/                 portrait.jpg, favicon.svg, and _headers /
@@ -78,13 +75,14 @@ docs/                   the evidence behind every claim on the site — read doc
 
 ## Where the facts come from
 
-`docs/` holds the primary material for the work described on the site: the
-original reports and repository READMEs in `docs/sources/`, a cited reading of
-each in `docs/notes/`, and `docs/site-claims.md`, which maps every checkable
-sentence on the site to the thing that supports it.
+`docs/` holds the primary material behind the work described on the site, a
+cited reading of each source, and a ledger mapping every checkable sentence to
+the thing that supports it.
 
-Change the evidence before you change the page, not after. `docs/README.md`
-explains the convention and how to file the next project.
+**Only `docs/README.md` is tracked by git.** The rest stays on disk: it contains
+an official transcript, other people's coursework, a publisher-copyrighted
+manuscript, and photographs of study volunteers. Change the evidence before you
+change the page, not after.
 
 ## Why there is no CV PDF here
 
@@ -135,14 +133,12 @@ cart travel.
   dodges the Playfair-Display look that reads as "template".
 - **Light theme only**, deliberately. The page is meant to read as a printed
   page, and a printed page has no dark mode.
-- **Email is base64-decoded in the browser** (`src/components/Email.tsx`). The
-  previous version concatenated string literals and this file claimed the plain
-  address never reached the client; it did — the bundler folds constant
-  expressions, and `grep` found the finished address in two JS chunks. `atob`
-  runs at runtime and cannot be folded, so the literal is genuinely absent now.
-  It still only defeats naive scraping: the no-JS fallback spells the address
-  out in an `[at]` form, and anyone who runs the page sees it. Obfuscation is
-  not protection.
+- **No email address anywhere.** LinkedIn is the contact route. An earlier
+  version published a personal address behind a string-concatenation trick and
+  claimed it never reached the client; it did, because the bundler folds
+  constant expressions. That is the general lesson: obfuscation is not
+  protection, and the only reliable way to keep an address off a public page is
+  not to put it there. `src/components/Email.tsx` has been deleted.
 - **Motion respects `prefers-reduced-motion`** — both the scroll reveal and both
   WebGL scenes.
 - **All colour and type lives in `@theme`** at the top of `globals.css`. Change
