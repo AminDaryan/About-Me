@@ -86,11 +86,11 @@ export default function Beyond() {
             </Settle>
             <Settle>
               <p className="max-w-measure">
-                Psychology I came to sideways, through the research. Two years of
-                working on gaze will do that to you. Once you have spent that long
-                treating where somebody looks as data, you cannot stop noticing how
-                much of a person is legible from the outside, and how much of it
-                they never chose to say.
+                Psychology I came to sideways, through the research. A year and a
+                half of working on gaze will do that to you. Once you have spent
+                that long treating where somebody looks as data, you cannot stop
+                noticing how much of a person is legible from the outside, and
+                how much of it they never chose to say.
               </p>
             </Settle>
           </Leaf>

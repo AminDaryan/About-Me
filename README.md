@@ -11,11 +11,17 @@ Then open <http://localhost:3000>.
 
 ---
 
-## The one thing still missing
+## The portrait
 
-Save your headshot as **`public/portrait.jpg`**. Until you do, the home page
-shows a ruled placeholder frame instead of a broken image. Aim for roughly
-800×1000 px, portrait orientation, under ~300 KB.
+`public/portrait.jpg` is in place — a 400×400 square, 28 KB. `Portrait.tsx`
+declares those exact dimensions so the browser reserves the right box before the
+image arrives and the masthead does not jump.
+
+400 px is a little thin for a 2× display at the 248 px column this sits in.
+If a larger original exists, drop it in and update the `width`/`height`
+attributes to match; nothing else needs to change. If the file ever goes
+missing, the component falls back to a ruled empty frame rather than a broken
+image.
 
 ## Before you go live
 
@@ -44,7 +50,18 @@ src/components/         Masthead, Portrait, Email, Settle, and ui.tsx (Entry, Di
 src/components/three/   the two WebGL figures
 src/lib/dip.ts          double inverted pendulum dynamics + LQR
 public/                 portrait.jpg (add this), favicon.svg
+docs/                   the evidence behind every claim on the site — read docs/README.md
 ```
+
+## Where the facts come from
+
+`docs/` holds the primary material for the work described on the site: the
+original reports and repository READMEs in `docs/sources/`, a cited reading of
+each in `docs/notes/`, and `docs/site-claims.md`, which maps every checkable
+sentence on the site to the thing that supports it.
+
+Change the evidence before you change the page, not after. `docs/README.md`
+explains the convention and how to file the next project.
 
 ## Why there is no CV PDF here
 

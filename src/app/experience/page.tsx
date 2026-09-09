@@ -23,8 +23,9 @@ export default function Experience() {
           </Settle>
           <Settle delay={0.16}>
             <p className="drop-cap mt-8 max-w-measure text-[1.16rem] leading-[1.65] text-ink-soft">
-              For four years I was a working software engineer, not a researcher.
-              I shipped products that people paid for, in teams, on deadlines, in
+              For four years I was a working software engineer, not a researcher:
+              Vancouver, then Spain. Later, alongside the master&rsquo;s, SAP. I
+              shipped products that people paid for, in teams, on deadlines, in
               three countries. I used to think of that period as an interruption.
               I have stopped: it is the reason my research code has tests, the
               reason I can hand a pipeline to somebody else and have it still run,
@@ -66,8 +67,9 @@ export default function Experience() {
               where="Student Research Assistant · Mashhad, Iran"
             >
               <p>
-                Motion control for a paraplegic lower-limb exoskeleton; technical
-                documentation for a 6R industrial robot.
+                Motion control for FUME, a paraplegic lower-limb exoskeleton
+                built in the lab; technical documentation for a 6R industrial
+                robot.
               </p>
             </Entry>
           </Entries>

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     template: "%s — Amin Daryan",
   },
   description:
-    "Amin Daryan — M.Sc. student in Automation and Control Engineering at RPTU Kaiserslautern, working on environment perception for off-road autonomous driving, explainable AI, and human-centred robotics.",
+    "Amin Daryan — M.Sc. student in Automation and Control at RPTU Kaiserslautern, working on environment perception for off-road autonomous driving, explainable AI, and human-centred robotics.",
   authors: [{ name: "Amin Daryan" }],
   openGraph: {
     type: "profile",
@@ -32,14 +32,21 @@ const PERSON_LD = {
   alternateName: "Amin Amir Baglouee Dariani",
   jobTitle: "Researcher, Robotics and Machine Perception",
   description:
-    "M.Sc. student in Automation and Control Engineering at RPTU Kaiserslautern working on environment perception for off-road autonomous driving using diffusion models.",
+    "M.Sc. student in Automation and Control at RPTU Kaiserslautern working on environment perception for off-road autonomous driving using diffusion models.",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Kaiserslautern",
     addressCountry: "DE",
   },
+  /* RPTU is a current affiliation, not a finished one: the M.Sc. runs from
+     March 2023 and is still in progress, so listing it under alumniOf would
+     tell a machine reader the degree is already awarded. alumniOf is for the
+     degree that is actually finished. */
+  affiliation: {
+    "@type": "CollegeOrUniversity",
+    name: "RPTU Kaiserslautern-Landau",
+  },
   alumniOf: [
-    { "@type": "CollegeOrUniversity", name: "RPTU Kaiserslautern-Landau" },
     { "@type": "CollegeOrUniversity", name: "Ferdowsi University of Mashhad" },
   ],
   worksFor: { "@type": "Organization", name: "Fraunhofer IOSB" },

@@ -75,14 +75,14 @@ export default function Home() {
         <Wrap>
           <Leaf>
             <Settle className="note">
-              M.Sc. Automation &amp; Control Engineering,
+              M.Sc. Automation &amp; Control,
               <br />
               RPTU Kaiserslautern, 2023 – present.
             </Settle>
             <Settle>
               <p className="drop-cap max-w-measure text-[1.16rem] leading-[1.65] text-ink-soft">
                 At the moment I am a master&rsquo;s student in Automation and
-                Control Engineering at RPTU Kaiserslautern, writing my thesis on
+                Control at RPTU Kaiserslautern, writing my thesis on
                 environment perception for off-road autonomous driving using
                 diffusion models. Off-road is the interesting case. There are no
                 lane markings, no map priors worth trusting, and a distribution
@@ -104,8 +104,9 @@ export default function Home() {
                   mechanical engineer in Mashhad and spent my undergraduate years
                   in a robotics lab working on motion control for a paraplegic
                   lower-limb exoskeleton — work that became my first publication.
-                  Then I built software professionally for four years: front-end
-                  and full-stack, in Vancouver, in Spain, and at SAP in Walldorf.
+                  Then I built software professionally for four years, front-end
+                  and full-stack, in Vancouver and then in Spain — and later,
+                  alongside the master&rsquo;s, at SAP in Walldorf.
                 </p>
                 <p>
                   I came back to research because the questions I could not put

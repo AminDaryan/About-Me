@@ -7,7 +7,7 @@ import { Divider, Entries, SectionTitle, Wrap } from "@/components/ui";
 export const metadata: Metadata = {
   title: "Curriculum Vitae",
   description:
-    "Curriculum vitae of Amin Daryan — M.Sc. Automation and Control Engineering, RPTU Kaiserslautern. Research at Fraunhofer IOSB and DFKI; engineering at SAP, JHELY and DelGate.",
+    "Curriculum vitae of Amin Daryan — M.Sc. Automation and Control, RPTU Kaiserslautern. Research at Fraunhofer IOSB and DFKI; engineering at SAP, JHELY and DelGate.",
 };
 
 export default function CV() {
@@ -51,7 +51,7 @@ export default function CV() {
           </Settle>
           <Entries>
             <Entry
-              title="M.Sc. Automation and Control Engineering"
+              title="M.Sc. Automation and Control"
               when="Mar 2023 – present"
               where="RPTU Kaiserslautern-Landau · Kaiserslautern, Germany"
             >
@@ -68,12 +68,19 @@ export default function CV() {
                 using diffusion models&rdquo; (ongoing).
               </p>
               <p>
-                <span className="text-ink">Master&rsquo;s project</span> — object
-                detection and transfer with a 6R robot and a RealSense camera.
+                Specialisation in Connected Automation Systems.
+              </p>
+              <p>
+                <span className="text-ink">Project lab</span> — pick-and-place
+                with a Franka Emika Panda (7-DOF) and an Intel RealSense D455:
+                custom-trained YOLO detection, PnP pose estimation against a CAD
+                model, MoveIt motion planning. A group of four at the Institute
+                of Control Systems, winter semester 2024/25.
               </p>
               <p className="text-[0.9rem]">
                 Selected coursework: 3D Computer Vision · Cooperative Robot
-                Control · Methods of Soft Control
+                Control · Methods of Soft Control · Model Predictive Control ·
+                Fault Diagnosis and Fault Tolerant Control
               </p>
             </Entry>
             <Entry
@@ -128,8 +135,10 @@ export default function CV() {
               where="Student Research Assistant · Mashhad, Iran"
             >
               <p>
-                Paraplegic lower-limb exoskeleton — motion control. 6R industrial
-                robot — technical documentation.
+                Motion control for FUME, a reconfigurable paraplegic lower-limb
+                exoskeleton — adaptive tracking control on a generalised fuzzy
+                hyperbolic model, implemented and tested on the robot. 6R
+                industrial robot — technical documentation.
               </p>
             </Entry>
           </Entries>
@@ -144,13 +153,13 @@ export default function CV() {
           <Settle>
             <div className="max-w-measure">
               <p>
-                A. Amir-B.D., S. M. Tahamipour, A. Akbarzadeh.{" "}
+                A. Amir-B.D., S. M. Tahamipour-Z., A. Akbarzadeh.{" "}
                 <em>
                   &ldquo;Adaptive Tracking Control Based on GFHM for a
                   Reconfigurable Lower Limb Exoskeleton.&rdquo;
                 </em>{" "}
                 7th International Conference on Robotics and Mechatronics
-                (ICRoM), Tehran, Iran, November 2019.
+                (ICRoM), Tehran, Iran, 20–21 November 2019, pp. 74–79.
               </p>
               <p className="mt-2 text-[0.9rem]">
                 <a

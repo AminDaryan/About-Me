@@ -111,17 +111,32 @@ export default function Research() {
               </p>
             </Entry>
             <Entry
-              title="Object detection and transfer with a 6R robot and a RealSense camera"
-              when="Master's project"
-              where="RPTU Kaiserslautern"
+              title="Pick-and-place with a Franka Emika Panda and an RGB-D camera"
+              when="Winter semester 2024/25"
+              where="Project lab, Connected Automation Systems · Institute of Control Systems, RPTU Kaiserslautern"
             >
               <p>
-                A full perception-to-manipulation loop on real hardware: detect
-                objects with an RGB-D camera, resolve their pose into the
-                robot&rsquo;s frame, and transfer them with a six-axis arm. The
-                instructive part of a project like this is never the detector —
-                it is everything between a bounding box and a gripper that closes
-                in the right place.
+                A four-person project lab, and a full perception-to-manipulation
+                loop on real hardware: find a cuboid placed anywhere on the
+                bench, recover its pose, and have a seven-axis arm pick it up and
+                set it down elsewhere without touching the obstacles it already
+                knows about.
+              </p>
+              <p>
+                Pose is the interesting half. A custom-trained YOLO detector
+                finds the cuboid in the colour frame; corners taken from inside
+                that box are solved against a CAD model of the object with PnP
+                under a plane constraint, the cuboid being known to lie on the
+                table; and the estimate is steadied across frames by discarding
+                the interquartile outliers before averaging. Planning runs
+                through MoveIt, and falls back through four OMPL planners with
+                growing timeouts when the first cannot reach the pose — which,
+                for the poses this task produces, is often.
+              </p>
+              <p>
+                The instructive part of a project like this is never the detector
+                — it is everything between a bounding box and a gripper that
+                closes in the right place.
               </p>
             </Entry>
             <Entry
@@ -130,13 +145,28 @@ export default function Research() {
               where="Robotics Lab, Ferdowsi University of Mashhad"
             >
               <p>
-                Motion control for a reconfigurable lower-limb exoskeleton for
-                paraplegic users, alongside technical documentation for a 6R
-                industrial manipulator. This is the work that made me a
-                researcher: a control problem where the plant is a person, the
-                failure modes are not abstract, and the specification is written
-                in terms of what a human body can tolerate. It produced my first
-                publication, below.
+                Motion control for FUME, a reconfigurable lower-limb exoskeleton
+                for paraplegic users built in the lab — six degrees of freedom,
+                the ankles passive, the whole machine confined to the sagittal
+                plane. Alongside it, technical documentation for a 6R industrial
+                manipulator.
+              </p>
+              <p>
+                The inertia of a machine like that you can write down. The
+                Coriolis and gravity terms, with a person strapped into it, you
+                cannot — so the controller learns that part online instead:
+                adaptive tracking built on a generalised fuzzy hyperbolic model,
+                chosen because it is cheap enough to run in real time on a plant
+                that is nonlinear, multi-input and permanently disturbed. It ran
+                on the robot itself rather than in simulation, and beat a tuned
+                PID on both tracking error and energy at all four actuated
+                joints.
+              </p>
+              <p>
+                This is the work that made me a researcher: a control problem
+                where the plant is a person, the failure modes are not abstract,
+                and the specification is written in terms of what a human body
+                can tolerate. It produced my first publication, below.
               </p>
             </Entry>
             <Entry
@@ -174,13 +204,13 @@ export default function Research() {
           <Settle>
             <div className="max-w-measure">
               <p>
-                A. Amir-B.D., S. M. Tahamipour, A. Akbarzadeh.{" "}
+                A. Amir-B.D., S. M. Tahamipour-Z., A. Akbarzadeh.{" "}
                 <em>
                   &ldquo;Adaptive Tracking Control Based on GFHM for a
                   Reconfigurable Lower Limb Exoskeleton.&rdquo;
                 </em>{" "}
                 7th International Conference on Robotics and Mechatronics
-                (ICRoM), Tehran, Iran, November 2019.
+                (ICRoM), Tehran, Iran, 20–21 November 2019, pp. 74–79.
               </p>
               <p className="mt-3 text-[0.9rem]">
                 <a

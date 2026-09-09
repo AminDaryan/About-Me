@@ -23,7 +23,7 @@ export default function Portrait() {
   return (
     <figure className="relative m-0 w-full max-w-[15.5rem] self-start">
       {missing ? (
-        <div className="flex aspect-4/5 items-end border border-rule bg-paper-deep p-6 text-[0.76rem] leading-relaxed text-ink-faint italic">
+        <div className="flex aspect-square items-end border border-rule bg-paper-deep p-6 text-[0.76rem] leading-relaxed text-ink-faint italic">
           Portrait goes here — save the photo as public/portrait.jpg
         </div>
       ) : (
@@ -33,8 +33,8 @@ export default function Portrait() {
             ref={imgRef}
             src="/portrait.jpg"
             alt="Portrait of Amin Daryan"
-            width={600}
-            height={750}
+            width={400}
+            height={400}
             onError={() => setMissing(true)}
             className="block w-full [filter:sepia(0.14)_saturate(0.92)_contrast(1.02)]"
           />
