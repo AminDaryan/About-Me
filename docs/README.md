@@ -26,6 +26,7 @@ ledger is what keeps the two honest about each other.
 | --- | --- | --- | --- |
 | Project lab — pick-and-place with a Franka Panda, RPTU WS 2024/25 | [`sources/cas-project-lab/`](sources/cas-project-lab/) — *report untracked* | [`notes/cas-project-lab.md`](notes/cas-project-lab.md) | `/research`, `/cv` |
 | FUME lower-limb exoskeleton — adaptive control, Ferdowsi 2017–19; the ICRoM 2019 paper | [`sources/fume-exoskeleton/`](sources/fume-exoskeleton/) — *paper untracked* | [`notes/fume-exoskeleton.md`](notes/fume-exoskeleton.md) | `/research`, `/experience`, `/cv` |
+| Master's project — gaze classification with HoloLens 2, DFKI smart factory, 2026 | [`sources/dfki-masters-project/`](sources/dfki-masters-project/) — *report and media untracked* | [`notes/dfki-masters-project.md`](notes/dfki-masters-project.md) | `/research`, `/experience`, `/cv` |
 | RPTU transcript of records — programme name, specialisation, module titles | [`sources/rptu-transcript/`](sources/rptu-transcript/) — **file and notes untracked** | *private* | `/cv`, `/research`, home, metadata |
 
 ## Adding the next project

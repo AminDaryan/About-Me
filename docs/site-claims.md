@@ -45,6 +45,13 @@ this file:
 | The pick-and-place work is the CAS Project Lab module, not the master's project | `cv`, `research` | RPTU transcript lists CAS Project Lab and Master Project CAS as separate modules; see the correction table below |
 | Coursework: 3D Computer Vision, Cooperative Robot Control, Methods of Soft Control, Model Predictive Control, Fault Diagnosis and Fault Tolerant Control | `cv` | All five appear as passed modules on the transcript |
 | The M.Sc. is still in progress | `cv`, home, JSON-LD `affiliation` | Transcript p. 3: "Der Prüfungsanspruch im genannten Studiengang besteht noch"; no thesis module recorded |
+| Master's project title, advisors and institute | `cv` | Report title page: "Classification of Eye Movements from Eye Tracking Data Recorded With HoloLens 2", Prof. Dr.-Ing. Daniel Görges and M.Sc. Snehal Walunj, Institute of Electromobility, RPTU, 31 March 2026 |
+| The experiment ran in the DFKI smart factory with ten volunteers | `research`, `experience` | Report p. 30: "ten volunteers who participated in the experiment, which was conducted in the smart factory of the DFKI institute of Kaiserslautern" |
+| Four activities: walking, waiting, tool usage with a glue gun, assembling | `research` | Report p. 29 |
+| The published toolchain sampled at 10 Hz, a third of the assumed rate, so a custom Unity/ARETT capture app was used | `research` | Report p. 28: "the data collection rate was only 10Hz, which was 20Hz less than the desired data rate used in the papers and ARETT" |
+| Nineteen features from blinks, fixations and dispersion | `research` | Report Table 5.3, p. 33 — 19 rows |
+| Extra trees led at 99.3% on the most demanding split | `research` | Report Table 5.1, p. 31: Extra Trees 99.29% at the 60–40 split, ahead of Random Forest 98.59% and every SVM kernel. The split is quoted with the number because three methods hit 100% at 80–20 on ten participants' data, which is a ceiling effect rather than a result |
+| The LSTM did not beat the inherited methods, and SMOTE over-sampling made it worse | `research` | Report p. 59 (LSTM "provides less favourable results … requires significantly more computation time") and p. 28 ("This approach did not work well, and it brought down the accuracy") |
 
 ## Corrected on 2026-09-09 — from the RPTU transcript
 
@@ -107,7 +114,8 @@ should know which sentences have paper behind them and which have Amin's word.
 ## Open
 
 - **The overall grade on the CV cannot be confirmed from the transcript**, which records module rows but states no average of its own — that is computed at graduation. The figure was left untouched: an overall grade is Amin's to state. The reconstruction is in `docs/notes/private/rptu-transcript.md`, which is untracked, and it does not agree with the site; this needs a decision from him.
-- **A substantial module is missing from the site.** *Master Project CAS*, 15 credits, dated 06.03.2026, is the largest single graded item on the transcript and appears nowhere, because no source for it has been attached. Ask Amin what it was.
+- ~~**A substantial module is missing from the site.** *Master Project CAS*, 15 credits.~~ **Closed 2026-09-09**: it is the master's project, *Classification of Eye Movements from Eye Tracking Data Recorded With HoloLens 2*, now on `/cv` and `/research`. See [`notes/dfki-masters-project.md`](notes/dfki-masters-project.md).
+- **The report's own tables have three defects** — unresolved LaTeX cross-references, an all-zero placeholder row for the LSTM, and one cell where Tables 5.1 and 5.2 disagree (SVM polynomial at 60–40: 96.13% vs 93.13%). None is quoted on the site. Worth a fix before the document is sent anywhere.
 - **A number in Amin's own paper does not reproduce.** The text reports a 77.73% MSE reduction at the left knee; Table II gives 4.49→1.49 ×10⁻⁴, which is 66.82%. The other three figures match the table exactly. Separately, the abstract labels 33.56% and 77.73% as "knee and hip" while the body labels them "left hip and left knee". No percentage from this paper is safe to quote, and the site quotes none — it makes the qualitative claim instead, which holds under every reading. See [`notes/fume-exoskeleton.md`](notes/fume-exoskeleton.md) §4.
 - The accepted manuscript in `sources/fume-exoskeleton/` is **not** the IEEE version of record and carries no copyright notice, so it is not linkable from the site as-is; the site links the DOI, which always is.
 - The "6R industrial robot — technical documentation" half of the Ferdowsi role still has no source attached and remains owner-stated.

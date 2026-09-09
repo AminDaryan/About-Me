@@ -58,7 +58,8 @@ export default function Experience() {
             >
               <p>
                 Gaze-enabled activity classification using machine learning —
-                inferring what a person is doing from where they look.
+                inferring what a person is doing from where they look, with eye
+                tracking on a HoloLens 2 in the DFKI smart factory.
               </p>
             </Entry>
             <Entry

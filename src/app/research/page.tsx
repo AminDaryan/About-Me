@@ -97,9 +97,9 @@ export default function Research() {
           </Settle>
           <Entries>
             <Entry
-              title="Gaze-enabled activity classification using machine learning"
-              when="Sep 2024 – Feb 2026"
-              where="Student Research Assistant · German Research Center for Artificial Intelligence (DFKI), Kaiserslautern"
+              title="Classifying what a person is doing from their gaze alone"
+              when="2024 – 2026"
+              where="DFKI Kaiserslautern · master's project, Institute of Electromobility, RPTU"
             >
               <p>
                 Where someone looks is a remarkably strong signal about what they
@@ -108,6 +108,26 @@ export default function Research() {
                 precisely because the input is so sparse: a scanpath carries far
                 less information than a video frame, but it sits much closer to
                 intent.
+              </p>
+              <p>
+                A HoloLens 2 supplied the eye tracking. The obvious route — the
+                published toolchain belonging to the work I was building on —
+                sampled at 10 Hz, a third of what the literature assumes, so I
+                built the capture application on Unity and ARETT instead. Ten
+                volunteers then performed four activities in the DFKI smart
+                factory: walking, waiting, gluing parts with a glue gun, and
+                assembling them. Walking and waiting are the awkward pair, and
+                they were chosen for exactly that — nobody is looking at anything
+                in particular, so the gaze is at its least structured.
+              </p>
+              <p>
+                Nineteen features out of the blinks, the fixations and their
+                dispersion; four classifiers over them. Extra trees came out
+                ahead, at 99.3% on the most demanding split. The more instructive
+                result is that the LSTM I added to the three inherited methods
+                lost, and kept losing — the dataset is ten people, which is not
+                what a recurrent model wants, and synthetically over-sampling to
+                fake more of it made the accuracy worse rather than better.
               </p>
             </Entry>
             <Entry

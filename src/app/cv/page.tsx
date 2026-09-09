@@ -62,13 +62,19 @@ export default function CV() {
                 </span>
                 .
               </p>
+              <p>Specialisation in Connected Automation Systems.</p>
               <p>
                 <span className="text-ink">Master&rsquo;s thesis</span> —
                 &ldquo;Environment perception for off-road autonomous driving
                 using diffusion models&rdquo; (ongoing).
               </p>
               <p>
-                Specialisation in Connected Automation Systems.
+                <span className="text-ink">Master&rsquo;s project</span> —
+                &ldquo;Classification of Eye Movements from Eye Tracking Data
+                Recorded With HoloLens 2&rdquo;. Institute of Electromobility,
+                RPTU, advised by Prof. Dr.-Ing. Daniel Görges and M.Sc. Snehal
+                Walunj; experiment conducted at the DFKI smart factory,
+                Kaiserslautern, 2026.
               </p>
               <p>
                 <span className="text-ink">Project lab</span> — pick-and-place
@@ -127,7 +133,11 @@ export default function CV() {
               when="Sep 2024 – Feb 2026"
               where="Student Research Assistant · Kaiserslautern, Germany"
             >
-              <p>Gaze-enabled activity classification using machine learning.</p>
+              <p>
+                Gaze-enabled activity classification using machine learning —
+                eye tracking on HoloLens 2, classifying industrial activities
+                from gaze features.
+              </p>
             </Entry>
             <Entry
               title="Robotics Lab, Ferdowsi University of Mashhad"
