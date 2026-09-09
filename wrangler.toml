@@ -13,7 +13,7 @@
 # NOT `npx wrangler deploy`, which is the Workers command and is why the last
 # deploy failed — it looked for a Worker entry point that does not exist here.
 
-name = "about-me"
+name = "my-cv"
 pages_build_output_dir = "./out"
 compatibility_date = "2026-09-09"
 
@@ -27,3 +27,6 @@ persist = true
 enabled = false
 head_sampling_rate = 1
 persist = true
+
+[assets]
+directory = "./public"
