@@ -16,17 +16,3 @@
 name = "my-cv"
 pages_build_output_dir = "./out"
 compatibility_date = "2026-09-09"
-
-[observability.logs]
-enabled = true
-head_sampling_rate = 1
-invocation_logs = true
-persist = true
-
-[observability.traces]
-enabled = false
-head_sampling_rate = 1
-persist = true
-
-[assets]
-directory = "./public"
