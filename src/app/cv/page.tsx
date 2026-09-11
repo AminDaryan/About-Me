@@ -179,6 +179,18 @@ export default function CV() {
                 </Link>
                 .
               </p>
+              {/* Named as the certified English transcript names them, and
+                  without marks: Ferdowsi grades out of 20 and the modules above
+                  are on the German scale, so a second column of numbers here
+                  would read as the same scale and is not. */}
+              <div>
+                <p className="label text-ink-faint">Selected modules</p>
+                <p className="mt-2">
+                  Automatic Control · Robotics, with laboratory · Robotics —
+                  Systematics and Dynamics · Numerical Computation · Computer
+                  Programming · Vibrations · Engineering Design Methods
+                </p>
+              </div>
             </Entry>
           </Entries>
         </Wrap>
@@ -271,7 +283,7 @@ export default function CV() {
             <Entry
               title="Eye Movement Classification from HoloLens 2 Eye Tracking"
               when="Mar 2026"
-              where="Master's project · RPTU / DFKI · 15 ECTS · advisors Prof. D. Görges, S. Walunj"
+              where="Master's project · RPTU / DFKI · advisors Prof. D. Görges, S. Walunj"
             >
               <p>
                 Designed and ran the data collection in the DFKI smart factory and
@@ -282,7 +294,7 @@ export default function CV() {
             <Entry
               title="Vision-guided Pick-and-Place with a Franka Emika Panda"
               when="Winter 2024/25"
-              where="Project lab · RPTU Institute of Control Systems · 5 ECTS · team of four · Prof. S. Liu, C. Cai"
+              where="Project lab · RPTU Institute of Control Systems · Prof. S. Liu, C. Cai"
             >
               <p>
                 ROS system in which a 7-DOF Franka Emika Panda locates a randomly
@@ -392,9 +404,6 @@ export default function CV() {
                 Further references, from my master&rsquo;s project advisor at RPTU
                 and my thesis supervisor at Fraunhofer IOSB, are available on
                 request.
-              </p>
-              <p className="mt-10 text-meta">
-                Full name on official documents: Amin Amir Baglouee Dariani.
               </p>
             </Settle>
           </div>

@@ -155,7 +155,7 @@ export const STEPS: Step[] = [
     name: "Doctorate",
     place: "To be decided",
     title: "A doctorate",
-    text: "I am looking for a doctoral position in explainable and trustworthy machine learning, starting after my master's.",
+    text: "I am looking for a doctoral position in artificial intelligence and robotics, starting after my master's — machine learning, perception and control, and making what they produce explainable enough to act on.",
     art: "road",
     alt: "A road leading to a flag on the horizon",
     href: "#contact",
