@@ -80,12 +80,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    // data-scroll-behavior: Next turns smooth scrolling off for the jump
+    // between pages, so a link to /research#gaze lands on it at once instead of
+    // gliding there from wherever the last page was scrolled.
+    <html lang="en" data-scroll-behavior="smooth">
       <head>
         {/* Scroll-in animation starts at opacity 0. Without JavaScript nothing
             would ever reveal it, so show everything outright instead. */}
         <noscript>
-          <style>{`.settle{opacity:1 !important;transform:none !important}.ink svg path{stroke-dashoffset:0 !important}`}</style>
+          <style>{`.settle{opacity:1 !important;transform:none !important}.ink svg path{stroke-dashoffset:0 !important}.road-draw{stroke-dashoffset:0 !important}.road-late{opacity:1 !important}`}</style>
         </noscript>
       </head>
       <body className="font-serif antialiased">

@@ -46,17 +46,30 @@ export default function Beyond() {
           </Settle>
           <Leaf>
             <Settle className="note">
-              Philosophy and linguistics — which turn out to be the same argument,
-              held from two ends.
+              History, for the patterns that keep repeating.
+            </Settle>
+            <Settle>
+              <p className="max-w-measure">
+                I read history because I love patterns, and because I am about as
+                curious and adventurous as people come. It is the best way I know
+                to understand social behaviour and the human mind: the same
+                patterns return across centuries and empires, and underneath them
+                runs the slow evolution of what people are.
+              </p>
+            </Settle>
+
+            <Settle className="note">
+              Philosophy and linguistics — one for the meaning, one for the
+              patterns.
             </Settle>
             <Settle>
               <div className="copy max-w-measure">
                 <p>
-                  Philosophy and linguistics arrived together and have never really
-                  separated. What holds me is the question of how meaning survives
-                  the trip from one mind to another at all — how much of it is
-                  carried by the words, how much by everything around them, and
-                  what exactly is lost on the way.
+                  Linguistics I read for the same reason: language is another long
+                  record of those patterns, and of how the human mind has changed.
+                  Philosophy I read for a different one — to understand what it all
+                  means, to think more logically, and to have my own intuitions,
+                  and my own logic, challenged.
                 </p>
                 <p>
                   It is not a coincidence that I ended up working on explainable
@@ -69,28 +82,14 @@ export default function Beyond() {
             </Settle>
 
             <Settle className="note">
-              History, read the way engineers read post-mortems.
+              Psychology — to understand myself as much as anyone else.
             </Settle>
             <Settle>
               <p className="max-w-measure">
-                I read history for the same reason I read failure reports: because
-                the interesting part is never the decision itself but the state of
-                the world in which it looked reasonable. Politics is the same
-                material while it is still warm, and far harder to read honestly.
-              </p>
-            </Settle>
-
-            <Settle className="note">
-              Psychology — the discipline that keeps quietly showing up in my
-              actual work.
-            </Settle>
-            <Settle>
-              <p className="max-w-measure">
-                Psychology I came to sideways, through the research. A year and a
-                half of working on gaze will do that to you. Once you have spent
-                that long treating where somebody looks as data, you cannot stop
-                noticing how much of a person is legible from the outside, and
-                how much of it they never chose to say.
+                Psychology comes from the same curiosity, turned inward as well as
+                outward. I read it to understand myself and other people better,
+                and, ultimately, to understand the human brain well enough to
+                improve it.
               </p>
             </Settle>
           </Leaf>

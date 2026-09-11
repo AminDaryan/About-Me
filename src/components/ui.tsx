@@ -34,14 +34,17 @@ export function Divider() {
 }
 
 export function SectionTitle({
+  id,
   num,
   children,
 }: {
+  /** Makes the heading a link target, e.g. /research#current-work. */
+  id?: string;
   num?: string;
   children: ReactNode;
 }) {
   return (
-    <h2 className="mb-7 text-section">
+    <h2 id={id} className="mb-7 text-section">
       {num && (
         <span className="label mb-[0.85rem] block text-accent">{num}</span>
       )}

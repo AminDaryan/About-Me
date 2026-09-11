@@ -45,10 +45,13 @@ export default function Research() {
       <section className="py-[clamp(2.8rem,6vw,4.5rem)]">
         <Wrap>
           <Settle>
-            <SectionTitle num="I">Current work</SectionTitle>
+            <SectionTitle id="current-work" num="I">
+              Current work
+            </SectionTitle>
           </Settle>
           <Entries>
             <Entry
+              id="thesis"
               title="Explaining graph neural networks that predict remaining useful life"
               when="In progress"
               where="Master's thesis · RPTU Kaiserslautern, advised at Fraunhofer IOSB and KIT"
@@ -102,6 +105,7 @@ export default function Research() {
           </Settle>
           <Entries>
             <Entry
+              id="gaze"
               title="Recognising industrial activity from gaze"
               when="2024 – 2026"
               where="Master's project · RPTU and DFKI Kaiserslautern"
@@ -129,6 +133,7 @@ export default function Research() {
               </p>
             </Entry>
             <Entry
+              id="pick-and-place"
               title="Vision-guided pick-and-place with a Franka Emika Panda"
               when="Winter 2024/25"
               where="Project lab · Institute of Control Systems, RPTU Kaiserslautern"
@@ -149,6 +154,7 @@ export default function Research() {
               <ArmFigure />
             </Entry>
             <Entry
+              id="exoskeleton"
               title="Adaptive control of a lower-limb exoskeleton"
               when="2017 – 2019"
               where="Undergraduate research · Robotics Lab, Ferdowsi University of Mashhad"
@@ -170,6 +176,7 @@ export default function Research() {
               </p>
             </Entry>
             <Entry
+              id="pendulum"
               title="Balancing an under-actuated double inverted pendulum"
               when="2019"
               where="Bachelor thesis · Ferdowsi University of Mashhad"

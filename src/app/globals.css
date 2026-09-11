@@ -171,6 +171,46 @@
     background-image: linear-gradient(var(--color-accent), var(--color-accent));
   }
 
+  /* -- Signposts to the other pages, under "Read on" ----------------------
+     The page, and one line saying what is on it. The whole row is the link,
+     so it is a comfortable target on a phone, and the name carries the same
+     hairline as any other link on the site. */
+  .signpost {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1.25rem;
+    padding: 1.15rem 0;
+    color: inherit;
+  }
+  .signpost-name {
+    grid-area: 1 / 1;
+    justify-self: start;
+    background-image: linear-gradient(var(--color-rule), var(--color-rule));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 100% 1px;
+    transition: background-image 0.28s ease, color 0.28s ease;
+  }
+  .signpost-note {
+    grid-area: 2 / 1 / 3 / -1;
+    margin-top: 0.2rem;
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    color: var(--color-ink-faint);
+  }
+  .signpost-arrow {
+    grid-area: 1 / 2;
+    color: var(--color-accent);
+    transition: transform 0.28s ease;
+  }
+  .signpost:hover .signpost-name,
+  .signpost:focus-visible .signpost-name {
+    color: var(--color-accent-deep);
+    background-image: linear-gradient(var(--color-accent), var(--color-accent));
+  }
+  .signpost:hover .signpost-arrow,
+  .signpost:focus-visible .signpost-arrow { transform: translateX(0.3rem); }
+
   /* -- Letterspaced labels: the workhorse of this design ------------------ */
   .label {
     font-size: 0.7rem;
@@ -295,9 +335,97 @@
     .settle.is-in { transition: none; }
   }
 
+  /* -- Arriving from a link that named a part of the page -----------------
+     Fig. 1 and the navigation link into single entries, not whole pages, and
+     a jump that lands mid-page is easy to mistake for a page that simply
+     opened there. A hairline in the margin says which entry was asked for,
+     then withdraws. */
+  .entry:target,
+  h2:target { position: relative; }
+  .entry:target::before,
+  h2:target::before {
+    content: "";
+    position: absolute;
+    left: -1.15rem;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--color-accent);
+    animation: arrived 2.4s ease-in 1.6s both;
+  }
+  .entry:target::before { top: 2.1rem; bottom: 2.1rem; }
+  h2:target::before { top: 0.1em; bottom: 0.5em; }
+  @keyframes arrived {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
   /* -- Body copy rhythm --------------------------------------------------- */
   .copy > p { margin-bottom: 1.35em; }
   .copy > p:last-child { margin-bottom: 0; }
+
+  /* -- University marks, hung to the left of a degree ---------------------
+     The logos are alpha masks, so they take the page's ink rather than their
+     own colours, and warm to the accent while the entry is pointed at. They
+     are decorative: the entry names the university in words. */
+  .entry-marked {
+    display: grid;
+    grid-template-columns: 2.6rem minmax(0, 1fr);
+    column-gap: 1.1rem;
+  }
+  @media (min-width: 640px) {
+    .entry-marked { grid-template-columns: 3.4rem minmax(0, 1fr); column-gap: 1.6rem; }
+  }
+  .entry-mark { padding-top: 0.3rem; }
+  .uni-mark {
+    display: block;
+    width: 100%;
+    height: 2.5rem;
+    background-color: var(--color-ink-soft);
+    -webkit-mask: var(--mark) center top / contain no-repeat;
+    mask: var(--mark) center top / contain no-repeat;
+    transition: background-color 0.3s ease;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @media (min-width: 640px) {
+    .uni-mark { height: 3.1rem; }
+  }
+  .entry-marked:hover .uni-mark { background-color: var(--color-accent); }
+  .uni-mark-rptu { --mark: url("/logos/rptu.png"); }
+  .uni-mark-fum { --mark: url("/logos/fum.png"); }
+
+  /* -- Modules and their grades, with a dotted leader between ------------- */
+  .grades {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    color: var(--color-ink-soft);
+  }
+  .grades li {
+    display: grid;
+    grid-template-columns: minmax(0, max-content) minmax(1.25rem, 1fr) auto;
+    align-items: baseline;
+    column-gap: 0.55rem;
+    padding: 0.2rem 0;
+  }
+  .grades-leader {
+    border-bottom: 1px dotted var(--color-rule);
+    transform: translateY(-0.3em);
+  }
+  .grades-mark {
+    min-width: 2.2rem;
+    text-align: right;
+    color: var(--color-ink);
+    font-feature-settings: "lnum" 1, "tnum" 1;
+  }
+  .grades-project {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin: 0.05rem 0 0.2rem 1rem;
+    font-style: italic;
+  }
 
   /* -- Contact icons -------------------------------------------------------
      Icon-only links, so each carries an aria-label for screen readers and a
@@ -341,89 +469,274 @@
     transform: none;
   }
 
-  /* -- Journey (Fig. 1) ----------------------------------------------------
-     A route drawn as one hairline through dated stops. The track and the
-     country bands share one grid, so they scroll together on a phone and a
-     band always sits over exactly the stops it spans. */
-  .journey-grid {
-    display: grid;
-    grid-template-columns: repeat(var(--journey-steps), minmax(4.9rem, 1fr));
+  /* -- Journey (Fig. 1): the road -----------------------------------------
+     A two-lane road, drawn in once on first view: verge, tarmac, edge lines
+     and a dashed centre line that lights up behind the car. Stops are pins
+     carrying their ink drawings. The tarmac is the site's ink lifted a little,
+     and everything else is paper, ink and the one accent — rather than an
+     infographic's colours. */
+  .road {
+    --road-w: 32px;
+    --tarmac: #3e3933;
+    --lamp: #eab553;
+  }
+  .road[data-kind="ribbon"] { --road-w: 26px; }
+  .road svg { overflow: visible; }
+
+  .road-shoulder,
+  .road-asphalt,
+  .road-lines,
+  .road-future {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .road-shoulder { stroke: var(--color-ink); stroke-opacity: 0.1; stroke-width: calc(var(--road-w) + 10px); }
+  .road-asphalt { stroke: var(--tarmac); stroke-width: var(--road-w); }
+  .road-lines { stroke: var(--color-paper); stroke-opacity: 0.7; stroke-width: calc(var(--road-w) - 5px); }
+  .road-asphalt-inner { stroke-width: calc(var(--road-w) - 7.4px); }
+
+  .road-centre {
+    fill: none;
+    stroke: var(--color-paper);
+    stroke-opacity: 0.75;
+    stroke-width: 1.6;
+    stroke-dasharray: 10 9;
+  }
+  .road-centre-lit { stroke: var(--lamp); stroke-opacity: 1; stroke-width: 2.4; }
+
+  /* The road beyond today: paved over with paper, so it reads as planned. */
+  .road-future {
+    stroke: var(--color-paper);
+    stroke-opacity: 0.68;
+    stroke-width: calc(var(--road-w) + 11px);
+    stroke-linecap: butt;
+  }
+  .road-future-end { fill: var(--color-paper); fill-opacity: 0.68; }
+
+  .road-start path { fill: none; stroke: var(--color-paper); stroke-width: 4; stroke-dasharray: 4 4; }
+
+  /* Drawn in along its own length the first time it is seen (pathLength="1"). */
+  .road-draw { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .road.is-drawn .road-draw { animation: road-draw 1.5s cubic-bezier(0.33, 0.1, 0.2, 1) forwards; }
+  @keyframes road-draw { to { stroke-dashoffset: 0; } }
+  .road-late { opacity: 0; transition: opacity 0.7s ease 0.85s; }
+  .road.is-drawn .road-late { opacity: 1; }
+
+  /* Pins. The chosen one fills with the accent and grows from its point. */
+  .road-pin {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .road[data-kind="ribbon"] .road-pin { transform-origin: center; }
+  .road-pin-body {
+    fill: var(--color-paper);
+    stroke: var(--color-ink-soft);
+    stroke-width: 1.2;
+    stroke-linejoin: round;
+    transition: fill 0.25s ease, stroke 0.25s ease;
+  }
+  .road-art path {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 1.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    transition: stroke 0.25s ease;
+  }
+  .road-pin[data-future] .road-pin-body { stroke-dasharray: 3 3; }
+  .road-pin[data-future] .road-art path { stroke: var(--color-ink-faint); }
+  .road-pin[data-active] { transform: scale(1.14); }
+  .road-pin[data-active] .road-pin-body { fill: var(--color-accent); stroke: var(--color-accent-deep); }
+  .road-pin[data-active] .road-art path { stroke: var(--color-paper); }
+  .road-pin[data-active] .road-pin-body { stroke-dasharray: none; }
+
+  .road-when {
+    font-size: 0.7rem;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+    fill: var(--color-ink-faint);
+  }
+  .road-name {
+    font-size: var(--text-meta);
+    fill: var(--color-ink-soft);
+    transition: fill 0.25s ease;
+  }
+  .road-name[data-active] { fill: var(--color-ink); }
+  .road-when[data-active] { fill: var(--color-accent-deep); }
+
+  /* Road signs at the borders, lettered in paper on ink like the real thing. */
+  .road-sign path { stroke: var(--color-ink-soft); stroke-width: 1.4; }
+  .road-sign rect { fill: var(--color-ink); }
+  .road-sign .road-sign-inset { fill: none; stroke: var(--color-paper); stroke-opacity: 0.55; stroke-width: 0.8; }
+  .road-sign text,
+  .road-country {
+    font-size: 0.56rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .road-sign text { fill: var(--color-paper); }
+  .road-country { fill: var(--color-accent-deep); }
+
+  .road-flag path { fill: none; stroke: var(--color-ink-soft); stroke-width: 1.2; stroke-linejoin: round; }
+  .road-flag path + path { fill: var(--color-accent); stroke: var(--color-accent); }
+
+  .road-cone-body { fill: var(--color-accent); }
+  .road-cone-stripe,
+  .road-cone-base { fill: none; stroke-linecap: round; }
+  .road-cone-stripe { stroke: var(--color-paper); stroke-width: 1.8; }
+  .road-cone-base { stroke: var(--color-ink-soft); stroke-width: 1.4; }
+
+  /* -- The scene inside each U-turn --------------------------------------
+     Each one stands for the chapter of the route beside it, and stands there
+     unpowered: drawn in the faintest rule the page has, the way a machine
+     reads when it is switched off. The car brings the power. Passing the
+     chapter's last stop lights the whole scene through, part by part in the
+     order the parts are listed, and it is a transition rather than an
+     animation so driving back switches it off again.
+
+     --turn and data-run both come from the car's distance along the road. */
+  .road-scene path {
+    fill: var(--color-paper);
+    stroke: var(--color-rule);
+    stroke-width: 1.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition-property: stroke, fill, opacity, transform;
+    transition-duration: 0.5s;
+    transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition-delay: calc(var(--i, 0) * 0.1s);
+  }
+  .road-scene[data-run] path { stroke: var(--color-ink-soft); }
+  .road-scene .road-ground {
+    fill: none;
+    stroke: var(--color-rule);
+    transition: none;
   }
 
-  .journey-band {
-    border-bottom: 1px solid var(--color-rule-soft);
-    padding: 0 0.35rem 0.4rem;
-    text-align: center;
+  /* The gear train. Each gear turns against the one driving it, by its ratio,
+     and a gear's bounding box is centred on its axle — so fill-box is right.
+     Its last path is the hub, which lights when the train has power. */
+  .road-spin {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: rotate(calc(var(--turn, 0) * var(--rate, 0) * 1deg));
   }
-  .journey-band + .journey-band {
-    border-left: 1px solid var(--color-rule-soft);
+  .road-scene[data-run] .road-spin path:last-child {
+    fill: var(--color-accent);
+    stroke: var(--color-accent-deep);
   }
 
-  .journey-step {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.9rem 0.2rem 0.4rem;
-    text-align: center;
+  /* The screen, building what is open in it. */
+  .road-scene .road-code path { fill: none; opacity: 0.45; }
+  .road-scene[data-run] .road-code path { opacity: 1; }
+  .road-scene .road-bar path {
+    fill: var(--color-accent);
+    stroke: none;
+    transform-box: fill-box;
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+  }
+  .road-scene[data-run] .road-bar path { transform: scaleX(1); }
+  .road-scene .road-done path {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 1.6;
+    opacity: 0;
+  }
+  .road-scene[data-run] .road-done path { opacity: 1; }
+
+  /* The network, and the arm it decides for. It comes on in ink rather than in
+     the accent: a stop's own pin is the accent, and six red nodes beside one
+     would out-shout it. The accent is spent on the two marks that carry the
+     meaning — the node the network settled on, and the ring reading it. */
+  .road-scene .road-edge path { fill: none; opacity: 0.5; }
+  .road-scene[data-run] .road-edge path { opacity: 1; }
+  .road-scene[data-run] .road-node path { fill: var(--color-ink-soft); }
+  .road-scene[data-run] .road-decision path {
+    fill: var(--color-accent);
+    stroke: var(--color-accent-deep);
+  }
+  .road-scene .road-ring path {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-dasharray: 2.5 3;
+    opacity: 0;
+  }
+  .road-scene[data-run] .road-ring path { opacity: 1; }
+
+  /* The car, seen from above and pointing along +x. */
+  .road-car-body { fill: var(--color-accent); stroke: var(--color-paper); stroke-width: 1; }
+  .road-car-roof { fill: var(--color-accent-deep); }
+  .road-car-glass { fill: var(--color-paper); fill-opacity: 0.9; }
+  .road-car-lamp { fill: var(--lamp); }
+  .road-halo {
+    fill: none;
+    stroke: var(--lamp);
+    stroke-width: 1.5;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: road-pulse 2.4s ease-out infinite;
+  }
+  @keyframes road-pulse {
+    0% { transform: scale(0.7); opacity: 0.8; }
+    70%, 100% { transform: scale(1.6); opacity: 0; }
+  }
+  .road.is-dragging .road-halo { animation: none; opacity: 0; }
+
+  /* The car's handle: invisible, larger than the car, above the stops so it
+     can be taken hold of wherever it is parked, and the only part of the
+     figure that captures a touch — so dragging elsewhere still scrolls. */
+  .road-handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    border-radius: 50%;
+    cursor: grab;
+    touch-action: none;
+    z-index: 1;
+  }
+  .road.is-dragging,
+  .road.is-dragging .road-handle,
+  .road.is-dragging .road-hit { cursor: grabbing; }
+
+  /* The buttons laid over each stop. Invisible until focused. */
+  .road-hit {
+    position: absolute;
+    border-radius: 0.9rem;
+    background: transparent;
     cursor: pointer;
   }
+  .road-hit:focus-visible { outline-offset: -2px; }
 
-  .journey-stop {
-    position: relative;
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    height: 13px;
-  }
-  /* The rail: a hairline through every stop, starting and ending at the
-     centre of the first and last. The final stretch, into the future, is
-     dashed. */
-  .journey-stop::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--color-rule);
-  }
-  li:first-child > .journey-step .journey-stop::before { left: 50%; }
-  li:last-child > .journey-step .journey-stop::before {
-    right: 50%;
-    background: repeating-linear-gradient(to right, var(--color-rule) 0 4px, transparent 4px 8px);
-  }
-
-  .journey-dot {
-    position: relative;
-    box-sizing: border-box;
-    width: 13px;
-    height: 13px;
-    border: 1px solid var(--color-ink-soft);
+  .road-tour {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.42rem 0.95rem 0.42rem 0.8rem;
+    border: 1px solid var(--color-rule);
     border-radius: 999px;
-    background: var(--color-paper);
-    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    font-size: 0.7rem;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--color-accent-deep);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
   }
-  .journey-dot[data-future] { border-style: dashed; }
-  .journey-step:hover .journey-dot { border-color: var(--color-accent); }
-  .journey-step[aria-selected="true"] .journey-dot {
-    background: var(--color-accent);
+  .road-tour svg { fill: currentColor; }
+  .road-tour:hover,
+  .road-tour:focus-visible {
     border-color: var(--color-accent);
-    transform: scale(1.25);
-  }
-  .journey-step[aria-selected="true"] .journey-name { color: var(--color-ink); }
-  .journey-step:focus-visible { outline-offset: -2px; }
-
-  .journey-name {
-    font-size: var(--text-meta);
-    line-height: 1.3;
-    color: var(--color-ink-soft);
-    transition: color 0.25s ease;
+    background-color: color-mix(in srgb, var(--color-accent) 8%, transparent);
   }
 
-  /* The panel's text fades in on every change; the drawing redraws itself via
-     the .ink rules above. */
+  /* The panel's text fades in on every change; its drawing redraws itself
+     through the .ink rules above. */
   .journey-panel-text {
     animation: journey-in 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
   }
@@ -431,9 +744,19 @@
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: none; }
   }
+
   @media (prefers-reduced-motion: reduce) {
     .journey-panel-text { animation: none; }
-    .journey-dot { transition: none; }
+    .road-draw { stroke-dashoffset: 0; }
+    .road.is-drawn .road-draw { animation: none; }
+    .road-late { opacity: 1; transition: none; }
+    .road-pin { transition: none; }
+    .road-halo { animation: none; opacity: 0; }
+    .signpost-arrow { transition: none; }
+    .road-spin { transform: none; }
+    .road-scene path { transition: none; }
+    .entry:target::before,
+    h2:target::before { animation: none; opacity: 0.55; }
   }
 }
 

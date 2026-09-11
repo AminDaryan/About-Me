@@ -5,7 +5,7 @@
    hundred bytes instead of a few hundred kilobytes, they need no image host
    (the CSP allows images only from this origin), and they put no photograph of
    a workplace or a person on a public page. To use a real photograph for a stop
-   instead, see the note on `art` in Journey.tsx.
+   instead, see the note on `art` in steps.ts.
 
    Every figure lives in a 120 × 120 box. Each entry is a list of SVG path data;
    each string draws as one stroke, in order, so related marks — a gear's teeth,
@@ -95,14 +95,6 @@ export const FIGURES = {
     "M 48 55 L 38 66 L 48 77",
     "M 57 79 L 65 53",
     "M 74 55 L 84 66 L 74 77",
-  ],
-
-  interface: [
-    WINDOW,
-    "M 13 38 H 107 M 38 38 V 96",
-    "M 19 48 H 32 M 19 56 H 29 M 19 64 H 31",
-    "M 46 50 H 97 M 46 58 H 84 M 46 66 H 90",
-    "M 46 74 H 70 V 89 H 46 Z M 76 74 H 98 V 89 H 76 Z",
   ],
 
   graduate: [

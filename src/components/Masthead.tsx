@@ -10,12 +10,14 @@ const NAV = [
   { href: "/beyond", label: "Beyond" },
 ];
 
-/* Sticky, and led by the diamond mark rather than the name. The name already
-   appears as the page's own heading; repeating it in the corner of every
-   screen made it the loudest thing on the site. The wordmark returns from the
-   small breakpoint up, where there is room for it and it aids orientation. */
+/* Sticky, and led by the diamond mark rather than the name. The wordmark
+   returns from the small breakpoint up, where there is room for it and it aids
+   orientation — except on the home page, whose own heading is the name set
+   large. Two of it in one screen reads as a mistake, and the one that has to
+   go is the smaller. */
 export default function Masthead() {
   const pathname = usePathname();
+  const named = pathname === "/";
 
   return (
     <header className="no-print sticky top-0 z-50 border-b border-rule bg-paper">
@@ -26,9 +28,11 @@ export default function Masthead() {
           className="group flex shrink-0 items-center gap-2.5"
         >
           <span className="block size-[7px] rotate-45 bg-accent transition-transform duration-500 group-hover:rotate-[135deg]" />
-          <span className="hidden text-[0.78rem] tracking-[0.24em] whitespace-nowrap uppercase transition-colors group-hover:text-accent-deep sm:inline">
-            Amin Dariani
-          </span>
+          {!named && (
+            <span className="hidden text-[0.78rem] tracking-[0.24em] whitespace-nowrap uppercase transition-colors group-hover:text-accent-deep sm:inline">
+              Amin Dariani
+            </span>
+          )}
         </Link>
 
         <nav

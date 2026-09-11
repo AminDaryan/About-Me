@@ -37,6 +37,39 @@ const REFERENCES = [
   },
 ];
 
+/* Grades as the RPTU transcript records them, on the German scale, for the
+   modules this CV has always listed. The two project modules link to the
+   projects themselves.
+
+   A module the transcript marks *mE* — passed, no grade — leaves `grade`
+   unset, and the leader simply runs on. Printing the word "passed" against a
+   row of 1.3s invites the reader to fill the blank in for themselves, and they
+   will not fill it in generously. */
+const MODULES: {
+  name: string;
+  /** Omitted where the transcript records a pass without a grade. */
+  grade?: string;
+  project?: { title: string; href: string };
+}[] = [
+  { name: "Optimal Control", grade: "1.3" },
+  { name: "Fault Diagnosis and Fault-Tolerant Control", grade: "1.3" },
+  { name: "Modelling and Identification", grade: "1.7" },
+  { name: "Cooperative Robot Control", grade: "2.0" },
+  { name: "3D Computer Vision", grade: "2.7" },
+  {
+    name: "Master Project CAS",
+    grade: "1.3",
+    project: { title: "Recognising industrial activity from gaze", href: "/research#gaze" },
+  },
+  {
+    name: "CAS Project Lab",
+    project: {
+      title: "Vision-guided pick-and-place with a Franka Emika Panda",
+      href: "/research#pick-and-place",
+    },
+  },
+];
+
 const PROFILES = [
   { label: "linkedin.com/in/amin-dariani", href: "https://www.linkedin.com/in/amin-dariani/" },
   { label: "github.com/AminDaryan", href: "https://github.com/AminDaryan" },
@@ -74,10 +107,6 @@ export default function CV() {
                 faithfulness and stability. Background in computer vision, robot
                 perception and model-based control.
               </p>
-              <p className="no-print mt-5 text-meta">
-                This page is laid out for printing — use your browser&rsquo;s
-                print dialog to save it as a PDF.
-              </p>
             </div>
           </Settle>
         </Wrap>
@@ -92,38 +121,63 @@ export default function CV() {
           </Settle>
           <Entries>
             <Entry
+              id="msc"
               title="M.Sc. Automation and Control"
               when="Mar 2023 – Apr 2027 (expected)"
-              where="RPTU Kaiserslautern-Landau · Kaiserslautern, Germany"
+              where="RPTU · Kaiserslautern, Germany"
+              mark={<span className="uni-mark uni-mark-rptu" />}
             >
               <p>
-                Current average 2.1 (German scale, where 1.0 is the highest).
-                Specialisation in Connected Automation Systems.
+                Current average 2.1. Specialisation in Connected Automation
+                Systems.
               </p>
               <p>
-                <span className="text-ink">Thesis</span> (in progress) —
-                &ldquo;A Comparative Evaluation of Explainable AI Methods for Graph
-                Neural Network-based Remaining Useful Life Prediction&rdquo;.
-                Advisor: M. Becker, Fraunhofer IOSB / KIT IES.
+                <span className="text-ink">Thesis</span> (in progress) —{" "}
+                <Link className="link" href="/research#thesis">
+                  &ldquo;A Comparative Evaluation of Explainable AI Methods for
+                  Graph Neural Network-based Remaining Useful Life
+                  Prediction&rdquo;
+                </Link>
+                . Advisor: M. Becker, Fraunhofer IOSB / KIT IES.
               </p>
-              <p className="text-meta">
-                Selected modules: Optimal Control · Fault Diagnosis and
-                Fault-Tolerant Control · Modelling and Identification · Cooperative
-                Robot Control · 3D Computer Vision
-              </p>
+              <div>
+                <p className="label text-ink-faint">Selected modules</p>
+                <ul className="grades mt-2">
+                  {MODULES.map((m) => (
+                    <li key={m.name}>
+                      <span>{m.name}</span>
+                      <span className="grades-leader" aria-hidden="true" />
+                      {m.grade && (
+                        <span className="grades-mark">
+                          <span className="sr-only">grade </span>
+                          {m.grade}
+                        </span>
+                      )}
+                      {m.project && (
+                        <Link className="link grades-project" href={m.project.href}>
+                          {m.project.title} →
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </Entry>
             <Entry
+              id="bsc"
               title="B.Sc. Mechanical Engineering"
               when="Sep 2014 – Sep 2019"
-              where="Ferdowsi University of Mashhad · Mashhad, Iran"
+              where="Ferdowsi University of Mashhad"
+              mark={<span className="uni-mark uni-mark-fum" />}
             >
+              <p>Overall grade 2.3.</p>
               <p>
-                Overall grade 2.3 (converted to the German scale).
-              </p>
-              <p>
-                <span className="text-ink">Thesis</span> — &ldquo;Under-actuated
-                Double Inverted Pendulum Control using LQR, PID and Fuzzy
-                Control&rdquo;.
+                <span className="text-ink">Thesis</span> —{" "}
+                <Link className="link" href="/research#pendulum">
+                  &ldquo;Under-actuated Double Inverted Pendulum Control using
+                  LQR, PID and Fuzzy Control&rdquo;
+                </Link>
+                .
               </p>
             </Entry>
           </Entries>
@@ -160,7 +214,7 @@ export default function CV() {
             <Entry
               title="Undergraduate Research Assistant"
               when="Sep 2017 – Sep 2019"
-              where="Robotics Lab, Ferdowsi University of Mashhad · Mashhad, Iran"
+              where="Robotics Lab, Ferdowsi University of Mashhad"
             >
               <p>
                 Adaptive tracking control on a generalised fuzzy hyperbolic model
@@ -187,7 +241,7 @@ export default function CV() {
                   Reconfigurable Lower Limb Exoskeleton.&rdquo;
                 </em>{" "}
                 7th International Conference on Robotics and Mechatronics
-                (ICRoM), Tehran, Iran, 20–21 November 2019, pp. 74–79.
+                (ICRoM), Tehran, 20–21 November 2019, pp. 74–79.
               </p>
               <p className="mt-2 text-meta">
                 <a
@@ -294,19 +348,21 @@ export default function CV() {
           </Settle>
           <Entries>
             <Entry
+              id="sap"
               title="CAP Developer, Working Student"
               when="Jan 2024 – Jan 2026"
               where="SAP SE · Walldorf, Germany · Cloud Application Programming"
             />
             <Entry
+              id="front-end"
               title="Senior Front-End Developer"
               when="Aug 2021 – Aug 2023"
-              where="JHELY · Spain"
+              where="JHELY · Spain · remote"
             />
             <Entry
               title="Front-End Developer"
               when="Sep 2019 – Aug 2021"
-              where="DelGate · Vancouver, Canada"
+              where="DelGate · Vancouver, Canada · remote"
             />
           </Entries>
         </Wrap>

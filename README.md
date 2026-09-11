@@ -108,13 +108,42 @@ apart before. If something genuinely needs a new role, add a token.
 
 ## The figures
 
-**Fig. 1, the route** (home). An interactive timeline of the path from 2014 to
-now: hover over a stop, tap it, or use the arrow keys, and its drawing and a short
-account appear below. It is an ARIA tablist, so it behaves the same for a mouse,
-a finger and a screen reader. The stops are data at the top of
-`src/components/journey/Journey.tsx`; the drawings are hairline SVG paths in
-`figures.ts`, drawn on with the same animation as the ink figures on `/beyond`.
+**Fig. 1, the route** (home). The path from 2014 to now as a winding road, with
+a pin for each stop and a road sign where it reaches Germany. Germany is the
+only country on a sign; the caption names Iran, and nothing else on the site
+names a country before Germany or says where a remote employer was. Point at a
+stop, tap it, or use the arrow keys, and a small car drives there (turning round
+if it has to go back) while the stop's drawing and a short account appear beside
+it. On a wide screen the car can be dragged along the road, or sent to drive the
+whole route by itself. Underneath the drawing it is an ARIA tablist, so it
+behaves the same for a mouse, a finger and a screen reader.
+
+Each stop links to its own entry rather than to a page — `/research#gaze`, not
+`/research`. The ids are on the entries; `scroll-padding-top` clears the
+masthead, and the entry that was asked for carries a hairline in the margin
+until it has been seen.
+
+In `src/components/journey/`: the stops are data in `steps.ts`; `road.ts` lays
+the road out for the width it has (U-turns on a wide screen, one road down the
+side on a phone); `figures.ts` holds the hairline drawings, drawn on with the
+same animation as the ink figures on `/beyond`; `scenery.ts` holds the pins, the
+cones, and the scene that stands inside each U-turn.
+
+Those scenes mark the chapter the road has just left — a gear train for the
+mechanical years, an editor building its code for the years as a developer, a
+network driving an arm for the machine-learning ones. Each stands unpowered, in
+the faintest rule on the page, and lights up when the car reaches the last stop
+of its chapter; the gears turn with the car as it rounds the turn. A scene is
+chosen by the chapter of the stop before its turn, not by its position, so the
+road can put two stops to a run or three and the scenes stay in step. They
+restate what the stops beside them already say and claim nothing of their own.
+
 Every fact on the route is already on `/cv` or `/research` — keep it that way.
+
+The university marks beside each degree on `/cv` are `public/logos/*.png`: alpha
+masks only, so CSS paints them in the page's ink. The RPTU signet was cut from
+the logo embedded in the project-lab report; the FUM emblem was keyed out of a
+letterhead. To replace one, keep it a transparent PNG with the mark opaque.
 
 The two WebGL figures are drawn only with lines and `meshBasicMaterial`, so
 neither scene contains a single light. Nothing is shaded and nothing is glossy —

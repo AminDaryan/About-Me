@@ -5,37 +5,24 @@ import Journey from "@/components/journey/Journey";
 import { LinkedInIcon, MailIcon } from "@/components/icons";
 import { Divider, Leaf, SectionTitle, Wrap } from "@/components/ui";
 
-const THREADS = [
+/* The three other pages, as signposts. Each says what is on its page and
+   nothing that is not: the CV, research and beyond pages are the record, and a
+   summary here would be a second one to keep true. */
+const PAGES = [
   {
-    h: "Explanations that can be checked",
-    p: (
-      <>
-        Graph neural networks can predict how long a machine has left before it
-        fails. My thesis compares the methods that explain those predictions, and
-        measures whether each explanation is <em>faithful</em> and{" "}
-        <em>stable</em>.
-      </>
-    ),
+    href: "/cv",
+    name: "Curriculum vitae",
+    note: "Degrees and their modules, posts, publications, projects, skills and referees.",
   },
   {
-    h: "Explanations people can use",
-    p: (
-      <>
-        A faithful explanation still has to be read by someone. At Fraunhofer
-        IOSB I build explainable-AI methods into analysis tooling, so that people
-        who are not ML specialists can see why a model decided what it did.
-      </>
-    ),
+    href: "/research",
+    name: "Research",
+    note: "The master’s thesis on explaining graph neural networks, the gaze study, the robot arm, the exoskeleton and the pendulum.",
   },
   {
-    h: "Perception and control on real hardware",
-    p: (
-      <>
-        Where I started: recognising human activity from HoloLens 2 eye tracking,
-        vision-guided manipulation with a Franka arm, and adaptive control of a
-        lower-limb exoskeleton.
-      </>
-    ),
+    href: "/beyond",
+    name: "Beyond",
+    note: "History, linguistics, philosophy and psychology; archery, the sabre, horse riding, dance and chess.",
   },
 ];
 
@@ -46,15 +33,15 @@ export default function Home() {
         <Wrap>
           <div className="grid items-start gap-[clamp(2.5rem,6vw,4rem)] md:grid-cols-[minmax(0,1fr)_15.5rem] md:gap-18">
             <div>
+              {/* The name and nothing above it. The masthead gives the place a
+                  visitor needs, the footer repeats it, and a standfirst over
+                  the title only delayed the one word the page is for. */}
               <Settle>
-                <p className="label text-ink-faint">Kaiserslautern, Germany</p>
-              </Settle>
-              <Settle delay={0.08}>
-                <h1 className="mt-2 text-display tracking-[-0.028em]">
+                <h1 className="text-display tracking-[-0.028em]">
                   Amin Dariani
                 </h1>
               </Settle>
-              <Settle delay={0.16}>
+              <Settle delay={0.08}>
                 <p className="mt-6 max-w-[30rem] text-lede italic">
                   I work on explainable and trustworthy machine learning, with a
                   background in computer vision, robot perception and
@@ -107,8 +94,9 @@ export default function Home() {
                   in a robotics lab working on motion control for a paraplegic
                   lower-limb exoskeleton — work that became my first publication.
                   Then I built software professionally for four years, front-end
-                  and full-stack, in Vancouver and then in Spain — and later,
-                  alongside the master&rsquo;s, at SAP in Walldorf.
+                  and full-stack, working remotely for companies in Vancouver and
+                  then in Spain — and later, alongside the master&rsquo;s, at SAP
+                  in Walldorf.
                 </p>
                 <p>
                   I came back to research because the questions I could not put
@@ -123,7 +111,7 @@ export default function Home() {
             <Settle className="note">Previously DFKI, 2024 – 2026.</Settle>
             <Settle>
               <p className="max-w-measure">
-                Before Fraunhofer I spent a year and a half at the German
+                Before Fraunhofer I spent a year at the German
                 Research Center for Artificial Intelligence (DFKI) on gaze-based
                 activity recognition — inferring what a person is doing from where
                 they choose to look. It became my master&rsquo;s project.
@@ -144,84 +132,36 @@ export default function Home() {
       <section className="py-[clamp(2.8rem,6vw,4.5rem)]">
         <Wrap>
           <Settle>
-            <SectionTitle num="I">Currently</SectionTitle>
+            <SectionTitle num="I">Read on</SectionTitle>
           </Settle>
           <Settle delay={0.06}>
-            <ul className="m-0 max-w-measure list-none p-0 text-ink-soft">
-              <li className="py-[0.55rem]">
-                <span className="text-ink">Master&rsquo;s thesis</span> — a
-                comparative evaluation of explainable AI methods for graph neural
-                network-based remaining useful life prediction. Fraunhofer IOSB
-                / KIT, in progress.
-              </li>
-              <li className="border-t border-rule-soft py-[0.55rem]">
-                <span className="text-ink">Working Student Researcher</span> —
-                explainable AI. Fraunhofer IOSB, Karlsruhe.
-              </li>
-              <li className="border-t border-rule-soft py-[0.55rem]">
-                <span className="text-ink">Looking ahead</span> — I am looking for
-                a doctoral position in explainable and trustworthy machine
-                learning, starting after my master&rsquo;s.
-              </li>
+            <ul className="m-0 max-w-measure list-none p-0">
+              {PAGES.map((page, i) => (
+                <li
+                  key={page.href}
+                  className={i ? "border-t border-rule-soft" : ""}
+                >
+                  <Link className="signpost" href={page.href}>
+                    <span className="signpost-name">{page.name}</span>
+                    <span className="signpost-note">{page.note}</span>
+                    <span className="signpost-arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </Link>
+                </li>
+              ))}
             </ul>
-          </Settle>
-        </Wrap>
-      </section>
-
-      <section className="py-[clamp(2.8rem,6vw,4.5rem)]">
-        <Wrap>
-          <Settle>
-            <SectionTitle num="II">Three threads</SectionTitle>
-          </Settle>
-          <div className="grid gap-10 md:grid-cols-3 md:gap-11">
-            {THREADS.map((t, i) => (
-              <Settle key={t.h} delay={i * 0.1}>
-                <article>
-                  <h3 className="mb-3 border-t border-rule pt-4 text-subhead">
-                    {t.h}
-                  </h3>
-                  <p>{t.p}</p>
-                </article>
-              </Settle>
-            ))}
-          </div>
-          <Settle>
-            <p className="mt-10">
-              <Link className="link" href="/research">
-                Read about the research →
-              </Link>
-            </p>
           </Settle>
         </Wrap>
       </section>
 
       <Divider />
 
-      <section className="py-[clamp(2.8rem,6vw,4.5rem)]">
-        <Wrap>
-          <Settle>
-            <div className="max-w-measure">
-              <SectionTitle num="III">Away from the desk</SectionTitle>
-              <p>
-                I am a slow reader of philosophy and history, a fast and mediocre
-                chess player, and I have spent more hours than I can defend on a
-                badminton court. A few of the other things — the bow, the sabre,
-                the horse, the dance floor — are on{" "}
-                <Link className="link" href="/beyond">
-                  a page of their own
-                </Link>
-                .
-              </p>
-            </div>
-          </Settle>
-        </Wrap>
-      </section>
-
-      <section id="contact" className="pt-[clamp(3rem,7vw,5rem)] pb-4">
+      <section id="contact" className="pb-4">
         <Wrap>
           <div className="max-w-measure">
             <Settle>
-              <SectionTitle num="IV">Get in touch</SectionTitle>
+              <SectionTitle num="II">Get in touch</SectionTitle>
             </Settle>
             <Settle>
               <p>
