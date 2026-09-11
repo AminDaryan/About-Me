@@ -1,22 +1,18 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Settle from "@/components/Settle";
 import Entry from "@/components/Entry";
-import { PendulumFigure } from "@/components/three/mounts";
-import {
-  Callout,
-  Divider,
-  Entries,
-  Leaf,
-  SectionTitle,
-  Wrap,
-} from "@/components/ui";
+import { ArmFigure, PendulumFigure } from "@/components/three/mounts";
+import { Divider, Entries, SectionTitle, Wrap } from "@/components/ui";
+
+/* This page is the why and the how; /cv is the what and the when. Nothing here
+   should be a list of dates, posts, grades, skills or citations — those live on
+   the CV once, and this page links to them instead of repeating them. */
 
 export const metadata: Metadata = {
   alternates: { canonical: "/research" },
   title: "Research",
   description:
-    "Environment perception for off-road autonomous driving with diffusion models, explainable AI at Fraunhofer IOSB, gaze-enabled activity classification at DFKI, and lower-limb exoskeleton control.",
+    "Explainable and trustworthy machine learning — comparing explanation methods for graph neural networks by faithfulness and stability — with earlier work on gaze-based activity recognition, vision-guided manipulation and exoskeleton control.",
 };
 
 export default function Research() {
@@ -31,13 +27,14 @@ export default function Research() {
             <h1 className="mt-2 text-title">What I work on</h1>
           </Settle>
           <Settle delay={0.16}>
-            <p className="drop-cap mt-8 max-w-measure text-[1.16rem] leading-[1.65] text-ink-soft">
-              The thread running through my work is perception in conditions that
-              break the usual assumptions — terrain no map describes, intent that
-              is never stated aloud, models whose reasoning has to survive contact
-              with a person who needs to trust them. I am drawn to the places
-              where a system has to act on an incomplete picture, and to the
-              question of how it should represent what it does not know.
+            <p className="drop-cap mt-8 max-w-measure">
+              My research is about explainable and trustworthy machine learning —
+              whether an explanation of a model&rsquo;s decision can be checked
+              rather than simply believed. Before that, my work was in perception
+              and control on real hardware: an exoskeleton, a robot arm, a
+              mixed-reality headset. The two are closer than they look. In both,
+              a system&rsquo;s decision is only as useful as your ability to
+              verify it.
             </p>
           </Settle>
         </Wrap>
@@ -52,39 +49,46 @@ export default function Research() {
           </Settle>
           <Entries>
             <Entry
-              title="Environment perception for off-road autonomous driving using diffusion models"
-              when="Ongoing"
-              where="Master's thesis · RPTU Kaiserslautern"
+              title="Explaining graph neural networks that predict remaining useful life"
+              when="In progress"
+              where="Master's thesis · RPTU Kaiserslautern, advised at Fraunhofer IOSB and KIT"
             >
               <p>
-                On-road autonomy leans hard on structure: lane geometry, sign
-                conventions, prior maps, a distribution of scenes that repeats.
-                Off-road removes almost all of it. Terrain is unlabelled and
-                self-similar, traversability is a property of the surface rather
-                than the paint on it, and appearance shifts with season, weather
-                and time of day faster than any fixed training set can cover.
+                Remaining useful life prediction asks how long a machine or a
+                component has before it fails. When a system is naturally a graph
+                — sensors or components, and the relations between them — a graph
+                neural network can learn from that structure directly, rather than
+                from a flat table of readings.
               </p>
               <p>
-                My thesis investigates diffusion models as a way into that
-                problem. Their appeal is that they learn a distribution over
-                plausible scenes rather than a single deterministic mapping — a
-                natural fit for a setting where the honest answer is often a set
-                of possibilities with different likelihoods rather than one
-                confident prediction.
+                A prediction like that is only worth acting on if the person
+                acting can see why it was made, and different explanation methods
+                can give different answers for the same prediction. My thesis
+                compares two families of them on the same models: general-purpose
+                attribution methods, and explanation methods built specifically
+                for graphs.
+              </p>
+              <p>
+                The comparison is quantitative. An explanation has to earn trust
+                on two counts — it should be faithful, reflecting what the model
+                actually relies on, and it should be stable, so that a small
+                change in the input does not produce a completely different
+                story.
               </p>
             </Entry>
             <Entry
-              title="Explainable AI"
-              when="Feb 2026 – present"
-              where="Working Student Researcher · Fraunhofer IOSB, Karlsruhe"
+              title="Making model decisions inspectable"
+              when="Ongoing"
+              where="Working student researcher · Fraunhofer IOSB, Karlsruhe"
             >
               <p>
-                Research on explainable AI. The part of the problem I find most
-                interesting is the gap between the two audiences an explanation
-                has to serve: the evaluation metric, which wants faithfulness to
-                the model, and the human being, who wants a reason they can act
-                on. Those are not the same target, and a method can score well on
-                one while being useless for the other.
+                Alongside the thesis, I implement explainable-AI methods inside
+                analysis tooling, so that people who are not machine-learning
+                specialists can see why a model decided what it did. It is the
+                practical half of the same question. An explanation has two
+                audiences — the evaluation metric, which wants faithfulness to
+                the model, and the person, who wants a reason they can act on —
+                and a method can satisfy one while being useless to the other.
               </p>
             </Entry>
           </Entries>
@@ -94,106 +98,92 @@ export default function Research() {
       <section className="py-[clamp(2.8rem,6vw,4.5rem)]">
         <Wrap>
           <Settle>
-            <SectionTitle num="II">Earlier research</SectionTitle>
+            <SectionTitle num="II">Earlier work</SectionTitle>
           </Settle>
           <Entries>
             <Entry
-              title="Classifying what a person is doing from their gaze alone"
+              title="Recognising industrial activity from gaze"
               when="2024 – 2026"
-              where="DFKI Kaiserslautern · master's project, Institute of Electromobility, RPTU"
+              where="Master's project · RPTU and DFKI Kaiserslautern"
             >
               <p>
                 Where someone looks is a remarkably strong signal about what they
-                are doing, and it is available before they act. This work
-                classified human activity from gaze, which is a good problem
-                precisely because the input is so sparse: a scanpath carries far
-                less information than a video frame, but it sits much closer to
-                intent.
+                are doing, and it is available before they act. A scanpath
+                carries far less information than a video frame, but it sits much
+                closer to intent — which is what makes classifying activity from
+                gaze a good problem.
               </p>
               <p>
-                A HoloLens 2 supplied the eye tracking, through a capture
-                application I built after the obvious off-the-shelf route turned
-                out to sample too slowly to be useful. Volunteers performed four
-                ordinary industrial activities in the DFKI smart factory —
-                walking, waiting, using a tool, assembling. Walking and waiting
-                are the awkward pair, and they were chosen for exactly that:
-                nobody is looking at anything in particular, so the gaze is at
-                its least structured.
+                I designed and ran the study in the DFKI smart factory, with
+                volunteers performing ordinary industrial tasks while a HoloLens 2
+                tracked their eyes. The published toolchain I started from turned
+                out to sample too slowly to be useful, so I moved the study onto a
+                recorder built on ARETT.
               </p>
               <p>
-                Features drawn from the blinks and the fixations fed a set of
-                classifiers. The more instructive result is the one that failed:
-                the recurrent model I added to the inherited methods lost, and
-                kept losing. The dataset is small, which is not what such a model
-                wants, and manufacturing more of it synthetically made things
-                worse rather than better.
+                Tree ensembles separated the activities cleanly. The more
+                instructive result was the one that failed: the recurrent model I
+                added to the inherited methods lost, and kept losing — the dataset
+                is small, which is not what such a model wants. A manuscript on
+                the work is in preparation.
               </p>
             </Entry>
             <Entry
-              title="Pick-and-place with a Franka Emika Panda and an RGB-D camera"
-              when="Winter semester 2024/25"
-              where="Project lab, Connected Automation Systems · Institute of Control Systems, RPTU Kaiserslautern"
+              title="Vision-guided pick-and-place with a Franka Emika Panda"
+              when="Winter 2024/25"
+              where="Project lab · Institute of Control Systems, RPTU Kaiserslautern"
             >
               <p>
-                A four-person project lab, and a full perception-to-manipulation
-                loop on real hardware: find a cuboid placed anywhere on the
-                bench, recover its pose, and have a seven-axis arm pick it up and
-                set it down elsewhere without touching the obstacles it already
-                knows about.
+                A four-person project and a full perception-to-manipulation loop
+                on real hardware: find an object placed anywhere on the bench,
+                recover its pose, and have a seven-axis arm pick it up and set it
+                down elsewhere without touching the obstacles it already knows
+                about. My part included the object detector: I recorded and
+                annotated its dataset and trained it.
               </p>
               <p>
-                Pose is the interesting half. A custom-trained YOLO detector
-                finds the cuboid in the colour frame; corners taken from inside
-                that box are solved against a CAD model of the object with PnP,
-                and the estimate is steadied over several frames before the
-                planner is allowed to act on it. Motion planning runs through
-                MoveIt, with fallbacks for the poses a single planner cannot
-                reach — which, for this task, is often.
+                The instructive part of a project like this is never the detector.
+                It is everything between a bounding box and a gripper that closes
+                in the right place.
               </p>
-              <p>
-                The instructive part of a project like this is never the detector
-                — it is everything between a bounding box and a gripper that
-                closes in the right place.
-              </p>
+              <ArmFigure />
             </Entry>
             <Entry
-              title="Paraplegic lower-limb exoskeleton — motion control"
-              when="Sep 2017 – Sep 2019"
-              where="Robotics Lab, Ferdowsi University of Mashhad"
+              title="Adaptive control of a lower-limb exoskeleton"
+              when="2017 – 2019"
+              where="Undergraduate research · Robotics Lab, Ferdowsi University of Mashhad"
             >
               <p>
-                Motion control for FUME, a reconfigurable lower-limb exoskeleton
-                for paraplegic users built in the lab. Alongside it, technical
-                documentation for a 6R industrial manipulator.
-              </p>
-              <p>
-                The inertia of a machine like that you can write down. The
-                Coriolis and gravity terms, with a person strapped into it, you
-                cannot — so the controller learns that part online instead:
-                adaptive tracking built on a generalised fuzzy hyperbolic model,
-                chosen because it is cheap enough to run in real time on a plant
-                that is nonlinear, multi-input and permanently disturbed. It ran
-                on the robot itself rather than in simulation, and outperformed a
-                tuned PID.
+                FUME is a lower-limb exoskeleton for paraplegic users, built in
+                the lab. The inertia of a machine like that you can write down.
+                The Coriolis and gravity terms, with a person strapped into it,
+                you cannot — so the controller I designed for the swing phase
+                learns that part online, with a generalised fuzzy hyperbolic model
+                cheap enough to run in real time. It ran on the robot itself
+                rather than in simulation, and outperformed a tuned PID.
               </p>
               <p>
                 This is the work that made me a researcher: a control problem
                 where the plant is a person, the failure modes are not abstract,
                 and the specification is written in terms of what a human body
-                can tolerate. It produced my first publication, below.
+                can tolerate. It became my first publication.
               </p>
             </Entry>
             <Entry
-              title="Under-actuated double inverted pendulum control using LQR, PID and fuzzy control"
+              title="Balancing an under-actuated double inverted pendulum"
               when="2019"
               where="Bachelor thesis · Ferdowsi University of Mashhad"
             >
               <p>
-                The classical hard case in control: more degrees of freedom than
-                actuators, an unstable equilibrium, and no way to cheat. I built
+                The classical hard case in control: two links balanced upright
+                with a motor at only the second joint — more degrees of freedom
+                than actuators, an unstable equilibrium, and no way to cheat. I built
                 and compared three controllers on it — linear-quadratic, classical
-                PID, and fuzzy — which is the most efficient way I know to learn
-                what each family of controller actually buys you.
+                PID and fuzzy — which is the most efficient way I know to learn
+                what each family of controller actually buys you. The figure below
+                runs a close relative live in your browser: a double inverted
+                pendulum on a cart, the full nonlinear model held upright by an
+                LQR controller, which you can take hold of and push.
               </p>
             </Entry>
           </Entries>
@@ -204,74 +194,6 @@ export default function Research() {
         <Wrap>
           <Settle>
             <PendulumFigure />
-          </Settle>
-        </Wrap>
-      </section>
-
-      <Divider />
-
-      <section className="py-[clamp(2.8rem,6vw,4.5rem)]">
-        <Wrap>
-          <Settle>
-            <SectionTitle num="III">Publication</SectionTitle>
-          </Settle>
-          <Settle>
-            <div className="max-w-measure">
-              <p>
-                A. Amir-B.D., S. M. Tahamipour-Z., A. Akbarzadeh.{" "}
-                <em>
-                  &ldquo;Adaptive Tracking Control Based on GFHM for a
-                  Reconfigurable Lower Limb Exoskeleton.&rdquo;
-                </em>{" "}
-                7th International Conference on Robotics and Mechatronics
-                (ICRoM), Tehran, Iran, 20–21 November 2019, pp. 74–79.
-              </p>
-              <p className="mt-3 text-[0.9rem]">
-                <a
-                  className="link"
-                  href="https://doi.org/10.1109/ICRoM48714.2019.9071886"
-                  rel="noopener"
-                >
-                  doi.org/10.1109/ICRoM48714.2019.9071886
-                </a>
-              </p>
-            </div>
-          </Settle>
-        </Wrap>
-      </section>
-
-      <section className="py-[clamp(2.8rem,6vw,4.5rem)]">
-        <Wrap>
-          <Settle>
-            <SectionTitle num="IV">Tools of the trade</SectionTitle>
-          </Settle>
-          <Leaf>
-            <Settle className="note">
-              Plus a working knowledge of production software engineering —
-              version control, review, testing — from four years of building it
-              for a living.
-            </Settle>
-            <Settle>
-              <p className="max-w-measure text-ink-soft">
-                Python and PyTorch for everything learned; OpenCV and YOLO for
-                everything seen; MATLAB for everything controlled. JavaScript,
-                still, out of habit and affection.
-              </p>
-            </Settle>
-          </Leaf>
-          <Settle>
-            <Callout>
-              Relevant coursework — 3D Computer Vision · Cooperative Robot
-              Control · Methods of Soft Control · Robotics: Kinematics and
-              Dynamics
-            </Callout>
-          </Settle>
-          <Settle>
-            <p>
-              <Link className="link" href="/cv">
-                The full record — degrees, posts, publications →
-              </Link>
-            </p>
           </Settle>
         </Wrap>
       </section>

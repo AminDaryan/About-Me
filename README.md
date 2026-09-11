@@ -66,7 +66,8 @@ configuring them there would silently do nothing.
 src/app/                one folder per route: /, /research, /cv, /beyond
                         plus robots.ts and sitemap.ts, emitted as static files
 src/components/         Masthead, Portrait, Settle, and ui.tsx (Entry, Divider, …)
-src/components/three/   the two WebGL figures
+src/components/three/   the two WebGL figures (Fig. 2 and Fig. 3, on /research)
+src/components/journey/ Fig. 1, the route on the home page, and its drawings
 src/lib/dip.ts          double inverted pendulum dynamics + LQR
 public/                 portrait.jpg, favicon.svg, and _headers /
                         _redirects, which Cloudflare Pages reads
@@ -95,17 +96,39 @@ phone numbers* of three referees — other people's personal data, which is not
 ours to put on a public site. If you do want a downloadable PDF, produce a
 redacted one first, drop it in `public/`, and link it from `src/app/cv/page.tsx`.
 
-## The two 3D figures
+## Text styles
 
-Both are drawn only with lines and `meshBasicMaterial`, so neither scene
-contains a single light. Nothing is shaded and nothing is glossy — they read as
-technical figures rather than renderings, which is the point.
+Every piece of text takes one of a handful of roles, defined once as tokens in
+the `@theme` block of `src/app/globals.css`: `text-lede` (the one italic line
+under the name), `text-subhead` (entry and card titles), body (every paragraph,
+applied by a base rule on `main p`, so a new paragraph needs no class at all),
+`text-meta` (captions, DOIs, notes to the reader), plus `.label` and `.note`.
+Don't size or colour a paragraph by hand: that is exactly how the pages drifted
+apart before. If something genuinely needs a new role, add a token.
 
-**Fig. 1, the 6R arm** (home). Forward kinematics by nesting the joint frames,
-which is what a scene graph already does for you. The joint angles are driven by
-sines at incommensurable frequencies, so the pose wanders and never repeats.
+## The figures
 
-**Fig. 2, the double inverted pendulum** (research). This one is a real
+**Fig. 1, the route** (home). An interactive timeline of the path from 2014 to
+now: hover over a stop, tap it, or use the arrow keys, and its drawing and a short
+account appear below. It is an ARIA tablist, so it behaves the same for a mouse,
+a finger and a screen reader. The stops are data at the top of
+`src/components/journey/Journey.tsx`; the drawings are hairline SVG paths in
+`figures.ts`, drawn on with the same animation as the ink figures on `/beyond`.
+Every fact on the route is already on `/cv` or `/research` — keep it that way.
+
+The two WebGL figures are drawn only with lines and `meshBasicMaterial`, so
+neither scene contains a single light. Nothing is shaded and nothing is glossy —
+they read as technical figures rather than renderings, which is the point.
+
+**Fig. 2, the seven-joint arm** (research, in the Franka Emika Panda project).
+Seven revolute joints in the Panda's alternating layout, with forward kinematics
+by nesting the joint frames — which is what a scene graph already does for you.
+The joint angles are driven by sines at incommensurable frequencies, so the pose
+wanders and never repeats. The framing was re-derived for seven joints by
+sampling 12,000 poses: the reach fits a sphere of radius 1.002, which the camera
+contains with room to spare, so no pose can leave the frame.
+
+**Fig. 3, the double inverted pendulum** (research). This one is a real
 simulation, not an animation:
 
 - The plant is the **full nonlinear** model — the Lagrangian mass matrix is
@@ -133,12 +156,13 @@ cart travel.
   dodges the Playfair-Display look that reads as "template".
 - **Light theme only**, deliberately. The page is meant to read as a printed
   page, and a printed page has no dark mode.
-- **No email address anywhere.** LinkedIn is the contact route. An earlier
-  version published a personal address behind a string-concatenation trick and
-  claimed it never reached the client; it did, because the bundler folds
+- **Only a university email, and only as a plain link.** Get in touch shows two
+  icons, the RPTU address and LinkedIn. A personal mailbox never goes on the
+  page. An earlier version published one behind a string-concatenation trick
+  and claimed it never reached the client; it did, because the bundler folds
   constant expressions. That is the general lesson: obfuscation is not
-  protection, and the only reliable way to keep an address off a public page is
-  not to put it there. `src/components/Email.tsx` has been deleted.
+  protection, so the university address is published honestly as a `mailto:`
+  and left to the university's spam filtering.
 - **Motion respects `prefers-reduced-motion`** — both the scroll reveal and both
   WebGL scenes.
 - **All colour and type lives in `@theme`** at the top of `globals.css`. Change

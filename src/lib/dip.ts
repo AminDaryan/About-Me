@@ -81,7 +81,19 @@ function solve3(A: number[][], b: number[]): [number, number, number] {
   return [m[0][3], m[1][3], m[2][3]];
 }
 
-export function deriv(s: State, u: number, p: Params, c: Consts): State {
+/** Generalized forces on [x, θ1, θ2] from something other than the cart motor —
+    a hand pulling on one part of the pendulum. See pointForce() below. */
+export type Generalized = [number, number, number];
+
+const NO_FORCE: Generalized = [0, 0, 0];
+
+export function deriv(
+  s: State,
+  u: number,
+  p: Params,
+  c: Consts,
+  ext: Generalized = NO_FORCE,
+): State {
   const [, t1, t2, xd, t1d, t2d] = s;
   const s1 = Math.sin(t1), c1 = Math.cos(t1);
   const s2 = Math.sin(t2), c2 = Math.cos(t2);
@@ -93,23 +105,31 @@ export function deriv(s: State, u: number, p: Params, c: Consts): State {
     [c.d3 * c2, c.d5 * c12, c.d6],
   ];
   const f = [
-    u + c.d2 * s1 * t1d * t1d + c.d3 * s2 * t2d * t2d - p.b * xd,
-    p.g * c.d2 * s1 - c.d5 * s12 * t2d * t2d,
-    p.g * c.d3 * s2 + c.d5 * s12 * t1d * t1d,
+    u + c.d2 * s1 * t1d * t1d + c.d3 * s2 * t2d * t2d - p.b * xd + ext[0],
+    p.g * c.d2 * s1 - c.d5 * s12 * t2d * t2d + ext[1],
+    p.g * c.d3 * s2 + c.d5 * s12 * t1d * t1d + ext[2],
   ];
   const [xdd, t1dd, t2dd] = solve3(Mm, f);
   return [xd, t1d, t2d, xdd, t1dd, t2dd];
 }
 
-/** One classical Runge–Kutta 4 step. */
-export function rk4(s: State, u: number, dt: number, p: Params, c: Consts): State {
+/** One classical Runge–Kutta 4 step. `ext` is held constant across the step;
+    at 300 Hz that is far finer than anything a hand can do. */
+export function rk4(
+  s: State,
+  u: number,
+  dt: number,
+  p: Params,
+  c: Consts,
+  ext: Generalized = NO_FORCE,
+): State {
   const step = (base: State, k: State, h: number): State =>
     base.map((v, i) => v + h * k[i]) as State;
 
-  const k1 = deriv(s, u, p, c);
-  const k2 = deriv(step(s, k1, dt / 2), u, p, c);
-  const k3 = deriv(step(s, k2, dt / 2), u, p, c);
-  const k4 = deriv(step(s, k3, dt), u, p, c);
+  const k1 = deriv(s, u, p, c, ext);
+  const k2 = deriv(step(s, k1, dt / 2), u, p, c, ext);
+  const k3 = deriv(step(s, k2, dt / 2), u, p, c, ext);
+  const k4 = deriv(step(s, k3, dt), u, p, c, ext);
   return s.map(
     (v, i) => v + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]),
   ) as State;
@@ -203,6 +223,126 @@ export function lqrGain(
 }
 
 export const UMAX = 30;
+
+/* -------------------------------- grabbing -------------------------------- */
+
+/** A body you can take hold of, and where on it: `s` is the distance from the
+    body's own base along a link (ignored for the cart). */
+export type Body = "cart" | "link1" | "link2";
+
+/**
+ * Where a point on a body is, how fast it is moving, and the Jacobian that maps
+ * a force there into generalized forces.
+ *
+ * Positions are in the plane of the pendulum, x right and y up, with both angles
+ * measured from vertical so a positive angle leans toward +x — the same
+ * convention deriv() is written in, which is what lets J^T F go straight into
+ * its right-hand side.
+ */
+export function bodyPoint(body: Body, sAlong: number, st: State, p: Params) {
+  const [x, t1, t2, xd, t1d, t2d] = st;
+  const c1 = Math.cos(t1), s1 = Math.sin(t1);
+  const c2 = Math.cos(t2), s2 = Math.sin(t2);
+
+  if (body === "cart") {
+    // The cart rides a rail: only horizontal force does anything.
+    return { px: x, py: 0, vx: xd, vy: 0, J: [[1, 0, 0], [0, 0, 0]] };
+  }
+  if (body === "link1") {
+    const a = sAlong;
+    return {
+      px: x + a * s1,
+      py: a * c1,
+      vx: xd + a * c1 * t1d,
+      vy: -a * s1 * t1d,
+      J: [[1, a * c1, 0], [0, -a * s1, 0]],
+    };
+  }
+  const a = sAlong;
+  return {
+    px: x + p.l1 * s1 + a * s2,
+    py: p.l1 * c1 + a * c2,
+    vx: xd + p.l1 * c1 * t1d + a * c2 * t2d,
+    vy: -p.l1 * s1 * t1d - a * s2 * t2d,
+    J: [[1, p.l1 * c1, a * c2], [0, -p.l1 * s1, -a * s2]],
+  };
+}
+
+/**
+ * Spring, damper and force cap between the hand and the point it holds.
+ *
+ * These are small on purpose, and the numbers were found, not guessed. The
+ * links are light — 0.3 kg and 0.2 kg — so a hand force that sounds modest is
+ * enormous to them: a steady 2 N at the tip tips the pendulum 80° in a quarter
+ * of a second, the cart motor saturates at its 30 N limit, and the cart runs off
+ * the rail. A controller designed for the free pendulum cannot hold it once
+ * something else is pulling on it that hard.
+ *
+ * Pulling low on the pendulum is the dangerous case: a force near the first
+ * joint makes the controller swing the cart a long way to compensate. So the
+ * force a link can take grows with distance from that joint — continuously, so
+ * the joint between the two links gets the same force whichever side of it is
+ * grabbed (which matters, because it is the same point: link 1's tip and link
+ * 2's base have identical Jacobians).
+ *
+ * Checked over a grid of 13 grab points along both links and the cart, each
+ * pulled in six directions and held for 0.3 s, 1.5 s and 4 s, then released:
+ * every one of the 234 trials recovers upright, and the cart never passes
+ * ±1.5 m, inside the drawn rail.
+ */
+const HAND = { k: 1, c: 1, fmax: 0.25 }; // N/m, N·s/m, N — the top of link 2
+const CART_GRAB = { k: 8, c: 8, fmax: 2 }; // the cart carries the whole mass
+const LINK1_SHARE = 0.42; // link 1, and link 2 at its base
+
+function grabGains(body: Body, sAlong: number, p: Params) {
+  if (body === "cart") return CART_GRAB;
+  const share =
+    body === "link1"
+      ? LINK1_SHARE
+      : LINK1_SHARE + (1 - LINK1_SHARE) * Math.min(1, Math.max(0, sAlong / p.l2));
+  return { k: HAND.k * share, c: HAND.c * share, fmax: HAND.fmax * share };
+}
+
+/** End stops on the rail, as a real cart-pole rig has: a stiff, damped bumper
+    beyond ±1.5 m. It is a property of the rig, not of the pendulum, so it is
+    applied by the scene alongside the hand force and deriv() stays the pure
+    plant that the energy check above was run against. */
+export function railStop(x: number, xd: number): number {
+  const EDGE = 1.5;
+  const over = Math.abs(x) - EDGE;
+  return over > 0 ? -Math.sign(x) * 400 * over - 30 * xd : 0;
+}
+
+/**
+ * The generalized force from pulling one point toward the pointer: F from the
+ * spring-damper, then Q = Jᵀ F. Pulling link 2 therefore acts on link 2 — its
+ * effect reaches the cart and link 1 only through the joints, as it would in
+ * a real mechanism.
+ */
+export function pointForce(
+  body: Body,
+  sAlong: number,
+  st: State,
+  p: Params,
+  hx: number,
+  hy: number,
+): Generalized {
+  const b = bodyPoint(body, sAlong, st, p);
+  const g = grabGains(body, sAlong, p);
+  let fx = g.k * (hx - b.px) - g.c * b.vx;
+  let fy = g.k * (hy - b.py) - g.c * b.vy;
+  const mag = Math.hypot(fx, fy);
+  if (mag > g.fmax) {
+    fx *= g.fmax / mag;
+    fy *= g.fmax / mag;
+  }
+  const J = b.J;
+  return [
+    J[0][0] * fx + J[1][0] * fy,
+    J[0][1] * fx + J[1][1] * fy,
+    J[0][2] * fx + J[1][2] * fy,
+  ];
+}
 
 /** u = −K (s − reference), saturated at the actuator limit. */
 export function control(K: number[], s: State, xRef: number): number {

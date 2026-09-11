@@ -7,15 +7,21 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Line, OrthographicCamera } from "@react-three/drei";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type RefObject } from "react";
 import * as THREE from "three";
+import type { Line2 } from "three-stdlib";
 import {
   DEFAULT_PARAMS,
   UMAX,
+  bodyPoint,
   constants,
   control,
   lqrGain,
+  pointForce,
+  railStop,
   rk4,
+  type Body,
+  type Generalized,
   type State,
 } from "@/lib/dip";
 
@@ -23,21 +29,41 @@ import {
 
    The plant is the full nonlinear model — no small-angle approximation in the
    simulation itself. Only the *controller* is designed on the linearisation,
-   which is what LQR means. Drag to move the cart's target; nudge to disturb. */
+   which is what LQR means.
+
+   You can take hold of any part. A pull is a force on the point you hold, not a
+   command: it enters the equations of motion as generalized forces, Q = Jᵀ F, so
+   pulling the top link acts on the top link and reaches the cart only through
+   the joints. The controller keeps running and resists you. The small diamond
+   is different — it is the cart's commanded position, and dragging it moves the
+   setpoint. */
 
 const INK = "#23201a";
 const RULE = "#d0cdbd";
 const ACCENT = "#9c5039";
 
 const DT = 1 / 300; // integrator step
+const UPRIGHT: State = [0, 0.09, -0.06, 0, 0, 0];
+
+/** The Sim group's transform. The pointer mapping inverts exactly this, so the
+    two are defined once, here. */
+const GROUP_Y = -0.55;
+const GROUP_TILT = -0.2;
 
 /** World units shown across the canvas. Narrower on small screens, or the
-    pendulum ends up a third of the height of the space it is given. Both the
-    camera and the drag mapping read this, so they cannot disagree. */
+    pendulum ends up a third of the height of the space it is given. The camera
+    and the pointer mapping both read this, so they cannot disagree. */
 const spanFor = (width: number) => (width < 640 ? 2.4 : 3.6);
 
 /** How far the target may be dragged, as a fraction of the visible span. */
 const xLimitFor = (width: number) => spanFor(width) * 0.34;
+
+const CART_W = 0.17;
+const CART_H = 0.085;
+
+type Grip =
+  | { kind: "body"; body: Body; s: number; hx: number; hy: number }
+  | { kind: "target" };
 
 function Rail() {
   const ticks = useMemo(() => {
@@ -70,17 +96,15 @@ function Rail() {
 }
 
 function Cart() {
-  const w = 0.17;
-  const h = 0.085;
   return (
     <group>
       <Line
         points={[
-          [-w, -h, 0],
-          [w, -h, 0],
-          [w, h, 0],
-          [-w, h, 0],
-          [-w, -h, 0],
+          [-CART_W, -CART_H, 0],
+          [CART_W, -CART_H, 0],
+          [CART_W, CART_H, 0],
+          [-CART_W, CART_H, 0],
+          [-CART_W, -CART_H, 0],
         ]}
         color={INK}
         lineWidth={1.5}
@@ -126,28 +150,36 @@ function FitCamera() {
 }
 
 interface SimProps {
-  xRef: React.RefObject<number>;
-  kickRef: React.RefObject<number>;
+  stateRef: RefObject<State>;
+  xRef: RefObject<number>;
+  kickRef: RefObject<number>;
+  gripRef: RefObject<Grip | null>;
   readout: (t1: number, t2: number, u: number) => void;
   running: boolean;
 }
 
-function Sim({ xRef, kickRef, readout, running }: SimProps) {
+function Sim({ stateRef, xRef, kickRef, gripRef, readout, running }: SimProps) {
   const p = DEFAULT_PARAMS;
   const c = useMemo(() => constants(p), [p]);
   const K = useMemo(() => lqrGain(p), [p]);
 
-  const stateRef = useRef<State>([0, 0.09, -0.06, 0, 0, 0]);
   const accRef = useRef(0);
   const tickRef = useRef(0);
+  const fallenRef = useRef(0);
 
   const cartRef = useRef<THREE.Group>(null);
   const link1Ref = useRef<THREE.Group>(null);
   const link2Ref = useRef<THREE.Group>(null);
   const targetRef = useRef<THREE.Group>(null);
+  const handRef = useRef<THREE.Mesh>(null);
+  // The pull, drawn as a hairline from the held point to the pointer, so the
+  // force being applied is visible rather than implied. Updated through its ref
+  // each frame, like every other moving part of the scene.
+  const bandRef = useRef<Line2>(null);
 
   useFrame((_, delta) => {
     let u = 0;
+    const grip = gripRef.current;
 
     if (running) {
       // Clamp so a backgrounded tab does not try to catch up in one frame.
@@ -162,9 +194,29 @@ function Sim({ xRef, kickRef, readout, running }: SimProps) {
           kickRef.current = 0;
         }
 
+        const ext: Generalized =
+          grip?.kind === "body"
+            ? pointForce(grip.body, grip.s, s, p, grip.hx, grip.hy)
+            : [0, 0, 0];
+        ext[0] += railStop(s[0], s[3]);
+
         u = control(K, s, xRef.current);
-        stateRef.current = rk4(s, u, DT, p, c);
+        stateRef.current = rk4(s, u, DT, p, c, ext);
         accRef.current -= DT;
+      }
+
+      // If it does go over — a hard fling can still do it — put it back upright
+      // once it has lain there a moment, rather than leaving a spinning wreck.
+      const [, a1, a2] = stateRef.current;
+      if (!grip && (Math.abs(a1) > 1.25 || Math.abs(a2) > 1.25)) {
+        fallenRef.current += Math.min(delta, 0.05);
+        if (fallenRef.current > 1.2) {
+          stateRef.current = [...UPRIGHT] as State;
+          xRef.current = 0;
+          fallenRef.current = 0;
+        }
+      } else {
+        fallenRef.current = 0;
       }
     }
 
@@ -176,6 +228,23 @@ function Sim({ xRef, kickRef, readout, running }: SimProps) {
     if (link2Ref.current) link2Ref.current.rotation.z = -(t2 - t1);
     if (targetRef.current) targetRef.current.position.x = xRef.current;
 
+    const bandLine = bandRef.current;
+    const hand = handRef.current;
+    if (grip?.kind === "body") {
+      const b = bodyPoint(grip.body, grip.s, stateRef.current, p);
+      if (bandLine) {
+        bandLine.geometry.setPositions([b.px, b.py, 0.01, grip.hx, grip.hy, 0.01]);
+        bandLine.visible = true;
+      }
+      if (hand) {
+        hand.visible = true;
+        hand.position.set(grip.hx, grip.hy, 0.01);
+      }
+    } else {
+      if (bandLine) bandLine.visible = false;
+      if (hand) hand.visible = false;
+    }
+
     tickRef.current += 1;
     if (tickRef.current % 6 === 0) readout(t1, t2, u);
   });
@@ -183,7 +252,7 @@ function Sim({ xRef, kickRef, readout, running }: SimProps) {
   // The group is dropped so the cart-to-tip span sits centred in the frame,
   // rather than riding high with dead space underneath it.
   return (
-    <group rotation={[-0.2, 0, 0]} position={[0, -0.55, 0]}>
+    <group rotation={[GROUP_TILT, 0, 0]} position={[0, GROUP_Y, 0]}>
       <Rail />
 
       {/* the commanded cart position */}
@@ -207,14 +276,39 @@ function Sim({ xRef, kickRef, readout, running }: SimProps) {
           </group>
         </group>
       </group>
+
+      <Line
+        ref={bandRef}
+        points={[
+          [0, 0, 0.01],
+          [0, 0, 0.01],
+        ]}
+        color={ACCENT}
+        lineWidth={1}
+        visible={false}
+      />
+      <mesh ref={handRef} visible={false}>
+        <ringGeometry args={[0.012, 0.02, 18]} />
+        <meshBasicMaterial color={ACCENT} side={THREE.DoubleSide} />
+      </mesh>
     </group>
   );
 }
 
+/** Distance from a point to a segment, and how far along the segment it lands. */
+function toSegment(px: number, py: number, ax: number, ay: number, bx: number, by: number) {
+  const dx = bx - ax, dy = by - ay;
+  const len2 = dx * dx + dy * dy;
+  const u = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / len2));
+  return { d: Math.hypot(px - (ax + u * dx), py - (ay + u * dy)), u };
+}
+
 export default function PendulumScene() {
+  const p = DEFAULT_PARAMS;
+  const stateRef = useRef<State>([...UPRIGHT] as State);
   const xRef = useRef(0);
   const kickRef = useRef(0);
-  const draggingRef = useRef(false);
+  const gripRef = useRef<Grip | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const t1Ref = useRef<HTMLSpanElement>(null);
@@ -235,36 +329,93 @@ export default function PendulumScene() {
     if (uRef.current) uRef.current.textContent = u.toFixed(1);
   };
 
-  const setTargetFromEvent = (clientX: number) => {
-    const rect = wrapRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const frac = (clientX - rect.left) / rect.width;
-    const limit = xLimitFor(rect.width);
-    xRef.current = Math.max(
-      -limit,
-      Math.min(limit, (frac - 0.5) * spanFor(rect.width)),
+  /** A pointer position in the pendulum's own plane: undo the orthographic
+      camera, then the Sim group's drop and tilt. */
+  const toPlane = (clientX: number, clientY: number) => {
+    const rect = wrapRef.current!.getBoundingClientRect();
+    const perPx = spanFor(rect.width) / rect.width;
+    const wx = (clientX - rect.left - rect.width / 2) * perPx;
+    const wy = (rect.top + rect.height / 2 - clientY) * perPx;
+    return { x: wx, y: (wy - GROUP_Y) / Math.cos(GROUP_TILT), perPx, rect };
+  };
+
+  /** What is under the pointer, if anything. The nearest part within about
+      14 px wins; touch gets a wider reach than a mouse. */
+  const pick = (clientX: number, clientY: number, touch: boolean): Grip | null => {
+    const { x: hx, y: hy, perPx } = toPlane(clientX, clientY);
+    const reach = (touch ? 22 : 14) * perPx;
+    const [x, t1, t2] = stateRef.current;
+    const j1x = x + p.l1 * Math.sin(t1), j1y = p.l1 * Math.cos(t1);
+    const tipx = j1x + p.l2 * Math.sin(t2), tipy = j1y + p.l2 * Math.cos(t2);
+
+    const options: { d: number; grip: Grip }[] = [];
+    const l2 = toSegment(hx, hy, j1x, j1y, tipx, tipy);
+    options.push({ d: l2.d, grip: { kind: "body", body: "link2", s: l2.u * p.l2, hx, hy } });
+    const l1 = toSegment(hx, hy, x, 0, j1x, j1y);
+    options.push({ d: l1.d, grip: { kind: "body", body: "link1", s: l1.u * p.l1, hx, hy } });
+    const cartD = Math.hypot(
+      Math.max(0, Math.abs(hx - x) - CART_W),
+      Math.max(0, Math.abs(hy) - CART_H),
     );
+    options.push({ d: cartD, grip: { kind: "body", body: "cart", s: 0, hx, hy } });
+    options.push({ d: Math.hypot(hx - xRef.current, hy + 0.045) - 0.035, grip: { kind: "target" } });
+
+    const best = options.filter((o) => o.d <= reach).sort((a, b) => a.d - b.d)[0];
+    return best ? best.grip : null;
+  };
+
+  const setCursor = (c: string) => {
+    if (wrapRef.current) wrapRef.current.style.cursor = c;
+  };
+
+  const moveTarget = (clientX: number) => {
+    const { x, rect } = toPlane(clientX, 0);
+    const limit = xLimitFor(rect.width);
+    xRef.current = Math.max(-limit, Math.min(limit, x));
+  };
+
+  const release = () => {
+    gripRef.current = null;
+    setCursor("");
   };
 
   return (
     <div>
       <div
         ref={wrapRef}
-        className="relative h-[19rem] w-full cursor-ew-resize touch-none select-none sm:h-[22rem]"
+        className="relative h-[19rem] w-full touch-none select-none sm:h-[22rem]"
         onPointerDown={(e) => {
-          draggingRef.current = true;
-          (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-          setTargetFromEvent(e.clientX);
+          const grip = pick(e.clientX, e.clientY, e.pointerType !== "mouse");
+          if (!grip) return;
+          // Keep receiving moves when the pointer leaves the canvas mid-drag.
+          // Capture throws if the pointer is no longer active (a touch that
+          // was already cancelled); the drag still works without it.
+          try {
+            e.currentTarget.setPointerCapture(e.pointerId);
+          } catch {}
+          gripRef.current = grip;
+          setCursor("grabbing");
+          if (grip.kind === "target") moveTarget(e.clientX);
+          setRunning(true);
         }}
         onPointerMove={(e) => {
-          if (draggingRef.current) setTargetFromEvent(e.clientX);
+          const grip = gripRef.current;
+          if (!grip) {
+            // Hovering: the grab hand only where there is something to hold.
+            setCursor(pick(e.clientX, e.clientY, false) ? "grab" : "");
+            return;
+          }
+          if (grip.kind === "target") {
+            moveTarget(e.clientX);
+          } else {
+            const { x, y } = toPlane(e.clientX, e.clientY);
+            grip.hx = x;
+            grip.hy = y;
+          }
         }}
-        onPointerUp={() => {
-          draggingRef.current = false;
-        }}
-        onPointerLeave={() => {
-          draggingRef.current = false;
-        }}
+        onPointerUp={release}
+        onPointerCancel={release}
+        onLostPointerCapture={release}
       >
         <Canvas
           dpr={[1, 2]}
@@ -273,8 +424,10 @@ export default function PendulumScene() {
         >
           <FitCamera />
           <Sim
+            stateRef={stateRef}
             xRef={xRef}
             kickRef={kickRef}
+            gripRef={gripRef}
             readout={readout}
             running={running}
           />
@@ -306,6 +459,7 @@ export default function PendulumScene() {
           <button
             type="button"
             onClick={() => {
+              stateRef.current = [...UPRIGHT] as State;
               xRef.current = 0;
               kickRef.current = 0;
             }}

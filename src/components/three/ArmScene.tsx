@@ -5,7 +5,11 @@ import { Line } from "@react-three/drei";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 
-/* A 6R articulated arm drawn as hairline ink on paper.
+/* A seven-joint arm drawn as hairline ink on paper — the figure for the Franka
+   Emika Panda project on /research. The joints alternate the way the Panda's do:
+   base yaw, shoulder pitch, upper-arm roll, elbow pitch, forearm roll, wrist
+   pitch, flange roll. (An earlier version had six joints and sat on the home
+   page as a generic figure; placed next to a 7-DOF robot, six would be wrong.)
 
    Everything uses Line and meshBasicMaterial, so the scene has no lights at
    all — nothing is shaded, nothing is glossy, and the result reads as a
@@ -18,8 +22,12 @@ const RULE = "#d0cdbd";
 const ACCENT = "#9c5039";
 
 const BASE = 0.28;
-const L1 = 0.85;
-const L2 = 0.72;
+// The upper arm and forearm are the old L1 = 0.85 and L2 = 0.72, each split by a
+// roll joint, so the arm's reach — and so its framing — is unchanged.
+const L1A = 0.46;
+const L1B = 0.39;
+const L2A = 0.4;
+const L2B = 0.32;
 const L3 = 0.3;
 const TOOL = 0.16;
 
@@ -85,6 +93,7 @@ function Arm({ speed }: { speed: number }) {
   const j4 = useRef<THREE.Group>(null);
   const j5 = useRef<THREE.Group>(null);
   const j6 = useRef<THREE.Group>(null);
+  const j7 = useRef<THREE.Group>(null);
 
   useFrame(({ clock }) => {
     // Incommensurable frequencies, so the pose wanders and never loops.
@@ -93,10 +102,13 @@ function Arm({ speed }: { speed: number }) {
     const t = clock.getElapsedTime() * speed;
     if (j1.current) j1.current.rotation.y = 0.62 * Math.sin(0.23 * t);
     if (j2.current) j2.current.rotation.x = -0.65 + 0.22 * Math.sin(0.31 * t + 1.0);
-    if (j3.current) j3.current.rotation.x = 1.45 + 0.3 * Math.sin(0.27 * t + 2.1);
-    if (j4.current) j4.current.rotation.y = 0.55 * Math.sin(0.19 * t + 0.4);
-    if (j5.current) j5.current.rotation.x = 0.55 + 0.3 * Math.sin(0.33 * t + 0.9);
-    if (j6.current) j6.current.rotation.y = 0.7 * Math.sin(0.21 * t);
+    // The seventh joint. Kept small: it swings the elbow's plane of motion, and a
+    // large roll here visibly corkscrews the arm out of the frame.
+    if (j3.current) j3.current.rotation.y = 0.3 * Math.sin(0.17 * t + 2.6);
+    if (j4.current) j4.current.rotation.x = 1.45 + 0.3 * Math.sin(0.27 * t + 2.1);
+    if (j5.current) j5.current.rotation.y = 0.55 * Math.sin(0.19 * t + 0.4);
+    if (j6.current) j6.current.rotation.x = 0.55 + 0.3 * Math.sin(0.33 * t + 0.9);
+    if (j7.current) j7.current.rotation.y = 0.7 * Math.sin(0.21 * t);
   });
 
   return (
@@ -111,60 +123,68 @@ function Arm({ speed }: { speed: number }) {
         <Link length={BASE} />
         <group ref={j2} position={[0, BASE, 0]}>
           <Joint axis="pitch" />
-          <Link length={L1} />
+          <Link length={L1A} />
 
-          <group ref={j3} position={[0, L1, 0]}>
-            <Joint axis="pitch" r={0.05} />
-            <Link length={L2} />
+          <group ref={j3} position={[0, L1A, 0]}>
+            <Joint axis="roll" r={0.046} />
+            <Link length={L1B} />
 
-            <group ref={j4} position={[0, L2, 0]}>
-              <Joint axis="roll" r={0.042} />
-              <group ref={j5}>
-                <Link length={L3} width={1.2} />
+            <group ref={j4} position={[0, L1B, 0]}>
+              <Joint axis="pitch" r={0.05} />
+              <Link length={L2A} />
 
-                <group ref={j6} position={[0, L3, 0]}>
-                  <Joint axis="roll" r={0.034} />
-                  {/* tool: a short fork, so the wrist roll is legible */}
-                  <Line
-                    points={[
-                      [0, 0, 0],
-                      [0, TOOL * 0.55, 0],
-                    ]}
-                    color={INK}
-                    lineWidth={1.2}
-                  />
-                  <Line
-                    points={[
-                      [-0.05, TOOL * 0.55, 0],
-                      [0.05, TOOL * 0.55, 0],
-                    ]}
-                    color={INK}
-                    lineWidth={1.2}
-                  />
-                  <Line
-                    points={[
-                      [-0.05, TOOL * 0.55, 0],
-                      [-0.05, TOOL, 0],
-                    ]}
-                    color={INK}
-                    lineWidth={1.2}
-                  />
-                  <Line
-                    points={[
-                      [0.05, TOOL * 0.55, 0],
-                      [0.05, TOOL, 0],
-                    ]}
-                    color={INK}
-                    lineWidth={1.2}
-                  />
+              <group ref={j5} position={[0, L2A, 0]}>
+                <Joint axis="roll" r={0.04} />
+                <Link length={L2B} />
 
-                  {/* A motion trail was tried here and cut: at this scale it
-                      knotted into a blob as the wrist turned, and left stray
-                      fragments behind. A single quiet mark says more. */}
-                  <mesh position={[0, TOOL, 0]}>
-                    <sphereGeometry args={[0.02, 14, 14]} />
-                    <meshBasicMaterial color={ACCENT} />
-                  </mesh>
+                <group ref={j6} position={[0, L2B, 0]}>
+                  <Joint axis="pitch" r={0.038} />
+                  <Link length={L3} width={1.2} />
+
+                  <group ref={j7} position={[0, L3, 0]}>
+                    <Joint axis="roll" r={0.034} />
+                    {/* tool: a short fork, so the wrist roll is legible */}
+                    <Line
+                      points={[
+                        [0, 0, 0],
+                        [0, TOOL * 0.55, 0],
+                      ]}
+                      color={INK}
+                      lineWidth={1.2}
+                    />
+                    <Line
+                      points={[
+                        [-0.05, TOOL * 0.55, 0],
+                        [0.05, TOOL * 0.55, 0],
+                      ]}
+                      color={INK}
+                      lineWidth={1.2}
+                    />
+                    <Line
+                      points={[
+                        [-0.05, TOOL * 0.55, 0],
+                        [-0.05, TOOL, 0],
+                      ]}
+                      color={INK}
+                      lineWidth={1.2}
+                    />
+                    <Line
+                      points={[
+                        [0.05, TOOL * 0.55, 0],
+                        [0.05, TOOL, 0],
+                      ]}
+                      color={INK}
+                      lineWidth={1.2}
+                    />
+
+                    {/* A motion trail was tried here and cut: at this scale it
+                        knotted into a blob as the wrist turned, and left stray
+                        fragments behind. A single quiet mark says more. */}
+                    <mesh position={[0, TOOL, 0]}>
+                      <sphereGeometry args={[0.02, 14, 14]} />
+                      <meshBasicMaterial color={ACCENT} />
+                    </mesh>
+                  </group>
                 </group>
               </group>
             </group>
@@ -175,13 +195,14 @@ function Arm({ speed }: { speed: number }) {
   );
 }
 
-/* Sampling the pose across the whole animation gives a bounding sphere of
-   radius 1.03 centred 0.972 above the base (the arm reaches 1.94 up at full
-   extension). Lifting the arm by exactly that much puts the sphere's centre on
-   the world origin, which is also what the parallax rotates about — so no pose
-   and no pointer position can swing the arm out of frame, rather than merely
-   being unlikely to. */
-const SPHERE_CENTRE_Y = 0.972;
+/* Sampling the pose across the whole animation — re-run for the seven-joint
+   chain, over 12,000 poses including the gripper tips — gives a bounding sphere
+   of radius 1.002 centred 1.000 above the base. Lifting the arm by exactly that
+   much puts the sphere's centre on the world origin, which is also what the
+   parallax rotates about — so no pose and no pointer position can swing the arm
+   out of frame, rather than merely being unlikely to. The camera sits 4.30 away;
+   this sphere needs 3.63 at a 32° field of view. */
+const SPHERE_CENTRE_Y = 1.0;
 
 function Rig({ parallax }: { parallax: boolean }) {
   const root = useRef<THREE.Group>(null);

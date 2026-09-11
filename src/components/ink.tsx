@@ -7,7 +7,7 @@ import { useSettle } from "./Settle";
    weight as the rules elsewhere, and each path carries pathLength={1} so the
    stroke can be dashed and drawn on without measuring anything at runtime. */
 
-function InkFigure({
+export function InkFigure({
   paths,
   viewBox,
   width,

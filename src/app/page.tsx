@@ -1,37 +1,39 @@
 import Link from "next/link";
 import Settle from "@/components/Settle";
 import Portrait from "@/components/Portrait";
-import { ArmFigure } from "@/components/three/mounts";
+import Journey from "@/components/journey/Journey";
+import { LinkedInIcon, MailIcon } from "@/components/icons";
 import { Divider, Leaf, SectionTitle, Wrap } from "@/components/ui";
 
 const THREADS = [
   {
-    h: "Perception under uncertainty",
+    h: "Explanations that can be checked",
     p: (
       <>
-        Generative models are unusually good at representing what a scene{" "}
-        <em>could plausibly be</em>. My thesis asks whether that helps a vehicle
-        read terrain it has never seen before.
+        Graph neural networks can predict how long a machine has left before it
+        fails. My thesis compares the methods that explain those predictions, and
+        measures whether each explanation is <em>faithful</em> and{" "}
+        <em>stable</em>.
       </>
     ),
   },
   {
-    h: "Explanations that hold up",
+    h: "Explanations people can use",
     p: (
       <>
-        A model that cannot account for itself is hard to trust and harder to
-        debug. My work at Fraunhofer IOSB sits in the gap between an explanation
-        that satisfies a metric and one that satisfies a person.
+        A faithful explanation still has to be read by someone. At Fraunhofer
+        IOSB I build explainable-AI methods into analysis tooling, so that people
+        who are not ML specialists can see why a model decided what it did.
       </>
     ),
   },
   {
-    h: "Robots and the people near them",
+    h: "Perception and control on real hardware",
     p: (
       <>
-        Exoskeletons, gaze, cooperative control. The systems I keep returning to
-        are the ones where a machine has to read a human&rsquo;s intent rather
-        than follow a waypoint.
+        Where I started: recognising human activity from HoloLens 2 eye tracking,
+        vision-guided manipulation with a Franka arm, and adaptive control of a
+        lower-limb exoskeleton.
       </>
     ),
   },
@@ -53,9 +55,10 @@ export default function Home() {
                 </h1>
               </Settle>
               <Settle delay={0.16}>
-                <p className="mt-6 max-w-[30rem] text-[clamp(1.18rem,2.4vw,1.42rem)] leading-[1.55] text-ink-soft italic">
-                  I work on machine perception for robots that have to operate
-                  where the world stops being tidy.
+                <p className="mt-6 max-w-[30rem] text-lede italic">
+                  I work on explainable and trustworthy machine learning, with a
+                  background in computer vision, robot perception and
+                  model-based control.
                 </p>
               </Settle>
             </div>
@@ -75,18 +78,19 @@ export default function Home() {
             <Settle className="note">
               M.Sc. Automation &amp; Control,
               <br />
-              RPTU Kaiserslautern, 2023 – present.
+              RPTU Kaiserslautern, 2023 – expected 2027.
             </Settle>
             <Settle>
-              <p className="drop-cap max-w-measure text-[1.16rem] leading-[1.65] text-ink-soft">
+              <p className="drop-cap max-w-measure">
                 At the moment I am a master&rsquo;s student in Automation and
-                Control at RPTU Kaiserslautern, writing my thesis on
-                environment perception for off-road autonomous driving using
-                diffusion models. Off-road is the interesting case. There are no
-                lane markings, no map priors worth trusting, and a distribution
-                that shifts with the weather, the season, and the light. It is
-                where perception stops being a solved problem and starts being a
-                question again.
+                Control at RPTU Kaiserslautern, writing my thesis with Fraunhofer
+                IOSB and KIT on explaining graph neural networks that predict how
+                long a machine has before it fails. A prediction like that is only
+                worth acting on if you can see why it was made — and it is not
+                obvious which explanation method to believe. The thesis compares
+                them, and measures whether each explanation reflects what the
+                model actually relies on and whether it holds still when the
+                input barely changes.
               </p>
             </Settle>
 
@@ -108,10 +112,10 @@ export default function Home() {
                 </p>
                 <p>
                   I came back to research because the questions I could not put
-                  down were all in perception and control. The engineering habits
-                  came with me, and they turned out to matter more than I
-                  expected: I write research code that other people can actually
-                  run.
+                  down were in machine learning, perception and control. The
+                  engineering habits came with me, and they turned out to matter
+                  more than I expected: I write research code that other people
+                  can actually run.
                 </p>
               </div>
             </Settle>
@@ -120,9 +124,9 @@ export default function Home() {
             <Settle>
               <p className="max-w-measure">
                 Before Fraunhofer I spent a year and a half at the German
-                Research Center for Artificial Intelligence (DFKI) on
-                gaze-enabled activity classification — inferring what a person is
-                doing from where they choose to look.
+                Research Center for Artificial Intelligence (DFKI) on gaze-based
+                activity recognition — inferring what a person is doing from where
+                they choose to look. It became my master&rsquo;s project.
               </p>
             </Settle>
           </Leaf>
@@ -132,7 +136,7 @@ export default function Home() {
       <section className="py-[clamp(1rem,3vw,2rem)]">
         <Wrap>
           <Settle>
-            <ArmFigure />
+            <Journey />
           </Settle>
         </Wrap>
       </section>
@@ -143,24 +147,21 @@ export default function Home() {
             <SectionTitle num="I">Currently</SectionTitle>
           </Settle>
           <Settle delay={0.06}>
-            <ul className="m-0 max-w-measure list-none p-0">
+            <ul className="m-0 max-w-measure list-none p-0 text-ink-soft">
               <li className="py-[0.55rem]">
-                <span className="text-ink">Master&rsquo;s thesis</span> —
-                environment perception for off-road autonomous driving using
-                diffusion models.{" "}
-                <span className="text-ink-soft">
-                  RPTU Kaiserslautern, ongoing.
-                </span>
+                <span className="text-ink">Master&rsquo;s thesis</span> — a
+                comparative evaluation of explainable AI methods for graph neural
+                network-based remaining useful life prediction. Fraunhofer IOSB
+                / KIT, in progress.
               </li>
               <li className="border-t border-rule-soft py-[0.55rem]">
                 <span className="text-ink">Working Student Researcher</span> —
-                explainable AI.{" "}
-                <span className="text-ink-soft">Fraunhofer IOSB, Karlsruhe.</span>
+                explainable AI. Fraunhofer IOSB, Karlsruhe.
               </li>
               <li className="border-t border-rule-soft py-[0.55rem]">
                 <span className="text-ink">Looking ahead</span> — I am looking for
-                a doctoral position in machine perception, learning for robotics,
-                or human–robot interaction, starting after my thesis.
+                a doctoral position in explainable and trustworthy machine
+                learning, starting after my master&rsquo;s.
               </li>
             </ul>
           </Settle>
@@ -176,10 +177,10 @@ export default function Home() {
             {THREADS.map((t, i) => (
               <Settle key={t.h} delay={i * 0.1}>
                 <article>
-                  <h3 className="mb-3 border-t border-rule pt-4 text-[1.1rem]">
+                  <h3 className="mb-3 border-t border-rule pt-4 text-subhead">
                     {t.h}
                   </h3>
-                  <p className="text-[0.96rem] text-ink-soft">{t.p}</p>
+                  <p>{t.p}</p>
                 </article>
               </Settle>
             ))}
@@ -201,7 +202,7 @@ export default function Home() {
           <Settle>
             <div className="max-w-measure">
               <SectionTitle num="III">Away from the desk</SectionTitle>
-              <p className="text-ink-soft">
+              <p>
                 I am a slow reader of philosophy and history, a fast and mediocre
                 chess player, and I have spent more hours than I can defend on a
                 badminton court. A few of the other things — the bow, the sabre,
@@ -223,24 +224,39 @@ export default function Home() {
               <SectionTitle num="IV">Get in touch</SectionTitle>
             </Settle>
             <Settle>
-              <p className="text-ink-soft">
+              <p>
                 I am glad to hear from anyone working on related problems — and
                 especially from groups with doctoral openings.
               </p>
             </Settle>
-            {/* One action, given the weight. Deliberately LinkedIn
-                rather than an address: a personal mailbox published on a
-                page this crawlable is harvested within days. */}
+            {/* Two ways to reach me, as icons. The address is the university
+                one, never a personal mailbox: it is published on a page this
+                crawlable, and it will be harvested. Each icon link names itself
+                for screen readers and shows a tooltip on hover and focus. */}
             <Settle delay={0.08}>
-              <div className="mt-9 border-t border-rule pt-7">
-                <a
-                  className="link text-[clamp(1.2rem,2.6vw,1.55rem)] break-all"
-                  href="https://www.linkedin.com/in/amin-Dariani/"
-                  rel="me noopener"
-                >
-                  linkedin.com/in/amin-Dariani
-                </a>
-              </div>
+              <ul className="mt-9 flex list-none flex-wrap items-center gap-x-5 gap-y-8 border-t border-rule p-0 pt-7 pb-6">
+                <li>
+                  <a
+                    className="contact-icon"
+                    href="mailto:rax06jud@rptu.de"
+                    aria-label="Email: rax06jud@rptu.de"
+                    data-tip="rax06jud@rptu.de"
+                  >
+                    <MailIcon className="h-[1.6rem] w-auto" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="contact-icon"
+                    href="https://www.linkedin.com/in/amin-dariani/"
+                    rel="me noopener"
+                    aria-label="LinkedIn profile"
+                    data-tip="LinkedIn"
+                  >
+                    <LinkedInIcon className="h-[1.75rem] w-[1.75rem]" />
+                  </a>
+                </li>
+              </ul>
             </Settle>
 
             <Settle delay={0.14}>

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Settle from "@/components/Settle";
 import { Bow } from "@/components/ink";
-import { Callout, Divider, Leaf, SectionTitle, Wrap } from "@/components/ui";
+import { Divider, Leaf, SectionTitle, Wrap } from "@/components/ui";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/beyond" },
@@ -27,7 +26,7 @@ export default function Beyond() {
             </h1>
           </Settle>
           <Settle delay={0.16}>
-            <p className="drop-cap mt-8 max-w-measure text-[1.16rem] leading-[1.65] text-ink-soft">
+            <p className="drop-cap mt-8 max-w-measure">
               My interests have never stayed in separate rooms. The things I read
               for pleasure keep turning up in my research, and the things I do
               with my hands keep teaching me something I could not get from a
@@ -103,7 +102,7 @@ export default function Beyond() {
       <section className="py-[clamp(2.8rem,6vw,4.5rem)]">
         <Wrap>
           <Settle>
-            <SectionTitle num="II">Playing</SectionTitle>
+            <SectionTitle num="II">Sport, dance and chess</SectionTitle>
           </Settle>
           <Leaf>
             {/* One figure per block. Two stacked here ran to ~370px against a
@@ -161,27 +160,6 @@ export default function Beyond() {
               </p>
             </Settle>
           </Leaf>
-        </Wrap>
-      </section>
-
-      <Divider />
-
-      <section className="py-[clamp(2.8rem,6vw,4.5rem)]">
-        <Wrap>
-          <Settle>
-            <div className="max-w-measure">
-              <Callout>
-                Everything above is really one interest wearing different clothes:
-                how an intention gets from the inside of one system to the inside
-                of another, and what it loses on the way.
-              </Callout>
-              <p>
-                <Link className="link" href="/">
-                  ← Back to the beginning
-                </Link>
-              </p>
-            </div>
-          </Settle>
         </Wrap>
       </section>
     </>

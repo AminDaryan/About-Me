@@ -14,11 +14,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
   title: {
-    default: "Amin Dariani — Robotics & Machine Perception",
+    default: "Amin Dariani — Explainable and Trustworthy Machine Learning",
     template: "%s — Amin Dariani",
   },
   description:
-    "Amin Dariani — M.Sc. student in Automation and Control at RPTU Kaiserslautern, working on environment perception for off-road autonomous driving, explainable AI, and human-centred robotics.",
+    "Amin Dariani — M.Sc. student in Automation and Control at RPTU Kaiserslautern, working on explainable AI for graph neural networks, with a background in computer vision, robot perception and model-based control.",
   authors: [{ name: "Amin Dariani" }],
   openGraph: {
     type: "profile",
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
     // object, so a value would put the site root in og:url on /cv
     // and /research. The canonical link states each page's own URL.
     siteName: "Amin Dariani",
-    title: "Amin Dariani — Robotics & Machine Perception",
+    title: "Amin Dariani — Explainable and Trustworthy Machine Learning",
     description:
-      "Machine perception for robots that have to operate where the world stops being tidy. Kaiserslautern, Germany.",
+      "Explainable and trustworthy machine learning, with a background in computer vision, robot perception and model-based control. Kaiserslautern, Germany.",
   },
   icons: { icon: "/favicon.svg" },
 };
@@ -38,9 +38,9 @@ const PERSON_LD = {
   "@type": "Person",
   name: "Amin Dariani",
   alternateName: "Amin Amir Baglouee Dariani",
-  jobTitle: "Researcher, Robotics and Machine Perception",
+  jobTitle: "Working Student Researcher, Explainable AI",
   description:
-    "M.Sc. student in Automation and Control at RPTU Kaiserslautern working on environment perception for off-road autonomous driving using diffusion models.",
+    "M.Sc. student in Automation and Control at RPTU Kaiserslautern, writing a thesis on explainable AI methods for graph neural network-based remaining useful life prediction.",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Kaiserslautern",
@@ -59,14 +59,21 @@ const PERSON_LD = {
   ],
   worksFor: { "@type": "Organization", name: "Fraunhofer IOSB" },
   knowsAbout: [
-    "Machine perception",
-    "Diffusion models",
     "Explainable AI",
+    "Graph neural networks",
+    "Machine learning",
+    "Computer vision",
     "Robotics",
     "Control engineering",
-    "Computer vision",
   ],
-  sameAs: ["https://www.linkedin.com/in/amin-Dariani/"],
+  /* Professional identities only, each one listed on the PhD CV. ORCID and
+     GitHub were checked against the name before going in; LinkedIn refuses
+     automated requests, so its handle is taken from the CV as written. */
+  sameAs: [
+    "https://www.linkedin.com/in/amin-dariani/",
+    "https://github.com/AminDaryan",
+    "https://orcid.org/0009-0003-6226-2030",
+  ],
 };
 
 export default function RootLayout({
@@ -78,7 +85,7 @@ export default function RootLayout({
         {/* Scroll-in animation starts at opacity 0. Without JavaScript nothing
             would ever reveal it, so show everything outright instead. */}
         <noscript>
-          <style>{`.settle{opacity:1 !important;transform:none !important}`}</style>
+          <style>{`.settle{opacity:1 !important;transform:none !important}.ink svg path{stroke-dashoffset:0 !important}`}</style>
         </noscript>
       </head>
       <body className="font-serif antialiased">

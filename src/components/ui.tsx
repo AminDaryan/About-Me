@@ -65,7 +65,7 @@ export function Entries({ children }: { children: ReactNode }) {
 
 export function Callout({ children }: { children: ReactNode }) {
   return (
-    <p className="my-10 max-w-measure border-y border-rule py-[1.6rem] text-ink-soft italic">
+    <p className="my-10 max-w-measure border-y border-rule py-[1.6rem] italic">
       {children}
     </p>
   );
