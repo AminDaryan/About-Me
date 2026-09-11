@@ -17,3 +17,8 @@ name = "my-cv"
 compatibility_date = "2026-09-09"
 
 pages_build_output_dir = "./out"
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+persist = true
