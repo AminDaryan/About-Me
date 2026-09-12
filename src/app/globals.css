@@ -547,7 +547,7 @@
     font-style: italic;
   }
 
-  /* -- Fig. 3: the loop the arm is running ---------------------------------
+  /* -- Fig. 4: the loop the arm is running ---------------------------------
      Seven words under the figure, in the order the project's own flowchart has
      them, with the one happening now in the accent. It is the figure's text
      equivalent as much as its legend: a reader who cannot see the canvas still
@@ -584,7 +584,7 @@
     color: var(--color-accent);
   }
 
-  /* -- Fig. 2: the gaze study ----------------------------------------------
+  /* -- Fig. 3: the gaze study ----------------------------------------------
      The room is drawn in rule weight and stays out of the way; the accent is
      on the eye alone, which is the one thing in the figure that is alive. */
   .gaze svg {
@@ -628,26 +628,31 @@
     stroke: none;
   }
 
-  .gaze-features {
+  /* -- Meters ---------------------------------------------------------------
+     A row of named quantities under a figure, each a hairline that fills. Two
+     figures use them: the four families of gaze feature, and the two things
+     the thesis measures about an explanation. */
+  .meters {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.55rem 2rem;
     max-width: 30rem;
     margin: 1.35rem auto 0;
   }
+  .meters[data-four] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   @media (min-width: 40rem) {
-    .gaze-features { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .meters[data-four] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   }
-  .gaze-feature {
+  .meter {
     display: grid;
     gap: 0.3rem;
   }
-  .gaze-bar {
+  .meter-bar {
     display: block;
     height: 3px;
     background: var(--color-rule-soft);
   }
-  .gaze-bar > span {
+  .meter-bar > span {
     display: block;
     width: 0;
     height: 100%;
@@ -655,7 +660,45 @@
     transition: width 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
-  /* -- Fig. 4: the exoskeleton ---------------------------------------------
+  /* -- Fig. 2: a prediction and two explanations of it ----------------------
+     The graph in ink, the explanation in the accent: only the handful of
+     sensors a method names is marked, because an explanation that points at
+     everything has not explained anything. */
+  .rul svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+  .rul-edge {
+    stroke: var(--color-rule);
+    stroke-width: 1.2;
+    transition: opacity 0.35s ease, stroke 0.35s ease;
+  }
+  .rul-rim {
+    fill: var(--color-paper);
+    stroke: var(--color-ink-soft);
+    stroke-width: 1.2;
+  }
+  .rul-core { fill: var(--color-ink); }
+  .rul-halo {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 1.6;
+    transition: opacity 0.35s ease;
+  }
+  .rul-life {
+    display: block;
+    width: 100%;
+    max-width: 30rem;
+    height: 4px;
+    margin: 0.4rem auto 0;
+  }
+  .rul-life-track { fill: var(--color-rule-soft); }
+  .rul-life-fill { fill: var(--color-accent-deep); }
+
+  /* -- Fig. 5: the exoskeleton ---------------------------------------------
      Hairlines at the same weight as the rules, so the drawing belongs to the
      page rather than sitting on it. The only accent is the leg being
      controlled — the one thing in the figure that the figure is about. */
@@ -1145,6 +1188,8 @@
     .rail a { transition: none; }
     .running-head { transition: none; }
     .pipeline li { transition: none; }
+    .rul-edge, .rul-halo { transition: none; }
+    .meter-bar > span { transition: none; }
     .to-top { transition: none; }
     .road-halo { animation: none; opacity: 0; }
     .signpost-arrow { transition: none; }

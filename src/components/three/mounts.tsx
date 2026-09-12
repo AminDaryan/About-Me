@@ -6,9 +6,10 @@ import dynamic from "next/dynamic";
    The placeholder reserves the same height to keep the layout from shifting.
 
    Figures are numbered in reading order across the site: Fig. 1 is the route
-   on the home page (components/journey), then /research runs Fig. 2 (the gaze
-   study), Fig. 3 (the arm, below), Fig. 4 (the exoskeleton) and Fig. 5 (the
-   pendulum, below). Adding a figure above one of these means renumbering it.
+   on the home page (components/journey), then /research runs Fig. 2 (the
+   thesis), Fig. 3 (the gaze study), Fig. 4 (the arm, below), Fig. 5 (the
+   exoskeleton) and Fig. 6 (the pendulum, below). Adding a figure above one of
+   these means renumbering every figure under it — four files, last time.
    Both captions here use the one caption style. */
 
 const ArmScene = dynamic(() => import("./ArmScene"), {
@@ -28,7 +29,7 @@ export function ArmFigure() {
     <figure className="m-0 mt-8">
       <ArmScene />
       <figcaption className={CAPTION}>
-        Fig. 3 — The loop the project ran: find the cuboid wherever it has
+        Fig. 4 — The loop the project ran: find the cuboid wherever it has
         been put down, get a pose out of the detection, plan a path around the
         obstacle it already knows about, and set it on the one target.
       </figcaption>
@@ -41,7 +42,7 @@ export function PendulumFigure() {
     <figure className="m-0">
       <PendulumScene />
       <figcaption className={CAPTION}>
-        Fig. 5 — Both joints turn freely and the one motor drives the cart,
+        Fig. 6 — Both joints turn freely and the one motor drives the cart,
         where its arrow is, so a pull on the lower link — yours is the accent
         arrow — sends the whole machine the other way.
       </figcaption>

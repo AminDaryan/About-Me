@@ -1,5 +1,5 @@
 /* ==========================================================================
-   The arm in Fig. 3, and the job it is doing.
+   The arm in Fig. 4, and the job it is doing.
 
    The project was a pick-and-place: a Franka Emika Panda finds an object put
    down anywhere on its bench, works out where it is, plans a path that misses

@@ -120,7 +120,9 @@ const SKILLS: {
   items: { name: string; mark?: ToolKey }[];
   /** Phrases rather than tool names: they take the full width, because in a
       half-width column they wrap and a wrapped phrase reads worse than a long
-      line does. */
+      line does. Each begins with a capital, as the tool names either side of
+      them do — a column where four rows start small and one starts large reads
+      as a mistake before it reads as a sentence. */
   single?: boolean;
 }[] = [
   {
@@ -165,10 +167,10 @@ const SKILLS: {
     single: true,
     items: [
       { name: "Attribution and graph-native explanation" },
-      { name: "graph neural networks" },
-      { name: "optimal and model-predictive control" },
-      { name: "adaptive control" },
-      { name: "system identification" },
+      { name: "Graph neural networks" },
+      { name: "Optimal and model-predictive control" },
+      { name: "Adaptive control" },
+      { name: "System identification" },
     ],
   },
   {

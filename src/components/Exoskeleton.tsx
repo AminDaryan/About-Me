@@ -19,7 +19,7 @@ import {
 } from "@/lib/swing";
 import { GROUND, H, TRACE_H, TRACE_W, TRACE_X, TRACE_Y, W, frameOf, poseAt } from "@/lib/pose";
 
-/* Fig. 4 — the exoskeleton's swing phase, and what an adaptive controller is
+/* Fig. 5 — the exoskeleton's swing phase, and what an adaptive controller is
    for.
 
    Two legs run one walking cycle half a cycle apart, so that while one stands
@@ -273,7 +273,7 @@ export default function Exoskeleton() {
       </div>
 
       <figcaption className="mt-4 max-w-measure text-meta text-ink-faint italic">
-        Fig. 4 — One leg swings and one supports, simulated here rather than
+        Fig. 5 — One leg swings and one supports, simulated here rather than
         measured: both controllers are given the machine&rsquo;s inertia,
         neither is told what the wearer weighs.
       </figcaption>

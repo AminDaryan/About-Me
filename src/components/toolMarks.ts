@@ -1,11 +1,15 @@
-/* The marks of the tools named under Technical skills, taken from the
-   simple-icons set and inlined so that CSS can colour them like any other
-   mark on the page. Each is its owner's trademark, reproduced only to
-   identify a tool Amin has worked with. Generated — refetch rather than
-   hand-edit, and keep the list to marks that stay legible at 14px. Taken from
-   simple-icons 16.30.0; the version is written down because the set drops
-   brands whose owners ask to be dropped, and a refetch that silently loses one
-   is easier to spot against a number than against "latest". */
+/* The marks of the tools named under Technical skills, taken from simple-icons
+   16.30.0 and inlined so that CSS can colour them like any other mark on the
+   page. Each is its owner's trademark, reproduced only to identify a tool Amin
+   has worked with. Generated — refetch rather than hand-edit, and keep the list
+   to marks that stay legible at 14px.
+
+   The version is written down rather than left at "latest" because the set
+   drops brands whose owners ask to be dropped — Microsoft went between 11 and
+   13 — and a refetch that quietly loses a mark is easy to miss against a
+   moving target and easy to see against a number. A tool whose mark is not in
+   the set stays a word: a glyph invented to fill the gap would be a mark its
+   owner does not have. */
 
 export type ToolMark = { viewBox: string; title: string; paths: string[] };
 

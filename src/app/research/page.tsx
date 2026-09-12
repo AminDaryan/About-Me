@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Settle from "@/components/Settle";
 import Entry from "@/components/Entry";
 import Exoskeleton from "@/components/Exoskeleton";
+import Explain from "@/components/Explain";
 import Gaze from "@/components/Gaze";
 import { ArmFigure, PendulumFigure } from "@/components/three/mounts";
 import { Divider, Entries, SectionTitle, Wrap } from "@/components/ui";
@@ -80,6 +81,7 @@ export default function Research() {
                 change in the input does not produce a completely different
                 story.
               </p>
+              <Explain />
             </Entry>
             <Entry
               title="Making model decisions inspectable"

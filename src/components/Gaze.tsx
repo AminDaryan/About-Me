@@ -12,7 +12,7 @@ import {
   type Fixation,
 } from "@/lib/scanpath";
 
-/* Fig. 2 — what four activities look like from behind the eyes.
+/* Fig. 3 — what four activities look like from behind the eyes.
 
    A scanpath plays out over a workbench and the four feature families fill
    underneath it. Switch activities and the whole shape of the looking changes:
@@ -144,11 +144,11 @@ export default function Gaze() {
 
       {/* The four families of feature, filling as the path plays. Nineteen of
           them went into the classifier; these are the families they fall into. */}
-      <div className="gaze-features">
+      <div className="meters" data-four>
         {["Blinks", "Dwell", "Spread", "Rate"].map((name, i) => (
-          <div key={name} className="gaze-feature">
+          <div key={name} className="meter">
             <span className="label text-ink-faint">{name}</span>
-            <span className="gaze-bar">
+            <span className="meter-bar">
               <span
                 ref={(el) => {
                   bars.current[i] = el;
@@ -188,7 +188,7 @@ export default function Gaze() {
       </div>
 
       <figcaption className="mt-4 max-w-measure text-meta text-ink-faint italic">
-        Fig. 2 — The same workbench watched four ways, the scanpaths drawn to
+        Fig. 3 — The same workbench watched four ways, the scanpaths drawn to
         show the kind of difference the study’s nineteen features measure
         rather than recorded from it.
       </figcaption>

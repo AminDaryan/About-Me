@@ -22,7 +22,7 @@ import {
   type Shot,
 } from "@/lib/arm";
 
-/* Fig. 3 — the pick-and-place, running.
+/* Fig. 4 — the pick-and-place, running.
 
    The project was not an arm waving: a Franka Emika Panda found an object put
    down anywhere on its bench, worked out where it was, planned a path that
