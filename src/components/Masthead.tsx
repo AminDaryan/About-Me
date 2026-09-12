@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import usePageContent from "./usePageContent";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -10,34 +12,55 @@ const NAV = [
   { href: "/beyond", label: "Beyond" },
 ];
 
-/* Sticky, and led by the diamond mark rather than the name. The wordmark
-   returns from the small breakpoint up, where there is room for it and it aids
-   orientation — except on the home page, whose own heading is the name set
-   large. Two of it in one screen reads as a mistake, and the one that has to
-   go is the smaller. */
+/* Sticky, and laid out like the head of a printed page: where you can go on
+   the left, whose pages these are on the right.
+
+   The name is a running head, not a logotype. Its job is to answer "whose site
+   is this?" on /research and /beyond, whose headings are about the work rather
+   than the person — so on the two pages that already answer that themselves,
+   large, at the top, it waits until their own name has scrolled out of sight
+   and then takes over. Showing both at once was the complaint; showing it on
+   some pages and not others would be the other one. This is the rule that
+   satisfies both: the name is on screen exactly once, always.
+
+   The fade is opacity alone and the box keeps its width, so the row never
+   moves — and with JavaScript off the name simply stays, which is the safe
+   way round. */
 export default function Masthead() {
   const pathname = usePathname();
-  const named = pathname === "/";
+
+  /* Quiet while the page is showing its own name. It starts false so the name
+     is there before hydration and stays there without JavaScript. */
+  const [quiet, setQuiet] = useState(false);
+  const observer = useRef<IntersectionObserver>(null);
+
+  usePageContent(() => {
+    observer.current?.disconnect();
+    const own = document.querySelector<HTMLElement>("main [data-page-name]");
+    if (!own) {
+      setQuiet(false);
+      return;
+    }
+    /* The heading counts as gone once it has passed under the masthead rather
+       than when its last pixel leaves the window, so the two names are never
+       both legible at once. The 80px is the masthead's own clearance, the same
+       one `html { scroll-padding-top }` uses; a rootMargin may only be given
+       in pixels or percent, so it cannot simply say 5rem. */
+    observer.current = new IntersectionObserver(
+      ([entry]) => setQuiet(entry.isIntersecting),
+      { rootMargin: "-80px 0px 0px 0px" },
+    );
+    observer.current.observe(own);
+  });
+
+  useEffect(() => () => observer.current?.disconnect(), []);
 
   return (
     <header className="no-print sticky top-0 z-50 border-b border-rule bg-paper">
-      <div className="mx-auto flex max-w-[58rem] items-center justify-between gap-x-4 px-5 py-4 sm:gap-x-8 sm:px-7">
-        <Link
-          href="/"
-          aria-label="Home"
-          className="group flex shrink-0 items-center gap-2.5"
-        >
-          <span className="block size-[7px] rotate-45 bg-accent transition-transform duration-500 group-hover:rotate-[135deg]" />
-          {!named && (
-            <span className="hidden text-[0.78rem] tracking-[0.24em] whitespace-nowrap uppercase transition-colors group-hover:text-accent-deep sm:inline">
-              Amin Dariani
-            </span>
-          )}
-        </Link>
-
+      <div className="flex items-center justify-between gap-x-5 px-5 py-4 sm:px-gutter">
         <nav
           aria-label="Primary"
-          className="flex items-baseline gap-x-2.5 sm:gap-x-6"
+          className="flex items-baseline gap-x-3.5 sm:gap-x-6"
         >
           {NAV.map((item) => {
             const active =
@@ -60,6 +83,26 @@ export default function Masthead() {
             );
           })}
         </nav>
+
+        {/* The mark goes quiet with the name it belongs to: half a running head,
+            appearing and disappearing on its own, would read as a glitch. On a
+            phone there is no room for the words, and the mark stands for them. */}
+        <Link
+          href="/"
+          aria-label="Amin Dariani — home"
+          data-quiet={quiet || undefined}
+          /* Out of the tab order and out of the accessibility tree while it is
+             invisible: a link nobody can see is not one to land focus on, and
+             the name it carries is on the page underneath in any case. */
+          tabIndex={quiet ? -1 : undefined}
+          aria-hidden={quiet || undefined}
+          className="running-head group flex shrink-0 items-center gap-2.5"
+        >
+          <span className="block size-[7px] rotate-45 bg-accent transition-transform duration-500 group-hover:rotate-[135deg]" />
+          <span className="hidden text-[0.78rem] tracking-[0.24em] whitespace-nowrap uppercase transition-colors group-hover:text-accent-deep sm:inline">
+            Amin Dariani
+          </span>
+        </Link>
       </div>
     </header>
   );

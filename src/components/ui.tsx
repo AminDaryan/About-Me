@@ -33,18 +33,75 @@ export function Divider() {
   );
 }
 
+/**
+ * A link to somewhere off this site.
+ *
+ * It opens in a new tab, always: these pages are reference documents, and a
+ * reader who follows a DOI or a university's mark out of the middle of a CV has
+ * lost their place in it. The one place that decides this, so that no link on
+ * the site can quietly disagree.
+ *
+ * A visitor who cannot see the new tab appear is the one who most needs telling
+ * it happened, so the accessible name says so — in the label where the link has
+ * one, and otherwise appended to the words themselves.
+ */
+export function ExternalLink({
+  href,
+  /** Names the link where its content cannot — an institution's mark, say. */
+  label,
+  /** Added before `noopener noreferrer`; `me` marks a profile as Amin's own. */
+  rel,
+  /** The hover and focus caption an icon link carries in place of words. */
+  tip,
+  className = "link",
+  children,
+}: {
+  href: string;
+  label?: string;
+  rel?: string;
+  tip?: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <a
+      className={className}
+      href={href}
+      target="_blank"
+      rel={rel ? `${rel} noopener noreferrer` : "noopener noreferrer"}
+      aria-label={label && `${label} (opens in a new tab)`}
+      data-tip={tip}
+    >
+      {children}
+      {!label && <span className="sr-only"> (opens in a new tab)</span>}
+    </a>
+  );
+}
+
+/** "Selected projects" → "selected-projects". */
+const slug = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 export function SectionTitle({
   id,
   num,
   children,
 }: {
-  /** Makes the heading a link target, e.g. /research#current-work. */
+  /** Overrides the id taken from the title itself, e.g. /research#current-work. */
   id?: string;
   num?: string;
   children: ReactNode;
 }) {
+  /* Every section is a link target whether or not anyone asked for one: the
+     margin rail points at these headings, and a section that cannot be linked
+     to cannot be pointed at either. */
+  const named = id ?? (typeof children === "string" ? slug(children) : undefined);
+
   return (
-    <h2 id={id} className="mb-7 text-section">
+    <h2 id={named} className="mb-7 text-section">
       {num && (
         <span className="label mb-[0.85rem] block text-accent">{num}</span>
       )}

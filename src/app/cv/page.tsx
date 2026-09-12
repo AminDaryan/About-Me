@@ -1,8 +1,24 @@
 import type { Metadata } from "next";
+import type { ComponentType } from "react";
 import Link from "next/link";
 import Settle from "@/components/Settle";
 import Entry from "@/components/Entry";
-import { Divider, Entries, SectionTitle, Wrap } from "@/components/ui";
+import {
+  ArmIcon,
+  CodeIcon,
+  GlobeIcon,
+  MethodIcon,
+  NetworkIcon,
+  ToolMark,
+} from "@/components/icons";
+import type { ToolKey } from "@/components/toolMarks";
+import {
+  Divider,
+  Entries,
+  ExternalLink,
+  SectionTitle,
+  Wrap,
+} from "@/components/ui";
 
 /* The record: what and when, one line per item, laid out to print. The why and
    the how of each project live on /research, and are linked rather than
@@ -37,6 +53,13 @@ const REFERENCES = [
   },
 ];
 
+type Module = {
+  name: string;
+  /** Omitted where the transcript records a pass without a grade. */
+  grade?: string;
+  project?: { title: string; href: string };
+};
+
 /* Grades as the RPTU transcript records them, on the German scale, for the
    modules this CV has always listed. The two project modules link to the
    projects themselves.
@@ -45,17 +68,11 @@ const REFERENCES = [
    unset, and the leader simply runs on. Printing the word "passed" against a
    row of 1.3s invites the reader to fill the blank in for themselves, and they
    will not fill it in generously. */
-const MODULES: {
-  name: string;
-  /** Omitted where the transcript records a pass without a grade. */
-  grade?: string;
-  project?: { title: string; href: string };
-}[] = [
+const MODULES: Module[] = [
   { name: "Optimal Control", grade: "1.3" },
   { name: "Fault Diagnosis and Fault-Tolerant Control", grade: "1.3" },
   { name: "Modelling and Identification", grade: "1.7" },
   { name: "Cooperative Robot Control", grade: "2.0" },
-  { name: "3D Computer Vision", grade: "2.7" },
   {
     name: "Master Project CAS",
     grade: "1.3",
@@ -70,11 +87,156 @@ const MODULES: {
   },
 ];
 
+/* Ferdowsi marks out of 20, converted the way the KMK's modified Bavarian
+   formula does it — 1 + 3 × (20 − grade) / (20 − 10) — and then put on the step
+   scale a German module grade is actually issued on: 1.0, 1.3, 1.7, 2.0, 2.3,
+   2.7 and so on, nearest step, a tie going to the better mark. The step matters
+   because the raw result does not exist as a German grade: a 17 of 20 converts
+   to 1.9, and a reader who has only ever seen 1.7 or 2.0 reads 1.9 as a mistake
+   rather than as a conversion. The raw results are in
+   docs/notes/private/bsc-transcript.md beside each row.
+
+   Four, one for each thing this degree is being cited for: the mathematics, the
+   robotics, the numerical work and the control. Seven rows of 2.0s and 2.3s
+   said no more than four and read as padding; a bachelor's list is supporting
+   evidence for a master's that is already on the page. The names are the
+   certified English transcript's own. */
+const BSC_MODULES: Module[] = [
+  { name: "General Mathematics I", grade: "1.0" },
+  { name: "Robotics, with laboratory", grade: "2.0" },
+  { name: "Numerical Computation", grade: "2.0" },
+  { name: "Automatic Control", grade: "2.3" },
+];
+
+/* Five groups, each with a mark to find it by, one under the other: a single
+   column is read straight down, where two columns ask the eye to choose a side
+   first. The marks do the work the second column was meant to do — they give
+   the eye a place to land. */
+const SKILLS: {
+  icon: ComponentType<{ className?: string }>;
+  name: string;
+  /** A tool carries its own mark where one exists and stays legible at this
+      size; the rest are words, and a row mixing the two is still a row. */
+  items: { name: string; mark?: ToolKey }[];
+  /** Phrases rather than tool names: they take the full width, because in a
+      half-width column they wrap and a wrapped phrase reads worse than a long
+      line does. */
+  single?: boolean;
+}[] = [
+  {
+    icon: CodeIcon,
+    name: "Programming",
+    items: [
+      { name: "Python", mark: "python" },
+      { name: "MATLAB/Simulink" },
+      { name: "JavaScript" },
+    ],
+  },
+  {
+    icon: NetworkIcon,
+    name: "Machine learning and computer vision",
+    items: [
+      { name: "PyTorch", mark: "pytorch" },
+      { name: "scikit-learn" },
+      { name: "OpenCV", mark: "opencv" },
+      { name: "YOLO" },
+    ],
+  },
+  {
+    icon: ArmIcon,
+    name: "Robotics and AR",
+    items: [
+      { name: "ROS", mark: "ros" },
+      { name: "MoveIt" },
+      { name: "Franka Emika Panda" },
+      { name: "Intel RealSense" },
+      { name: "HoloLens 2" },
+      { name: "Unity", mark: "unity" },
+      { name: "MRTK" },
+      { name: "ARETT" },
+    ],
+  },
+  {
+    // "Explainable AI" is the field this CV is applying in, not a method, and
+    // the research-focus line above already names it. What belongs here is the
+    // work it is done with.
+    icon: MethodIcon,
+    name: "Methods and models",
+    single: true,
+    items: [
+      { name: "Attribution and graph-native explanation" },
+      { name: "graph neural networks" },
+      { name: "optimal and model-predictive control" },
+      { name: "adaptive control" },
+      { name: "system identification" },
+    ],
+  },
+  {
+    icon: GlobeIcon,
+    name: "Languages",
+    items: [
+      { name: "English — fluent (IELTS 8.0)" },
+      { name: "German — B1" },
+      { name: "Persian — native" },
+    ],
+  },
+];
+
 const PROFILES = [
   { label: "linkedin.com/in/amin-dariani", href: "https://www.linkedin.com/in/amin-dariani/" },
   { label: "github.com/AminDaryan", href: "https://github.com/AminDaryan" },
   { label: "ORCID 0009-0003-6226-2030", href: "https://orcid.org/0009-0003-6226-2030" },
 ];
+
+/**
+ * An institution's mark, linking to its own site. It opens in a new tab: this
+ * page is a reference document, and losing your place in a CV to go and look at
+ * a university is a poor trade. The link carries the name, because a mark on
+ * its own tells a screen reader nothing.
+ */
+function MarkLink({
+  href,
+  name,
+  mark,
+}: {
+  href: string;
+  name: string;
+  mark: string;
+}) {
+  return (
+    <ExternalLink className="uni-link" href={href} label={`${name} website`}>
+      <span className={`uni-mark ${mark}`} />
+    </ExternalLink>
+  );
+}
+
+/** A degree's modules: name, a dotted leader, the mark, and the project it was. */
+function Modules({ items }: { items: Module[] }) {
+  return (
+    <div>
+      <p className="label text-ink-faint">Selected modules</p>
+      <ul className="grades mt-2">
+        {items.map((m) => (
+          <li key={m.name}>
+            <span>{m.name}</span>
+            <span className="grades-leader" aria-hidden="true" />
+            {m.grade && (
+              <span className="grades-mark">
+                <span className="sr-only">grade </span>
+                {m.grade}
+              </span>
+            )}
+            {m.project && (
+              <Link className="link grades-project" href={m.project.href}>
+                {m.project.title} →
+              </Link>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export default function CV() {
   return (
@@ -85,7 +247,14 @@ export default function CV() {
             <p className="label text-ink-faint">Curriculum Vitae</p>
           </Settle>
           <Settle delay={0.08}>
-            <h1 className="mt-2 text-title">Amin Dariani</h1>
+            {/* The letterhead, and the masthead's cue to hold its own copy of
+                the name back while this one is on screen. It stays because a CV
+                is a document before it is a web page: the masthead and the
+                footer are both `no-print`, so without these two lines the
+                printed CV would carry no name and no address at all. */}
+            <h1 data-page-name className="mt-2 text-title">
+              Amin Dariani
+            </h1>
           </Settle>
           <Settle delay={0.16}>
             <div className="mt-6 max-w-measure">
@@ -94,9 +263,9 @@ export default function CV() {
                 {PROFILES.map((p) => (
                   <span key={p.href}>
                     {" · "}
-                    <a className="link" href={p.href} rel="me noopener">
+                    <ExternalLink href={p.href} rel="me">
                       {p.label}
-                    </a>
+                    </ExternalLink>
                   </span>
                 ))}
               </p>
@@ -125,7 +294,7 @@ export default function CV() {
               title="M.Sc. Automation and Control"
               when="Mar 2023 – Apr 2027 (expected)"
               where="RPTU · Kaiserslautern, Germany"
-              mark={<span className="uni-mark uni-mark-rptu" />}
+              mark={<MarkLink href="https://rptu.de/" name="RPTU" mark="uni-mark-rptu" />}
             >
               <p>
                 Current average 2.1. Specialisation in Connected Automation
@@ -140,35 +309,20 @@ export default function CV() {
                 </Link>
                 . Advisor: M. Becker, Fraunhofer IOSB / KIT IES.
               </p>
-              <div>
-                <p className="label text-ink-faint">Selected modules</p>
-                <ul className="grades mt-2">
-                  {MODULES.map((m) => (
-                    <li key={m.name}>
-                      <span>{m.name}</span>
-                      <span className="grades-leader" aria-hidden="true" />
-                      {m.grade && (
-                        <span className="grades-mark">
-                          <span className="sr-only">grade </span>
-                          {m.grade}
-                        </span>
-                      )}
-                      {m.project && (
-                        <Link className="link grades-project" href={m.project.href}>
-                          {m.project.title} →
-                        </Link>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <Modules items={MODULES} />
             </Entry>
             <Entry
               id="bsc"
               title="B.Sc. Mechanical Engineering"
               when="Sep 2014 – Sep 2019"
               where="Ferdowsi University of Mashhad"
-              mark={<span className="uni-mark uni-mark-fum" />}
+              mark={
+                <MarkLink
+                  href="https://www.um.ac.ir/"
+                  name="Ferdowsi University of Mashhad"
+                  mark="uni-mark-fum"
+                />
+              }
             >
               <p>Overall grade 2.3.</p>
               <p>
@@ -179,18 +333,7 @@ export default function CV() {
                 </Link>
                 .
               </p>
-              {/* Named as the certified English transcript names them, and
-                  without marks: Ferdowsi grades out of 20 and the modules above
-                  are on the German scale, so a second column of numbers here
-                  would read as the same scale and is not. */}
-              <div>
-                <p className="label text-ink-faint">Selected modules</p>
-                <p className="mt-2">
-                  Automatic Control · Robotics, with laboratory · Robotics —
-                  Systematics and Dynamics · Numerical Computation · Computer
-                  Programming · Vibrations · Engineering Design Methods
-                </p>
-              </div>
+              <Modules items={BSC_MODULES} />
             </Entry>
           </Entries>
         </Wrap>
@@ -206,6 +349,14 @@ export default function CV() {
               title="Working Student Researcher, Explainable AI"
               when="Feb 2026 – present"
               where="Fraunhofer IOSB · Karlsruhe, Germany · supervisor: M. Becker"
+              mark={
+                <MarkLink
+                  href="https://www.iosb.fraunhofer.de/"
+                  name="Fraunhofer IOSB"
+                  mark="uni-mark-fraunhofer"
+                />
+              }
+              wideMark
             >
               <p>
                 Implementing explainable-AI methods inside analysis tooling, making
@@ -216,6 +367,14 @@ export default function CV() {
               title="Student Research Assistant, Gaze-based Activity Recognition"
               when="Sep 2024 – Feb 2026"
               where="German Research Center for Artificial Intelligence (DFKI) · Kaiserslautern, Germany"
+              mark={
+                <MarkLink
+                  href="https://www.dfki.de/en/web"
+                  name="DFKI"
+                  mark="uni-mark-dfki"
+                />
+              }
+              wideMark
             >
               <p>
                 Gaze-based human activity recognition for industrial settings:
@@ -226,7 +385,21 @@ export default function CV() {
             <Entry
               title="Undergraduate Research Assistant"
               when="Sep 2017 – Sep 2019"
-              where="Robotics Lab, Ferdowsi University of Mashhad"
+              where="FUM Robotics Research Lab · Ferdowsi University of Mashhad"
+              /* The lab's own mark rather than the university's: this post was
+                 in one group inside a large university, and the degree above
+                 already carries the university crest. Prof. Akbarzadeh signs
+                 the letter of recommendation as director of the FUM Robotics
+                 Research Lab, and the centre he directs — FUM CARE — lists the
+                 FUM-Exoskeleton, which is FUME, among its own projects. */
+              mark={
+                <MarkLink
+                  href="https://fum-care.com/"
+                  name="FUM CARE, Ferdowsi University of Mashhad"
+                  mark="uni-mark-fumcare"
+                />
+              }
+              wideMark
             >
               <p>
                 Adaptive tracking control on a generalised fuzzy hyperbolic model
@@ -256,13 +429,9 @@ export default function CV() {
                 (ICRoM), Tehran, 20–21 November 2019, pp. 74–79.
               </p>
               <p className="mt-2 text-meta">
-                <a
-                  className="link"
-                  href="https://doi.org/10.1109/ICRoM48714.2019.9071886"
-                  rel="noopener"
-                >
+                <ExternalLink href="https://doi.org/10.1109/ICRoM48714.2019.9071886">
                   doi.org/10.1109/ICRoM48714.2019.9071886
-                </a>
+                </ExternalLink>
               </p>
               <p className="label mt-8 text-ink-faint">In preparation</p>
               <p className="mt-2">
@@ -320,34 +489,31 @@ export default function CV() {
             <SectionTitle num="V">Technical skills</SectionTitle>
           </Settle>
           <Settle>
-            <div className="copy max-w-measure">
-              <p>
-                <span className="label block text-ink-faint">Programming</span>
-                Python · MATLAB/Simulink · JavaScript
-              </p>
-              <p>
-                <span className="label block text-ink-faint">
-                  Machine learning and computer vision
-                </span>
-                PyTorch · scikit-learn · OpenCV · YOLO · SHAP
-              </p>
-              <p>
-                <span className="label block text-ink-faint">
-                  Robotics and AR
-                </span>
-                ROS · MoveIt · Franka Emika Panda · Intel RealSense · HoloLens 2
-                (Unity, MRTK, ARETT)
-              </p>
-              <p>
-                <span className="label block text-ink-faint">Methods</span>
-                Explainable AI · graph neural networks · optimal and
-                model-predictive control · adaptive control · system
-                identification
-              </p>
-              <p>
-                <span className="label block text-ink-faint">Languages</span>
-                English — fluent (IELTS 8.0) · German — B1 · Persian — native
-              </p>
+            <div className="skills">
+              {SKILLS.map(({ icon: Icon, name, items, single }) => (
+                <div key={name} className="skill">
+                  <span className="skill-mark" aria-hidden="true">
+                    <Icon />
+                  </span>
+                  <div>
+                    <p className="label text-ink-faint">{name}</p>
+                    {/* One item to a row, so a name is never orphaned by a line
+                        break and the marks line up in a column of their own. The
+                        gutter is there whether or not the item has a mark, which
+                        is what keeps the names on one edge. */}
+                    <ul className="tools" data-single={single || undefined}>
+                      {items.map((item) => (
+                        <li key={item.name} className="tool">
+                          <span className="tool-gutter" aria-hidden="true">
+                            {item.mark && <ToolMark mark={item.mark} />}
+                          </span>
+                          {item.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
             </div>
           </Settle>
         </Wrap>

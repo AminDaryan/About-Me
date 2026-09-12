@@ -56,6 +56,16 @@
 
   --spacing-measure: 36rem;
   --spacing-margin-col: 10.5rem;
+
+  /* The outer margin, where the chrome lives: the masthead's row and the
+     section rail both sit on this line, so on a wide screen they read as one
+     edge of the page rather than two things that nearly agree. It is the
+     text column's own gutter until the window is wide enough to have a margin
+     to give away, and it stops at 6rem — past that the chrome would be adrift
+     in white space instead of framing anything. 50vw rather than 50%, because
+     the rail is fixed and the masthead is not, and only the viewport is a
+     length both of them mean. */
+  --spacing-gutter: clamp(1.75rem, calc(50vw - 43rem), 6rem);
 }
 
 @layer base {
@@ -391,8 +401,94 @@
     .uni-mark { height: 3.1rem; }
   }
   .entry-marked:hover .uni-mark { background-color: var(--color-accent); }
+  /* The mark is a link to the institution. It is the only thing in the box, so
+     the box is the target: no padding games, and a visible ring when focused. */
+  .uni-link { display: block; border-radius: 3px; }
+  .uni-link:hover .uni-mark { background-color: var(--color-accent-deep); }
+  .uni-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
   .uni-mark-rptu { --mark: url("/logos/rptu.png"); }
   .uni-mark-fum { --mark: url("/logos/fum.png"); }
+  .uni-mark-fumcare { --mark: url("/logos/fumcare.png"); }
+  .uni-mark-fraunhofer { --mark: url("/logos/fraunhofer.png"); }
+  .uni-mark-dfki { --mark: url("/logos/dfki.png"); }
+
+  /* A crest wants height; a wordmark wants width. The research posts are
+     marked with lockups, so their column is wider and the marks hang from its
+     left edge — centred, three shapes this different would each start in a
+     different place and the column would read as a mistake. */
+  /* On a phone a wordmark beside the title costs a fifth of the width and the
+     title wraps after three words, so it goes above the title instead and the
+     text gets the whole line. */
+  .entry-marked[data-wide] { grid-template-columns: minmax(0, 1fr); }
+  .entry-marked[data-wide] .entry-mark { padding-top: 0; margin-bottom: 0.9rem; }
+  .entry-marked[data-wide] .uni-mark {
+    height: 1.5rem;
+    -webkit-mask-position: left center;
+    mask-position: left center;
+  }
+  @media (min-width: 640px) {
+    .entry-marked[data-wide] { grid-template-columns: 6.5rem minmax(0, 1fr); }
+    .entry-marked[data-wide] .entry-mark { padding-top: 0.3rem; margin-bottom: 0; }
+    .entry-marked[data-wide] .uni-mark { height: 1.9rem; }
+  }
+
+  /* -- Technical skills: a mark, a heading and a short list, one per row ----
+     The marks are decorative and the heading beside each one names the group.
+     One column, capped at the measure: the section is read straight down, and
+     the marks are what give the eye a place to land. */
+  .skills {
+    display: grid;
+    gap: 1.5rem;
+    max-width: var(--spacing-measure);
+  }
+  .skill {
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    column-gap: 0.9rem;
+    align-items: start;
+  }
+  .skill-mark {
+    display: block;
+    padding-top: 0.2rem;
+    color: var(--color-ink-faint);
+  }
+  .skill-mark svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* One item to a row, two columns where there is room for them. A run of
+     names separated by dots wraps wherever it likes, which orphans the last
+     one and scatters the marks; a row each keeps the marks in a column and
+     every name on the same edge, marked or not. */
+  .tools {
+    margin: 0.4rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.15rem 1.6rem;
+  }
+  @media (min-width: 640px) {
+    .tools:not([data-single]) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .tool {
+    display: grid;
+    grid-template-columns: 1.25em minmax(0, 1fr);
+    align-items: baseline;
+  }
+  .tool-mark {
+    display: inline-block;
+    width: 0.85em;
+    height: 0.85em;
+    vertical-align: -0.08em;
+    opacity: 0.6;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 
   /* -- Modules and their grades, with a dotted leader between ------------- */
   .grades {
@@ -426,6 +522,108 @@
     margin: 0.05rem 0 0.2rem 1rem;
     font-style: italic;
   }
+
+  /* -- The masthead's running head -----------------------------------------
+     The name is a running head, not a logotype: it is there to say whose site
+     this is on a page that does not otherwise say so. So it steps aside while
+     the page is showing its own name — the home page and the CV both open with
+     it set large — and takes over once that has scrolled away. Opacity only,
+     and the box keeps its size either way, so nothing in the row moves. */
+  .running-head {
+    transition: opacity 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .running-head[data-quiet] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* -- The margin rail -----------------------------------------------------
+     A book's running head, set in the outer margin: the sections of this page,
+     with the one being read marked in the accent. It appears only from 1360px
+     up, where there is margin enough to hold it clear of the measure — below
+     that it would either crowd the text or overlap it, and the masthead is a
+     short page away in any case. */
+  .rail {
+    display: none;
+    position: fixed;
+    top: 50%;
+    /* Out at the page's own edge rather than hugging the text: the margin is
+       where a running head belongs, and close to the measure it reads as part
+       of the column. It sits on the same line as the masthead's row. */
+    left: var(--spacing-gutter);
+    z-index: 40;
+    width: 10rem;
+    transform: translateY(-50%);
+  }
+  /* Not 1320px: there the rail cleared the measure by half a rem, which is a
+     gap the eye reads as a collision rather than as a margin. From here on it
+     is never nearer the column than about 2.5rem. */
+  @media (min-width: 1380px) {
+    .rail { display: block; }
+  }
+  .rail ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-left: 1px solid var(--color-rule-soft);
+  }
+  .rail a {
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    align-items: baseline;
+    margin-left: -1px;
+    padding: 0.4rem 0 0.4rem 0.85rem;
+    border-left: 1px solid transparent;
+    color: var(--color-ink-faint);
+    font-size: 0.78rem;
+    line-height: 1.4;
+    transition: color 0.25s ease, border-color 0.25s ease;
+  }
+  .rail a:hover { color: var(--color-ink-soft); }
+  .rail a[aria-current] {
+    color: var(--color-accent-deep);
+    border-left-color: var(--color-accent);
+  }
+  .rail-num {
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .rail a[aria-current] .rail-num { color: var(--color-accent); }
+
+  /* -- Back to the top -----------------------------------------------------
+     Out of the way until the masthead is well out of sight, then a quiet mark
+     in the corner rather than a floating button with a shadow. */
+  .to-top {
+    position: fixed;
+    right: clamp(1rem, 3vw, 2.25rem);
+    bottom: clamp(1rem, 3vw, 2.25rem);
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--color-rule);
+    border-radius: 50%;
+    background: var(--color-paper);
+    color: var(--color-ink-soft);
+    opacity: 0;
+    transform: translateY(0.4rem);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease, color 0.25s ease,
+      border-color 0.25s ease;
+  }
+  .to-top[data-show] {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  .to-top:hover,
+  .to-top:focus-visible {
+    color: var(--color-accent-deep);
+    border-color: var(--color-accent);
+  }
+  .to-top svg { width: 1.1rem; height: 1.1rem; }
 
   /* -- Contact icons -------------------------------------------------------
      Icon-only links, so each carries an aria-label for screen readers and a
@@ -751,6 +949,9 @@
     .road.is-drawn .road-draw { animation: none; }
     .road-late { opacity: 1; transition: none; }
     .road-pin { transition: none; }
+    .rail a { transition: none; }
+    .running-head { transition: none; }
+    .to-top { transition: none; }
     .road-halo { animation: none; opacity: 0; }
     .signpost-arrow { transition: none; }
     .road-spin { transform: none; }
@@ -774,6 +975,7 @@
   /* Close the generous screen rhythm up to something that fits on paper. */
   section { padding-top: 0.35rem !important; padding-bottom: 0.35rem !important; }
   .entry { break-inside: avoid; padding: 0.55rem 0 !important; }
+  .skill { break-inside: avoid; }
   h1, h2, h3 { break-after: avoid; }
 
   /* The fleuron is a screen flourish; on paper a plain rule reads better. */

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Masthead from "@/components/Masthead";
+import SectionNav from "@/components/SectionNav";
+import BackToTop from "@/components/BackToTop";
 import { SITE_URL } from "@/lib/site";
 import { Footer } from "@/components/ui";
 import "./globals.css";
@@ -88,7 +90,7 @@ export default function RootLayout({
         {/* Scroll-in animation starts at opacity 0. Without JavaScript nothing
             would ever reveal it, so show everything outright instead. */}
         <noscript>
-          <style>{`.settle{opacity:1 !important;transform:none !important}.ink svg path{stroke-dashoffset:0 !important}.road-draw{stroke-dashoffset:0 !important}.road-late{opacity:1 !important}`}</style>
+          <style>{`.settle{opacity:1 !important;transform:none !important}.ink svg path{stroke-dashoffset:0 !important}.road-draw{stroke-dashoffset:0 !important}.road-late{opacity:1 !important}.to-top{opacity:1 !important;transform:none !important;pointer-events:auto !important}`}</style>
         </noscript>
       </head>
       <body className="font-serif antialiased">
@@ -104,6 +106,10 @@ export default function RootLayout({
         </a>
         <Masthead />
         <main id="main">{children}</main>
+        {/* Both sit in the margins and come after the content in the document,
+            so neither stands between the reader and the page. */}
+        <SectionNav />
+        <BackToTop />
         <Footer />
       </body>
     </html>

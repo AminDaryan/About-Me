@@ -13,21 +13,23 @@ import { useSettle } from "./Settle";
 export default function Entry({
   id,
   mark,
+  wideMark,
   title,
   when,
   where,
-  links,
   delay = 0,
   children,
 }: {
   /** Makes the entry a link target, e.g. /research#gaze. */
   id?: string;
-  /** A small emblem hung to the left of the entry — a university's mark. */
+  /** A small emblem hung to the left of the entry — an institution's mark. */
   mark?: ReactNode;
+  /** The mark is a wordmark rather than a crest, so it wants width instead of
+      height: a wider column, and the marks hung from its left edge. */
+  wideMark?: boolean;
   title: string;
   when: string;
   where?: string;
-  links?: { label: string; href: string }[];
   delay?: number;
   children?: ReactNode;
 }) {
@@ -47,18 +49,6 @@ export default function Entry({
       )}
 
       {children && <div className="copy">{children}</div>}
-
-      {links && (
-        <ul className="mt-[0.9rem] flex flex-wrap gap-x-6 gap-y-1.5 text-meta">
-          {links.map((l) => (
-            <li key={l.href}>
-              <a className="link" href={l.href} rel="noopener">
-                {l.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
     </>
   );
 
@@ -66,13 +56,16 @@ export default function Entry({
     <li
       id={id}
       ref={ref}
+      data-wide={mark && wideMark ? "" : undefined}
       className={`settle entry border-t border-rule-soft py-[2.1rem] first:border-rule ${mark ? "entry-marked" : ""}`}
     >
       {mark ? (
         <>
-          <div className="entry-mark" aria-hidden="true">
-            {mark}
-          </div>
+          {/* Not aria-hidden: the mark is a link to the institution now, and
+              hiding a focusable element from assistive technology leaves
+              keyboard users landing on something their screen reader will not
+              name. Its own label carries the name. */}
+          <div className="entry-mark">{mark}</div>
           <div className="min-w-0">{body}</div>
         </>
       ) : (

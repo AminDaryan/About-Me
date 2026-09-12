@@ -3,7 +3,7 @@ import Settle from "@/components/Settle";
 import Portrait from "@/components/Portrait";
 import Journey from "@/components/journey/Journey";
 import { LinkedInIcon, MailIcon } from "@/components/icons";
-import { Divider, Leaf, SectionTitle, Wrap } from "@/components/ui";
+import { Divider, ExternalLink, Leaf, SectionTitle, Wrap } from "@/components/ui";
 
 /* The three other pages, as signposts. Each says what is on its page and
    nothing that is not: the CV, research and beyond pages are the record, and a
@@ -29,15 +29,25 @@ const PAGES = [
 export default function Home() {
   return (
     <>
-      <section className="pt-[clamp(3.5rem,9vw,7rem)] pb-[clamp(2.5rem,6vw,4rem)]">
+      {/* The three sections before the first heading still have somewhere to
+          be pointed at: the rail reads these names, and no heading is added to
+          a page that is deliberately one piece of prose. */}
+      <section
+        id="top"
+        data-rail="Introduction"
+        className="pt-[clamp(3.5rem,9vw,7rem)] pb-[clamp(2.5rem,6vw,4rem)]"
+      >
         <Wrap>
           <div className="grid items-start gap-[clamp(2.5rem,6vw,4rem)] md:grid-cols-[minmax(0,1fr)_15.5rem] md:gap-18">
             <div>
               {/* The name and nothing above it. The masthead gives the place a
                   visitor needs, the footer repeats it, and a standfirst over
-                  the title only delayed the one word the page is for. */}
+                  the title only delayed the one word the page is for.
+                  `data-page-name` tells the masthead that this page says the
+                  name itself, so its own copy stays out of the way until this
+                  one has scrolled past. */}
               <Settle>
-                <h1 className="text-display tracking-[-0.028em]">
+                <h1 data-page-name className="text-display tracking-[-0.028em]">
                   Amin Dariani
                 </h1>
               </Settle>
@@ -59,7 +69,7 @@ export default function Home() {
 
       <Divider />
 
-      <section className="py-[clamp(2.8rem,6vw,4.5rem)]">
+      <section id="background" data-rail="Background" className="py-[clamp(2.8rem,6vw,4.5rem)]">
         <Wrap>
           <Leaf>
             <Settle className="note">
@@ -121,7 +131,7 @@ export default function Home() {
         </Wrap>
       </section>
 
-      <section className="py-[clamp(1rem,3vw,2rem)]">
+      <section id="route" data-rail="The route" className="py-[clamp(1rem,3vw,2rem)]">
         <Wrap>
           <Settle>
             <Journey />
@@ -186,29 +196,19 @@ export default function Home() {
                   </a>
                 </li>
                 <li>
-                  <a
+                  <ExternalLink
                     className="contact-icon"
                     href="https://www.linkedin.com/in/amin-dariani/"
-                    rel="me noopener"
-                    aria-label="LinkedIn profile"
-                    data-tip="LinkedIn"
+                    rel="me"
+                    label="LinkedIn profile"
+                    tip="LinkedIn"
                   >
                     <LinkedInIcon className="h-[1.75rem] w-[1.75rem]" />
-                  </a>
+                  </ExternalLink>
                 </li>
               </ul>
             </Settle>
 
-            <Settle delay={0.14}>
-              <ul className="label mt-7 flex flex-wrap gap-x-8 gap-y-3 border-t border-rule-soft p-0 pt-5 text-ink-faint">
-                <li>
-                  <Link className="link" href="/cv">
-                    Curriculum vitae
-                  </Link>
-                </li>
-                <li>References on request</li>
-              </ul>
-            </Settle>
           </div>
         </Wrap>
       </section>
