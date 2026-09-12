@@ -87,13 +87,11 @@ export default function Home() {
               <p className="drop-cap max-w-measure">
                 At the moment I am a master&rsquo;s student in Automation and
                 Control at RPTU Kaiserslautern, writing my thesis with Fraunhofer
-                IOSB and KIT on explaining graph neural networks that predict how
-                long a machine has before it fails. A prediction like that is only
-                worth acting on if you can see why it was made — and it is not
-                obvious which explanation method to believe. The thesis compares
-                them, and measures whether each explanation reflects what the
-                model actually relies on and whether it holds still when the
-                input barely changes.
+                IOSB and KIT on explaining graph neural networks. A prediction is
+                only worth acting on if you can see why it was made — and on a
+                graph, where what the model has learned is spread across the
+                structure rather than sitting in any one place, saying what a
+                prediction rests on is harder than it sounds.
               </p>
             </Settle>
 

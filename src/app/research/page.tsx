@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/research" },
   title: "Research",
   description:
-    "Explainable and trustworthy machine learning — comparing explanation methods for graph neural networks by faithfulness and stability — with earlier work on gaze-based activity recognition, vision-guided manipulation and exoskeleton control.",
+    "Explainable and trustworthy machine learning — explaining what a graph neural network's prediction rests on — with earlier work on gaze-based activity recognition, vision-guided manipulation and exoskeleton control.",
 };
 
 export default function Research() {
@@ -55,31 +55,24 @@ export default function Research() {
           <Entries>
             <Entry
               id="thesis"
-              title="Explaining graph neural networks that predict remaining useful life"
+              title="Explaining graph neural networks"
               when="In progress"
               where="Master's thesis · RPTU Kaiserslautern, advised at Fraunhofer IOSB and KIT"
             >
               <p>
-                Remaining useful life prediction asks how long a machine or a
-                component has before it fails. When a system is naturally a graph
-                — sensors or components, and the relations between them — a graph
-                neural network can learn from that structure directly, rather than
-                from a flat table of readings.
+                Many systems are naturally graphs — parts or measurements, and
+                the relations between them. A graph neural network learns from
+                that structure directly rather than from a flat table of
+                readings, and what it learns ends up spread across the graph,
+                which is what makes it hard to say what any one prediction
+                rests on.
               </p>
               <p>
-                A prediction like that is only worth acting on if the person
-                acting can see why it was made, and different explanation methods
-                can give different answers for the same prediction. My thesis
-                compares two families of them on the same models: general-purpose
-                attribution methods, and explanation methods built specifically
-                for graphs.
-              </p>
-              <p>
-                The comparison is quantitative. An explanation has to earn trust
-                on two counts — it should be faithful, reflecting what the model
-                actually relies on, and it should be stable, so that a small
-                change in the input does not produce a completely different
-                story.
+                A prediction is only worth acting on if the person acting can
+                see why it was made. My thesis is about explaining these models:
+                what an explanation of a graph model can be asked to show, and
+                what it takes for one to be worth believing rather than simply
+                believed.
               </p>
               <Explain />
             </Entry>
@@ -93,8 +86,8 @@ export default function Research() {
                 analysis tooling, so that people who are not machine-learning
                 specialists can see why a model decided what it did. It is the
                 practical half of the same question. An explanation has two
-                audiences — the evaluation metric, which wants faithfulness to
-                the model, and the person, who wants a reason they can act on —
+                audiences — the evaluation, which wants a true account of the
+                model, and the person, who wants a reason they can act on —
                 and a method can satisfy one while being useless to the other.
               </p>
             </Entry>

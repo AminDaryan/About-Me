@@ -44,8 +44,9 @@ function edge(a: [number, number, number], b: [number, number, number]) {
 const WINDOW =
   "M 16 26 H 104 Q 107 26 107 29 V 93 Q 107 96 104 96 H 16 Q 13 96 13 93 V 29 Q 13 26 16 26 Z";
 
-/* Graph for the thesis stop: node radius stands for attribution, and the most
-   important node gets a second ring — an explanation drawn on a graph. */
+/* Graph for the thesis stop: node radius stands for how much the prediction
+   rests on that node, and the most important one gets a second ring — an
+   explanation drawn on a graph. */
 const N: [number, number, number][] = [
   [26, 40, 4],
   [58, 24, 7.5],

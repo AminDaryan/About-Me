@@ -660,43 +660,43 @@
     transition: width 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
-  /* -- Fig. 2: a prediction and two explanations of it ----------------------
-     The graph in ink, the explanation in the accent: only the handful of
-     sensors a method names is marked, because an explanation that points at
+  /* -- Fig. 2: a graph network and what its prediction rests on -------------
+     The graph in ink, the explanation in the accent: only the handful of nodes
+     the explanation names is marked, because an explanation that points at
      everything has not explained anything. */
-  .rul svg {
+  .graph-fig svg {
     display: block;
     width: 100%;
     height: auto;
     max-width: 30rem;
     margin-inline: auto;
   }
-  .rul-edge {
+  .graph-edge {
     stroke: var(--color-rule);
     stroke-width: 1.2;
     transition: opacity 0.35s ease, stroke 0.35s ease;
   }
-  .rul-rim {
+  .graph-rim {
     fill: var(--color-paper);
     stroke: var(--color-ink-soft);
     stroke-width: 1.2;
   }
-  .rul-core { fill: var(--color-ink); }
-  .rul-halo {
+  .graph-core { fill: var(--color-ink); }
+  .graph-halo {
     fill: none;
     stroke: var(--color-accent);
     stroke-width: 1.6;
     transition: opacity 0.35s ease;
   }
-  .rul-life {
+  .graph-out {
     display: block;
     width: 100%;
     max-width: 30rem;
     height: 4px;
     margin: 0.4rem auto 0;
   }
-  .rul-life-track { fill: var(--color-rule-soft); }
-  .rul-life-fill { fill: var(--color-accent-deep); }
+  .graph-out-track { fill: var(--color-rule-soft); }
+  .graph-out-fill { fill: var(--color-accent-deep); }
 
   /* -- Fig. 5: the exoskeleton ---------------------------------------------
      Hairlines at the same weight as the rules, so the drawing belongs to the
@@ -1188,7 +1188,7 @@
     .rail a { transition: none; }
     .running-head { transition: none; }
     .pipeline li { transition: none; }
-    .rul-edge, .rul-halo { transition: none; }
+    .graph-edge, .graph-halo { transition: none; }
     .meter-bar > span { transition: none; }
     .to-top { transition: none; }
     .road-halo { animation: none; opacity: 0; }

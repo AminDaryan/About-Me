@@ -42,7 +42,7 @@ const PERSON_LD = {
   alternateName: "Amin Amir Baglouee Dariani",
   jobTitle: "Working Student Researcher, Explainable AI",
   description:
-    "M.Sc. student in Automation and Control at RPTU Kaiserslautern, writing a thesis on explainable AI methods for graph neural network-based remaining useful life prediction.",
+    "M.Sc. student in Automation and Control at RPTU Kaiserslautern, writing a thesis on explaining graph neural networks.",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Kaiserslautern",

@@ -144,7 +144,7 @@ export const STEPS: Step[] = [
     chapter: "learn",
     place: "Karlsruhe, Germany",
     title: "Explainable AI at Fraunhofer IOSB",
-    text: "Now: a working student researcher in explainable AI, and a master's thesis comparing explanation methods for graph neural networks that predict how long a machine has left before it fails.",
+    text: "Now: a working student researcher in explainable AI, and a master's thesis on explaining what a graph neural network's prediction rests on.",
     art: "graph",
     alt: "A graph whose most important node is ringed",
     href: "/research#thesis",

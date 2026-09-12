@@ -161,12 +161,12 @@ const SKILLS: {
   {
     // "Explainable AI" is the field this CV is applying in, not a method, and
     // the research-focus line above already names it. What belongs here is the
-    // work it is done with.
+    // work it is done with. Naming particular families of explanation method
+    // would say more about the thesis than it is ready to say.
     icon: MethodIcon,
     name: "Methods and models",
     single: true,
     items: [
-      { name: "Attribution and graph-native explanation" },
       { name: "Graph neural networks" },
       { name: "Optimal and model-predictive control" },
       { name: "Adaptive control" },
@@ -273,10 +273,10 @@ export default function CV() {
               </p>
               <p className="mt-5">
                 <span className="label block text-ink-faint">Research focus</span>
-                Explainable and trustworthy machine learning — attribution and
-                graph-native explanation methods, evaluated quantitatively for
-                faithfulness and stability. Background in computer vision, robot
-                perception and model-based control.
+                Explainable and trustworthy machine learning — making what a
+                model has learned inspectable, and checkable rather than simply
+                believed. Background in computer vision, robot perception and
+                model-based control.
               </p>
             </div>
           </Settle>
@@ -305,9 +305,7 @@ export default function CV() {
               <p>
                 <span className="text-ink">Thesis</span> (in progress) —{" "}
                 <Link className="link" href="/research#thesis">
-                  &ldquo;A Comparative Evaluation of Explainable AI Methods for
-                  Graph Neural Network-based Remaining Useful Life
-                  Prediction&rdquo;
+                  explaining graph neural networks
                 </Link>
                 . Advisor: M. Becker, Fraunhofer IOSB / KIT IES.
               </p>
