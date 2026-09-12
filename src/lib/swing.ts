@@ -67,8 +67,9 @@ export function withWearer(body: Body, extraThigh: number, extraShank: number): 
   };
 }
 
-/** M(θ), symmetric, as [M11, M12, M22]. */
-function inertia(b: Body, knee: number): [number, number, number] {
+/** M(θ), symmetric, as [M11, M12, M22]. Exported because it is the half of
+    the dynamics a designer really does know, and both controllers use it. */
+export function inertia(b: Body, knee: number): [number, number, number] {
   const cross = b.m2 * b.l1 * b.c2 * Math.cos(knee);
   return [
     b.I1 + b.m1 * b.c1 * b.c1 + b.I2 + b.m2 * (b.l1 * b.l1 + b.c2 * b.c2) + 2 * cross,
@@ -121,35 +122,67 @@ export function step(b: Body, s: Limb, tau: Joints, dt: number): Limb {
 /** The cycle, in seconds. One step of one leg, then the same for the other. */
 export const CYCLE = 4;
 
+/** A point on the trajectory: where to be, how fast, and how hard to
+    accelerate — the last of which is what the controller feeds forward. */
+export interface Reference {
+  q: Joints;
+  dq: Joints;
+  ddq: Joints;
+}
+
+/** Where a leg is in its own cycle: standing for the first half, in the air
+    for the second. Two legs are the same curve half a cycle apart, which is
+    what walking is. */
+export const SWING_FROM = 0.5;
+
+/** A smooth hump, zero at both ends and at its ends' slopes: one flexion. */
+const bump = (u: number) => (1 - Math.cos(2 * Math.PI * u)) / 2;
+
 /**
  * Where the hip and the knee should be, at phase `t` of the cycle (0 to 1),
  * and how fast.
  *
- * Shaped like a slow, deliberate walk — the hip swings through about forty
- * degrees, the knee folds to about forty-five and straightens before the heel
- * goes down — rather than measured from anyone. The paper drives the robot with a
- * recorded normal gait instead; what matters to the demonstration is that the
- * reference is smooth, periodic, and not something either controller knows in
- * advance.
+ * A walking cycle, not a swing repeated: the leg stands through the first half
+ * — hip rotating from ahead of the body to behind it, knee almost straight
+ * with the small dip a loaded leg takes just after the heel goes down — and
+ * flies through the second, the knee folding to about fifty-five degrees at
+ * mid-swing to clear the floor and straightening again before the heel lands.
+ * Both legs run this curve, half a cycle apart, so each one stands while the
+ * other swings. An earlier version gave the standing leg a tenth of the swing
+ * leg's knee and nothing else, which drew a machine walking on one good leg
+ * and one stiff one.
+ *
+ * Shaped rather than measured. The paper drives the robot from a recorded
+ * normal gait; what matters here is that the reference is smooth, periodic,
+ * and not something either controller is told in advance.
  */
-export function reference(t: number): { q: Joints; dq: Joints } {
+export function reference(t: number): Reference {
   const w = 2 * Math.PI;
-  const hipAt = (x: number) => 0.38 * Math.sin(w * x) - 0.05;
+  /* +0.35 at the start of stance, where the heel goes down ahead of the body,
+     and −0.35 at toe-off half a cycle later. */
+  const hipAt = (x: number) => 0.35 * Math.cos(w * x) - 0.02;
   /* Negative, because the shank's angle in the plant is measured as hip + knee
      and a knee only bends one way: a positive value here would draw a leg
      hyperextending forward at every step. */
-  const kneeAt = (x: number) =>
-    -(0.58 * (1 - Math.cos(w * x)) * 0.5 + 0.4 * Math.max(0, Math.sin(w * x + 0.9)) ** 2);
+  const kneeAt = (x: number) => {
+    const p = ((x % 1) + 1) % 1;
+    return p < SWING_FROM
+      ? -0.12 * bump(p / SWING_FROM)
+      : -0.95 * bump((p - SWING_FROM) / (1 - SWING_FROM));
+  };
   /* Rates in radians per *second*, not per cycle — the controller compares
      them against a measured θ̇ and there is no second place for the cycle time
      to be divided out. Numerically, because the knee is a cosine plus a
      one-sided square and its derivative is not worth writing by hand for a
      curve that is evaluated afresh every step anyway. */
-  const h = 1e-4;
+  const h = 1e-3;
   const rate = (f: (x: number) => number) => (f(t + h) - f(t - h)) / (2 * h * CYCLE);
+  const accel = (f: (x: number) => number) =>
+    (f(t + h) - 2 * f(t) + f(t - h)) / (h * h * CYCLE * CYCLE);
   return {
     q: [hipAt(t), kneeAt(t)],
     dq: [rate(hipAt), rate(kneeAt)],
+    ddq: [accel(hipAt), accel(kneeAt)],
   };
 }
 
@@ -157,13 +190,30 @@ export function reference(t: number): { q: Joints; dq: Joints } {
 
 export type Law = "pid" | "adaptive";
 
-/** Both controllers share this much: a proportional-derivative core on the
-    tracking error, tuned once, on the frame with no wearer in it. */
-const KP: Joints = [420, 260];
-const KD: Joints = [58, 30];
-/** Integral gain, PID only. Enough to pull out a steady lean, slow enough not
-    to wind up against a trajectory that reverses twice a cycle. */
-const KI: Joints = [260, 150];
+/**
+ * Both controllers have the same shape, and it is the paper's:
+ *
+ *     τ = M̂(θ) · (θ̈ᵣ + Kd ė + Kp e) + (what each one does about V)
+ *
+ * The inertia is written down from the machine's drawings, so both may use it;
+ * what neither is given is V — the Coriolis and gravity terms, which depend on
+ * the person in the frame. Compensating M̂ and leaving V to be discovered is
+ * what makes the comparison about the thing the paper is about, and not about
+ * which controller happens to have more gain.
+ *
+ * `M̂` is the bare frame, deliberately: a wearer's mass is not the designer's
+ * to know, and the plant this acts on is the frame with somebody in it.
+ */
+/* Tuned by search, on the plant, until neither law got better: the knee wants
+   six times the hip's stiffness because its own inertia is six times smaller,
+   and past this the torque is spent for nothing. A baseline nobody tried to
+   tune is not a comparison, it is a straw man. */
+const KP: Joints = [430, 2600];
+const KD: Joints = [41, 92];
+/** Integral gain, PID only: its one way of discovering a load it cannot see.
+    Wound down hard, because it is chasing a term that reverses twice a cycle
+    and an integrator that keeps up with that is an integrator that rings. */
+const KI: Joints = [700, 700];
 /** The sliding variable's weight: r = ė + Λe, which is what the adaptation
     law watches instead of the error alone. */
 const LAMBDA = 14;
@@ -205,55 +255,70 @@ function basis([q1, q2, d1, d2]: Limb): number[] {
 }
 
 /* Learning rate, and the leakage that keeps the weights from drifting.
-   Slower than it could be: at ten times this the error settles inside the
-   first step and there is nothing to watch. Here it takes three or four, which
-   is both visible and honest about what adaptation is — the controller is
-   finding something out, and finding things out takes time. */
-const GAMMA = 15;
-const LEAK = 0.01;
+   Fast, and deliberately: a slower rate makes the first few steps visibly
+   improve, which is a nice thing to watch and a worse controller — it can
+   then only learn an average of a term that swings right through the stroke,
+   and it settles at twice the error. The demonstration does not need the
+   learning to be slow enough to see. It needs the reader to be able to change
+   the wearer and watch which of the two laws cares. */
+const GAMMA = 240;
+const LEAK = 0.02;
 
 /**
  * The torque to apply now, and the estimate as it stands after this step.
  *
  * The PID knows nothing about the limb and pays for it in lag: gravity on a
- * loaded shank is a torque it can only discover after the error has appeared.
- * The adaptive law adds φ̂ᵀψ, which converges on that torque while the leg is
- * moving, so the error it is correcting gets smaller rather than repeating
- * every cycle.
+ * loaded shank is a torque it can only discover after the error has appeared,
+ * and its integrator rediscovers it from scratch twice a cycle, as the sign
+ * turns over. The adaptive law learns that torque as a function of where the
+ * leg is, so the second step is better than the first and the fifth is better
+ * again.
  */
 export function torque(
   law: Law,
   s: Limb,
-  ref: { q: Joints; dq: Joints },
+  ref: Reference,
   est: Estimate,
   dt: number,
+  nominal: Body = FRAME,
 ): Joints {
   const e: Joints = [ref.q[0] - s[0], ref.q[1] - s[1]];
   const de: Joints = [ref.dq[0] - s[2], ref.dq[1] - s[3]];
-  const pd: Joints = [KP[0] * e[0] + KD[0] * de[0], KP[1] * e[1] + KD[1] * de[1]];
+
+  /* The acceleration being asked for: the trajectory's own, plus whatever it
+     takes to close the error that is there. */
+  const want: Joints = [
+    ref.ddq[0] + KP[0] * e[0] + KD[0] * de[0],
+    ref.ddq[1] + KP[1] * e[1] + KD[1] * de[1],
+  ];
 
   if (law === "pid") {
     // Clamped, because an integrator against a trajectory this fast will
     // otherwise wind up and hand back the energy at the worst moment.
-    est.integral[0] = Math.max(-0.6, Math.min(0.6, est.integral[0] + e[0] * dt));
-    est.integral[1] = Math.max(-0.6, Math.min(0.6, est.integral[1] + e[1] * dt));
-    return [
-      pd[0] + KI[0] * est.integral[0],
-      pd[1] + KI[1] * est.integral[1],
-    ];
+    for (const j of [0, 1] as const) {
+      est.integral[j] = Math.max(-0.06, Math.min(0.06, est.integral[j] + e[j] * dt));
+      want[j] += KI[j] * est.integral[j];
+    }
   }
 
-  const psi = basis(s);
-  const out: Joints = [pd[0], pd[1]];
-  for (let j = 0; j < 2; j++) {
-    const r = de[j] + LAMBDA * e[j];
-    const w = est.weights[j];
-    let feed = 0;
-    for (let i = 0; i < BASIS; i++) {
-      w[i] += dt * GAMMA * (r * psi[i] - LEAK * w[i]);
-      feed += w[i] * psi[i];
+  const [M11, M12, M22] = inertia(nominal, s[1]);
+  const out: Joints = [
+    M11 * want[0] + M12 * want[1],
+    M12 * want[0] + M22 * want[1],
+  ];
+
+  if (law === "adaptive") {
+    const psi = basis(s);
+    for (let j = 0; j < 2; j++) {
+      const r = de[j] + LAMBDA * e[j];
+      const w = est.weights[j];
+      let feed = 0;
+      for (let i = 0; i < BASIS; i++) {
+        w[i] += dt * GAMMA * (r * psi[i] - LEAK * w[i]);
+        feed += w[i] * psi[i];
+      }
+      out[j] += feed;
     }
-    out[j] += feed;
   }
   return out;
 }
