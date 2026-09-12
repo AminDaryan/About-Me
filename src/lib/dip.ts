@@ -314,10 +314,14 @@ export function railStop(x: number, xd: number): number {
 }
 
 /**
- * The generalized force from pulling one point toward the pointer: F from the
- * spring-damper, then Q = Jᵀ F. Pulling link 2 therefore acts on link 2 — its
- * effect reaches the cart and link 1 only through the joints, as it would in
- * a real mechanism.
+ * The pull: the force in newtons at the point being held, where that point is,
+ * and what the force does to the coordinates — Q = Jᵀ F.
+ *
+ * Pulling link 2 therefore acts on link 2; its effect reaches the cart and link
+ * 1 only through the joints, as it would in a real mechanism. The Cartesian
+ * force comes back with the generalized one because the scene draws it: a pull
+ * on the lower link sends the whole machine the other way, and the only way to
+ * read that as mechanics rather than as a fault is to see both arrows.
  */
 export function pointForce(
   body: Body,
@@ -326,7 +330,7 @@ export function pointForce(
   p: Params,
   hx: number,
   hy: number,
-): Generalized {
+): { Q: Generalized; fx: number; fy: number; px: number; py: number } {
   const b = bodyPoint(body, sAlong, st, p);
   const g = grabGains(body, sAlong, p);
   let fx = g.k * (hx - b.px) - g.c * b.vx;
@@ -337,11 +341,17 @@ export function pointForce(
     fy *= g.fmax / mag;
   }
   const J = b.J;
-  return [
-    J[0][0] * fx + J[1][0] * fy,
-    J[0][1] * fx + J[1][1] * fy,
-    J[0][2] * fx + J[1][2] * fy,
-  ];
+  return {
+    Q: [
+      J[0][0] * fx + J[1][0] * fy,
+      J[0][1] * fx + J[1][1] * fy,
+      J[0][2] * fx + J[1][2] * fy,
+    ],
+    fx,
+    fy,
+    px: b.px,
+    py: b.py,
+  };
 }
 
 /** u = −K (s − reference), saturated at the actuator limit. */

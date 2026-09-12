@@ -4,6 +4,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { ACCENT, INK, RULE } from "./palette";
 
 /* A seven-joint arm drawn as hairline ink on paper — the figure for the Franka
    Emika Panda project on /research. The joints alternate the way the Panda's do:
@@ -16,10 +17,6 @@ import * as THREE from "three";
    technical figure rather than a rendering. The pose comes from nesting the
    joint frames, which is forward kinematics done the way a scene graph
    already wants to do it. */
-
-const INK = "#23201a";
-const RULE = "#d0cdbd";
-const ACCENT = "#9c5039";
 
 const BASE = 0.28;
 // The upper arm and forearm are the old L1 = 0.85 and L2 = 0.72, each split by a

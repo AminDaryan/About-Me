@@ -8,23 +8,33 @@
    ========================================================================== */
 
 @theme {
-  /* Ground: Fedrigoni Splendorgel Avorio. Everything below is derived from it
-     by mixing ink into the sheet at fixed ratios — 4% for the panel, 7% for the
-     soft rule, 13% for the rule — so the hairlines keep the same relative
-     presence they had on the old near-white. Swapping only --color-paper would
-     have put the rules within a few percent of the ground and erased them. */
-  --color-paper: #eae7d5;
-  --color-paper-deep: #e2dfcd;
-  --color-ink: #23201a;
-  --color-ink-soft: #57514a;
-  /* Raised from #8c837a: on this ground that was 2.9:1, which is too thin for
-     small letterspaced caps. This is 4.6:1. */
-  --color-ink-faint: #6f6555;
-  --color-rule: #d0cdbd;
-  --color-rule-soft: #dcd9c8;
-  /* Darkened from #a65a43 for the same reason — 4.1:1 became 4.7:1. */
-  --color-accent: #9c5039;
-  --color-accent-deep: #7d3c28;
+  /* Ground: a warm laid cream, the colour of a book that has been on a shelf
+     for fifty years. The old ground was a greener ivory — hue 51°, and against
+     the ink it read cool and clinical where it was meant to read like paper.
+     This is hue 42° and a little more saturated: the same lightness, so nothing
+     below it had to move, but the whole page now sits under lamplight rather
+     than daylight.
+
+     Everything derived from it is ink mixed into the sheet at fixed ratios —
+     4% for the panel, 7% for the soft rule, 13% for the rule — so the hairlines
+     keep the same relative presence whatever the ground becomes. Changing only
+     --color-paper would put the rules within a few percent of it and erase
+     them.
+
+     Every ratio below is measured against the ground, and none may drop under
+     4.5:1: ink 12.2, ink-soft 6.1, ink-faint 4.8, accent 5.2, accent-deep 7.0. */
+  --color-paper: #ece3ce;
+  --color-paper-deep: #e4dbc7;
+  --color-ink: #2a231a;
+  --color-ink-soft: #5c5044;
+  --color-ink-faint: #6f6049;
+  --color-rule: #d3cab7;
+  --color-rule-soft: #ded6c1;
+  /* Oxblood rather than brick: deeper and less orange than the #9c5039 it
+     replaces, which is both warmer against this ground and a point of contrast
+     better than the one before it. */
+  --color-accent: #96442d;
+  --color-accent-deep: #7a3522;
 
   /* No web fonts. This stack resolves to Iowan Old Style, Palatino or Georgia
      depending on the visitor's OS — which avoids loading Google Fonts (ruled a
@@ -49,8 +59,11 @@
   --text-lede--line-height: 1.55;
   --text-subhead: 1.24rem;
   --text-subhead--line-height: 1.35;
-  --text-body: 1.0625rem;
-  --text-body--line-height: 1.72;
+  /* Set a shade larger and looser than a screen would ask for, because a page
+     read at arm's length in no hurry wants a book's measure rather than an
+     interface's: 17.4px on a 68-character line, leading at 1.76. */
+  --text-body: 1.09rem;
+  --text-body--line-height: 1.76;
   --text-meta: 0.9rem;
   --text-meta--line-height: 1.6;
 
@@ -88,8 +101,8 @@
     background: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-serif);
-    font-size: 1.0625rem;
-    line-height: 1.72;
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
     font-feature-settings: "kern" 1, "liga" 1, "onum" 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -167,6 +180,17 @@
 }
 
 @layer components {
+  /* -- A small control with a full-sized target ---------------------------
+     The figures' controls are set in the same quiet letterspaced caps as
+     everything else, which on a phone is a target about sixteen pixels high.
+     The text stays exactly where it is and the target grows around it, which
+     is the whole of the fix; nothing moves on the page. */
+  .tap {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
   /* -- Links: a hairline that warms on hover ----------------------------- */
   .link {
     background-image: linear-gradient(var(--color-rule), var(--color-rule));
@@ -521,6 +545,138 @@
     justify-self: start;
     margin: 0.05rem 0 0.2rem 1rem;
     font-style: italic;
+  }
+
+  /* -- Fig. 2: the gaze study ----------------------------------------------
+     The room is drawn in rule weight and stays out of the way; the accent is
+     on the eye alone, which is the one thing in the figure that is alive. */
+  .gaze svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+  .gaze-rule {
+    stroke: var(--color-rule);
+    stroke-width: 1.1;
+    fill: none;
+  }
+  .gaze-prop {
+    fill: none;
+    stroke: var(--color-rule);
+    stroke-width: 1.1;
+    stroke-linejoin: round;
+  }
+  .gaze-trail {
+    fill: none;
+    stroke: var(--color-ink-soft);
+    stroke-width: 0.9;
+    stroke-linejoin: round;
+    opacity: 0.5;
+  }
+  .gaze-fix {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 1.2;
+    transition: opacity 0.12s linear;
+  }
+  /* A fixation the lids closed on, marked by a second ring rather than a
+     colour: the accent belongs to the eye. */
+  .gaze-blink {
+    stroke-dasharray: 2.5 2.5;
+  }
+  .gaze-eye {
+    fill: var(--color-accent);
+    stroke: none;
+  }
+
+  .gaze-features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem 2rem;
+    max-width: 30rem;
+    margin: 1.35rem auto 0;
+  }
+  @media (min-width: 40rem) {
+    .gaze-features { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  .gaze-feature {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .gaze-bar {
+    display: block;
+    height: 3px;
+    background: var(--color-rule-soft);
+  }
+  .gaze-bar > span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--color-accent-deep);
+    transition: width 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* -- Fig. 4: the exoskeleton ---------------------------------------------
+     Hairlines at the same weight as the rules, so the drawing belongs to the
+     page rather than sitting on it. The only accent is the leg being
+     controlled — the one thing in the figure that the figure is about. */
+  .exo svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 30rem;
+    margin-inline: auto;
+    overflow: visible;
+  }
+  .exo-rule {
+    stroke: var(--color-rule);
+    stroke-width: 1;
+  }
+  .exo-limb {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .exo-stance {
+    stroke: var(--color-ink-soft);
+    stroke-width: 1.5;
+  }
+  .exo-swing {
+    stroke: var(--color-accent);
+  }
+  /* Where the leg is *meant* to be. Dashed, and thin enough that the gap
+     between it and the solid leg is the thing you see. */
+  .exo-ghost {
+    fill: none;
+    stroke: var(--color-ink-faint);
+    stroke-width: 1.1;
+    stroke-dasharray: 3 4;
+    stroke-linecap: round;
+    opacity: 0.85;
+  }
+  .exo-motor {
+    fill: var(--color-ink);
+    stroke: none;
+  }
+  .exo-passive {
+    fill: var(--color-paper);
+    stroke: var(--color-ink-soft);
+    stroke-width: 1.3;
+  }
+  .exo-label {
+    fill: var(--color-ink-faint);
+    font-size: 9.5px;
+    font-style: italic;
+  }
+  .exo-trace {
+    fill: none;
+    stroke: var(--color-accent-deep);
+    stroke-width: 1.2;
+    stroke-linejoin: round;
   }
 
   /* -- The masthead's running head -----------------------------------------

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Settle from "@/components/Settle";
 import Entry from "@/components/Entry";
+import Exoskeleton from "@/components/Exoskeleton";
+import Gaze from "@/components/Gaze";
 import { ArmFigure, PendulumFigure } from "@/components/three/mounts";
 import { Divider, Entries, SectionTitle, Wrap } from "@/components/ui";
 
@@ -131,6 +133,7 @@ export default function Research() {
                 is small, which is not what such a model wants. A manuscript on
                 the work is in preparation.
               </p>
+              <Gaze />
             </Entry>
             <Entry
               id="pick-and-place"
@@ -174,6 +177,7 @@ export default function Research() {
                 and the specification is written in terms of what a human body
                 can tolerate. It became my first publication.
               </p>
+              <Exoskeleton />
             </Entry>
             <Entry
               id="pendulum"

@@ -16,12 +16,12 @@ const NAV = [
    the left, whose pages these are on the right.
 
    The name is a running head, not a logotype. Its job is to answer "whose site
-   is this?" on /research and /beyond, whose headings are about the work rather
-   than the person — so on the two pages that already answer that themselves,
-   large, at the top, it waits until their own name has scrolled out of sight
-   and then takes over. Showing both at once was the complaint; showing it on
-   some pages and not others would be the other one. This is the rule that
-   satisfies both: the name is on screen exactly once, always.
+   is this?", and it does that everywhere except where the page already sets the
+   same name large in its own heading — the CV's letterhead — where it waits
+   until that has scrolled under it. One rule, and the name is on screen exactly
+   once: never twice in a screen, never missing from a page. The home page's
+   greeting says only "Amin", so the masthead carries the surname there from the
+   first line.
 
    The fade is opacity alone and the box keeps its width, so the row never
    moves — and with JavaScript off the name simply stays, which is the safe

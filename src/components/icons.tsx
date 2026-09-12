@@ -54,7 +54,7 @@ export function NetworkIcon({ className = "" }: IconProps) {
   );
 }
 
-/** A two-link arm on its base, gripper open, as Fig. 2 draws one. */
+/** A two-link arm on its base, gripper open, as Fig. 3 draws one. */
 export function ArmIcon({ className = "" }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden="true" focusable="false">

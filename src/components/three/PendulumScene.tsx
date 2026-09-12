@@ -10,6 +10,7 @@ import { Line, OrthographicCamera } from "@react-three/drei";
 import { useMemo, useRef, useState, type RefObject } from "react";
 import * as THREE from "three";
 import type { Line2 } from "three-stdlib";
+import { ACCENT, INK, RULE } from "./palette";
 import {
   DEFAULT_PARAMS,
   UMAX,
@@ -36,11 +37,14 @@ import {
    pulling the top link acts on the top link and reaches the cart only through
    the joints. The controller keeps running and resists you. The small diamond
    is different — it is the cart's commanded position, and dragging it moves the
-   setpoint. */
+   setpoint.
 
-const INK = "#23201a";
-const RULE = "#d0cdbd";
-const ACCENT = "#9c5039";
+   Both forces are drawn where they act, because the honest answer to "I pulled
+   it right and it went left" is a picture. Pull anywhere on the lower link and
+   the cart leaves the other way: the link leans into your hand until gravity
+   balances it, and the motor has to chase the lean. The reversal stops about a
+   hand's width above the first joint — below that point the machine goes one
+   way, above it the other, and nothing about the controller changes. */
 
 const DT = 1 / 300; // integrator step
 const UPRIGHT: State = [0, 0.09, -0.06, 0, 0, 0];
@@ -66,6 +70,8 @@ const PIVOT = 0.026;
 const TARGET_R = 0.035;
 /** The rail the cart runs on, and the line the target diamond sits on. */
 const RAIL_Y = -0.045;
+/** Where the motor's arrow hangs: under the cart, clear of the rail's ticks. */
+const MOTOR_Y = -0.125;
 
 type Grip =
   | { kind: "body"; body: Body; s: number; hx: number; hy: number }
@@ -79,6 +85,83 @@ type Held = Body | "target" | null;
     moves the link, and without this the pendulum looks as though it grabbed
     something else. */
 const inkOr = (held: boolean | undefined) => (held ? ACCENT : INK);
+
+/* -- Force arrows ---------------------------------------------------------
+   Your pull and the motor's push, drawn where each one acts.
+
+   The two differ by two orders of magnitude — a tenth of a newton against as
+   much as thirty — so the length goes as the square root of the force: linear,
+   either the hand's arrow is a dot or the motor's runs off the page. Both use
+   the same scale, so they stay comparable with each other, and the exact
+   newtons are printed under the figure for anyone who wants them. */
+const ARROW_Z = 0.02;
+const HEAD_LEN = 0.05;
+const arrowLength = (newtons: number) => Math.min(0.62, 0.17 * Math.sqrt(newtons));
+/** Below this the arrow is shorter than its own head, and reads as a smudge. */
+const ARROW_MIN = 0.02;
+
+/** A force arrow, drawn from where it acts. Both halves are moved by ref. */
+function Arrow({
+  shaft,
+  head,
+  colour,
+}: {
+  shaft: RefObject<Line2 | null>;
+  head: RefObject<THREE.Mesh | null>;
+  colour: string;
+}) {
+  return (
+    <group>
+      <Line
+        ref={shaft}
+        points={[
+          [0, 0, ARROW_Z],
+          [0, 0, ARROW_Z],
+        ]}
+        color={colour}
+        lineWidth={1.4}
+        visible={false}
+      />
+      <mesh ref={head} visible={false}>
+        <coneGeometry args={[0.019, HEAD_LEN, 16]} />
+        <meshBasicMaterial color={colour} side={THREE.DoubleSide} />
+      </mesh>
+    </group>
+  );
+}
+
+/** Points an arrow from (x, y) along (fx, fy), or hides it if there is no force. */
+function aim(
+  shaft: Line2 | null,
+  head: THREE.Mesh | null,
+  x: number,
+  y: number,
+  fx: number,
+  fy: number,
+) {
+  const force = Math.hypot(fx, fy);
+  const len = arrowLength(force);
+  const show = len > ARROW_MIN;
+  if (shaft) {
+    shaft.visible = show;
+    if (show) {
+      const ux = fx / force, uy = fy / force;
+      // The shaft stops where the head begins, or the head's base shows
+      // through the line as a notch.
+      const tail = Math.max(0, len - HEAD_LEN * 0.9);
+      shaft.geometry.setPositions([x, y, ARROW_Z, x + ux * tail, y + uy * tail, ARROW_Z]);
+    }
+  }
+  if (head) {
+    head.visible = show;
+    if (show) {
+      const ux = fx / force, uy = fy / force;
+      head.position.set(x + ux * (len - HEAD_LEN / 2), y + uy * (len - HEAD_LEN / 2), ARROW_Z);
+      // A cone points along its own +Y, so the rotation is measured from there.
+      head.rotation.z = Math.atan2(uy, ux) - Math.PI / 2;
+    }
+  }
+}
 
 function Rail() {
   const ticks = useMemo(() => {
@@ -173,7 +256,7 @@ interface SimProps {
      letting go are two events per drag, not sixty a second, so the parts that
      only have to look held can be told in the ordinary way. */
   held: Held;
-  readout: (t1: number, t2: number, u: number) => void;
+  readout: (t1: number, t2: number, u: number, pull: number) => void;
   running: boolean;
 }
 
@@ -196,6 +279,16 @@ function Sim({ stateRef, xRef, kickRef, gripRef, held, readout, running }: SimPr
   // each frame, like every other moving part of the scene.
   const bandRef = useRef<Line2>(null);
 
+  /* The two forces in the drawing: yours, at the point you hold, and the
+     motor's, under the cart. Pull the lower link to the right and the machine
+     leaves to the left — which is mechanics, not a fault, and the arrows are
+     where you can see it happen. */
+  const pullRef = useRef<{ fx: number; fy: number; px: number; py: number } | null>(null);
+  const pullLine = useRef<Line2>(null);
+  const pullHead = useRef<THREE.Mesh>(null);
+  const motorLine = useRef<Line2>(null);
+  const motorHead = useRef<THREE.Mesh>(null);
+
   useFrame((_, delta) => {
     let u = 0;
     const grip = gripRef.current;
@@ -213,10 +306,14 @@ function Sim({ stateRef, xRef, kickRef, gripRef, held, readout, running }: SimPr
           kickRef.current = 0;
         }
 
-        const ext: Generalized =
-          grip?.kind === "body"
-            ? pointForce(grip.body, grip.s, s, p, grip.hx, grip.hy)
-            : [0, 0, 0];
+        let ext: Generalized = [0, 0, 0];
+        if (grip?.kind === "body") {
+          const pull = pointForce(grip.body, grip.s, s, p, grip.hx, grip.hy);
+          ext = pull.Q;
+          // Kept for the arrow: the last of the 300 Hz steps is the one the
+          // frame about to be drawn is showing.
+          pullRef.current = pull;
+        }
         ext[0] += railStop(s[0], s[3]);
 
         u = control(K, s, xRef.current);
@@ -262,10 +359,26 @@ function Sim({ stateRef, xRef, kickRef, gripRef, held, readout, running }: SimPr
     } else {
       if (bandLine) bandLine.visible = false;
       if (hand) hand.visible = false;
+      pullRef.current = null;
     }
 
+    const pull = pullRef.current;
+    aim(
+      pullLine.current,
+      pullHead.current,
+      pull?.px ?? 0,
+      pull?.py ?? 0,
+      pull?.fx ?? 0,
+      pull?.fy ?? 0,
+    );
+    // The motor drives the cart along the rail and nothing else, so its arrow
+    // is horizontal and hangs under the cart, where the drive would be.
+    aim(motorLine.current, motorHead.current, x, MOTOR_Y, u, 0);
+
     tickRef.current += 1;
-    if (tickRef.current % 6 === 0) readout(t1, t2, u);
+    if (tickRef.current % 6 === 0) {
+      readout(t1, t2, u, pull ? Math.hypot(pull.fx, pull.fy) : 0);
+    }
   });
 
   // The group is dropped so the cart-to-tip span sits centred in the frame,
@@ -299,6 +412,11 @@ function Sim({ stateRef, xRef, kickRef, gripRef, held, readout, running }: SimPr
           </group>
         </group>
       </group>
+
+      {/* Both forces, drawn where they act: yours in the accent at the point
+          you hold, the motor's in ink under the cart. */}
+      <Arrow shaft={pullLine} head={pullHead} colour={ACCENT} />
+      <Arrow shaft={motorLine} head={motorHead} colour={INK} />
 
       <Line
         ref={bandRef}
@@ -357,6 +475,7 @@ export default function PendulumScene() {
   const t1Ref = useRef<HTMLSpanElement>(null);
   const t2Ref = useRef<HTMLSpanElement>(null);
   const uRef = useRef<HTMLSpanElement>(null);
+  const pullRow = useRef<HTMLSpanElement>(null);
 
   // This component is only ever mounted client-side (dynamic, ssr: false),
   // so reading matchMedia in the initialiser is safe and avoids an effect.
@@ -366,10 +485,16 @@ export default function PendulumScene() {
       !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
 
-  const readout = (t1: number, t2: number, u: number) => {
+  const readout = (t1: number, t2: number, u: number, pull: number) => {
     if (t1Ref.current) t1Ref.current.textContent = t1.toFixed(3);
     if (t2Ref.current) t2Ref.current.textContent = t2.toFixed(3);
     if (uRef.current) uRef.current.textContent = u.toFixed(1);
+    /* The pull's own row appears only while there is one, so the line does not
+       carry a permanent 0.00 N for a force nobody is applying. */
+    if (pullRow.current) {
+      pullRow.current.hidden = pull === 0;
+      if (pull !== 0) pullRow.current.textContent = `your pull ${pull.toFixed(2)} N`;
+    }
   };
 
   /** A pointer position in the pendulum's own plane: undo the orthographic
@@ -512,8 +637,9 @@ export default function PendulumScene() {
           <span className="mx-2 text-rule">·</span>
           θ₂ <span ref={t2Ref} className="text-ink">0.000</span> rad
           <span className="mx-2 text-rule">·</span>
-          u <span ref={uRef} className="text-ink">0.0</span> N
+          motor <span ref={uRef} className="text-ink">0.0</span> N
           <span className="ml-2 normal-case">(limit ±{UMAX} N)</span>
+          <span ref={pullRow} hidden className="ml-2 text-accent" />
         </p>
 
         <div className="flex gap-6">
@@ -524,7 +650,7 @@ export default function PendulumScene() {
                 (Math.random() > 0.5 ? 1 : -1) * (1.4 + Math.random() * 1.4);
               setRunning(true);
             }}
-            className="label link cursor-pointer text-accent"
+            className="label tap link cursor-pointer text-accent"
           >
             Disturb it
           </button>
@@ -535,7 +661,7 @@ export default function PendulumScene() {
               xRef.current = 0;
               kickRef.current = 0;
             }}
-            className="label link cursor-pointer text-ink-faint"
+            className="label tap link cursor-pointer text-ink-faint"
           >
             Recentre
           </button>

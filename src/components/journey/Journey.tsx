@@ -8,12 +8,12 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
   type CSSProperties,
   type KeyboardEvent,
   type PointerEvent,
 } from "react";
 import { InkFigure } from "@/components/ink";
+import useMedia from "@/components/useMedia";
 import { FIGURES } from "./figures";
 import {
   fromStops,
@@ -57,18 +57,6 @@ const TOUR_MS = 2800;
     sweep, in px, and how far the driving gear turns across it, in degrees. */
 const SWEEP = 200;
 const SPIN = 300;
-
-function useMedia(query: string, onServer: boolean) {
-  return useSyncExternalStore(
-    (notify) => {
-      const m = window.matchMedia(query);
-      m.addEventListener("change", notify);
-      return () => m.removeEventListener("change", notify);
-    },
-    () => window.matchMedia(query).matches,
-    () => onServer,
-  );
-}
 
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 

@@ -40,15 +40,15 @@ export default function Home() {
         <Wrap>
           <div className="grid items-start gap-[clamp(2.5rem,6vw,4rem)] md:grid-cols-[minmax(0,1fr)_15.5rem] md:gap-18">
             <div>
-              {/* The name and nothing above it. The masthead gives the place a
-                  visitor needs, the footer repeats it, and a standfirst over
-                  the title only delayed the one word the page is for.
-                  `data-page-name` tells the masthead that this page says the
-                  name itself, so its own copy stays out of the way until this
-                  one has scrolled past. */}
+              {/* A greeting rather than a nameplate. The page used to open with
+                  the full name set large, which is how a title page addresses a
+                  committee and not how a person introduces themselves — and the
+                  masthead was saying the same three syllables an inch above it.
+                  The masthead keeps the full name for anyone who needs to know
+                  whose site this is; this line is for the reader. */}
               <Settle>
-                <h1 data-page-name className="text-display tracking-[-0.028em]">
-                  Amin Dariani
+                <h1 className="text-display tracking-[-0.028em]">
+                  Hello — I&rsquo;m Amin.
                 </h1>
               </Settle>
               <Settle delay={0.08}>
