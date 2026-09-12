@@ -5,7 +5,13 @@ import Journey from "@/components/journey/Journey";
 import { LinkedInIcon, MailIcon } from "@/components/icons";
 import { Divider, ExternalLink, Leaf, SectionTitle, Wrap } from "@/components/ui";
 
-/* The three other pages, as signposts. Each says what is on its page and
+/* The front page is not a numbered document, and its two headings no longer
+   pretend to be: sections I and II sat under three sections that have no
+   heading at all, which reads as a numbering with the beginning missing. The
+   CV and the research page are enumerated because they really are records with
+   parts; this page is one piece of prose and a figure.
+
+   The three other pages, as signposts. Each says what is on its page and
    nothing that is not: the CV, research and beyond pages are the record, and a
    summary here would be a second one to keep true. */
 const PAGES = [
@@ -97,34 +103,14 @@ export default function Home() {
               Ferdowsi University of Mashhad, 2014 – 2019.
             </Settle>
             <Settle>
-              <div className="copy max-w-measure">
-                <p>
-                  My route here was not a straight line. I trained as a
-                  mechanical engineer in Mashhad and spent my undergraduate years
-                  in a robotics lab working on motion control for a paraplegic
-                  lower-limb exoskeleton — work that became my first publication.
-                  Then I built software professionally for four years, front-end
-                  and full-stack, working remotely for companies in Vancouver and
-                  then in Spain — and later, alongside the master&rsquo;s, at SAP
-                  in Walldorf.
-                </p>
-                <p>
-                  I came back to research because the questions I could not put
-                  down were in machine learning, perception and control. The
-                  engineering habits came with me, and they turned out to matter
-                  more than I expected: I write research code that other people
-                  can actually run.
-                </p>
-              </div>
-            </Settle>
-
-            <Settle className="note">Previously DFKI, 2024 – 2026.</Settle>
-            <Settle>
               <p className="max-w-measure">
-                Before Fraunhofer I spent a year at the German
-                Research Center for Artificial Intelligence (DFKI) on gaze-based
-                activity recognition — inferring what a person is doing from where
-                they choose to look. It became my master&rsquo;s project.
+                I came to this from mechanical engineering, by way of a robotics
+                lab — where the work on a paraplegic exoskeleton became my first
+                paper — and four years building software professionally. I came
+                back to research because the questions I could not put down were
+                in machine learning, perception and control, and the engineering
+                habits came with me: I write research code that other people can
+                actually run.
               </p>
             </Settle>
           </Leaf>
@@ -142,7 +128,7 @@ export default function Home() {
       <section className="py-[clamp(2.8rem,6vw,4.5rem)]">
         <Wrap>
           <Settle>
-            <SectionTitle num="I">Read on</SectionTitle>
+            <SectionTitle>Read on</SectionTitle>
           </Settle>
           <Settle delay={0.06}>
             <ul className="m-0 max-w-measure list-none p-0">
@@ -171,7 +157,7 @@ export default function Home() {
         <Wrap>
           <div className="max-w-measure">
             <Settle>
-              <SectionTitle num="II">Get in touch</SectionTitle>
+              <SectionTitle>Get in touch</SectionTitle>
             </Settle>
             <Settle>
               <p>
