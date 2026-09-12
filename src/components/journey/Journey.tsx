@@ -796,7 +796,7 @@ export default function Journey() {
         Fig. 1 — The route so far, from mechanical engineering in Iran to
         explainable AI at Fraunhofer IOSB in Germany:{" "}
         {wide
-          ? "point at a stop, take the wheel and drive the car yourself, or let it drive the whole route"
+          ? "point at a stop, take the wheel, or let it drive itself"
           : "tap a stop, or step through the route"}
         {" "}— the arrow keys work too.
       </figcaption>

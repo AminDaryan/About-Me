@@ -13,7 +13,7 @@ import dynamic from "next/dynamic";
 
 const ArmScene = dynamic(() => import("./ArmScene"), {
   ssr: false,
-  loading: () => <div className="h-full w-full" />,
+  loading: () => <div className="h-[21rem] w-full sm:h-[25rem]" />,
 });
 
 const PendulumScene = dynamic(() => import("./PendulumScene"), {
@@ -26,14 +26,11 @@ const CAPTION = "mt-4 max-w-measure text-meta text-ink-faint italic";
 export function ArmFigure() {
   return (
     <figure className="m-0 mt-8">
-      <div className="h-[17rem] w-full sm:h-[21rem]">
-        <ArmScene />
-      </div>
+      <ArmScene />
       <figcaption className={CAPTION}>
-        Fig. 3 — Seven revolute joints in the same alternating layout as the
-        Franka Emika Panda used in this project: base, shoulder, upper-arm roll,
-        elbow, forearm roll, wrist and flange. Forward kinematics by nested joint
-        frames; the accent mark is the end effector.
+        Fig. 3 — The loop the project ran: find the cuboid wherever it has
+        been put down, get a pose out of the detection, plan a path around the
+        obstacle it already knows about, and set it on the one target.
       </figcaption>
     </figure>
   );
@@ -44,12 +41,9 @@ export function PendulumFigure() {
     <figure className="m-0">
       <PendulumScene />
       <figcaption className={CAPTION}>
-        Fig. 5 — A double inverted pendulum held upright by a linear-quadratic
-        regulator: both joints turn freely, and the single motor drives the cart
-        along the rail, where its arrow is. Take hold of any part and pull —
-        yours is the accent arrow — and watch a pull on the lower link send the
-        whole machine the other way: with fewer motors than joints you cannot
-        command it, only disturb it.
+        Fig. 5 — Both joints turn freely and the one motor drives the cart,
+        where its arrow is, so a pull on the lower link — yours is the accent
+        arrow — sends the whole machine the other way.
       </figcaption>
     </figure>
   );

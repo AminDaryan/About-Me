@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Settle from "@/components/Settle";
-import { Bow } from "@/components/ink";
+import MarginalStudy from "@/components/beyond/MarginalStudy";
 import { Divider, Leaf, SectionTitle, Wrap } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -47,6 +47,7 @@ export default function Beyond() {
           <Leaf>
             <Settle className="note">
               History, for the patterns that keep repeating.
+              <MarginalStudy subject="history" />
             </Settle>
             <Settle>
               <p className="max-w-measure">
@@ -61,6 +62,7 @@ export default function Beyond() {
             <Settle className="note">
               Philosophy and linguistics — one for the meaning, one for the
               patterns.
+              <MarginalStudy subject="philosophy" />
             </Settle>
             <Settle>
               <div className="copy max-w-measure">
@@ -83,6 +85,7 @@ export default function Beyond() {
 
             <Settle className="note">
               Psychology — to understand myself as much as anyone else.
+              <MarginalStudy subject="psychology" />
             </Settle>
             <Settle>
               <p className="max-w-measure">
@@ -104,13 +107,9 @@ export default function Beyond() {
             <SectionTitle num="II">Sport, dance and chess</SectionTitle>
           </Settle>
           <Leaf>
-            {/* One figure per block. Two stacked here ran to ~370px against a
-                175px paragraph, and because .leaf is a grid the row grows to
-                the taller cell — inflating the gap before the next paragraph.
-                The sabre returns when this prose is split to give it its own. */}
             <Settle className="note">
               The bow, the sabre, the horse.
-              <Bow className="mt-6" />
+              <MarginalStudy subject="archery" />
             </Settle>
             <Settle>
               <p className="max-w-measure">
@@ -125,6 +124,7 @@ export default function Beyond() {
 
             <Settle className="note">
               Salsa and bachata — the opposite skill entirely.
+              <MarginalStudy subject="dance" />
             </Settle>
             <Settle>
               <p className="max-w-measure">
@@ -139,6 +139,7 @@ export default function Beyond() {
 
             <Settle className="note">
               Chess — where I lose most often, and most instructively.
+              <MarginalStudy subject="chess" />
             </Settle>
             <Settle>
               <p className="max-w-measure">
@@ -149,7 +150,10 @@ export default function Beyond() {
               </p>
             </Settle>
 
-            <Settle className="note">And the ordinary weekly ones.</Settle>
+            <Settle className="note">
+              And the ordinary weekly ones.
+              <MarginalStudy subject="badminton" />
+            </Settle>
             <Settle>
               <p className="max-w-measure">
                 Badminton is the one I actually play every week, for no better

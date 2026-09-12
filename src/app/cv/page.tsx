@@ -129,7 +129,7 @@ const SKILLS: {
     items: [
       { name: "Python", mark: "python" },
       { name: "MATLAB/Simulink" },
-      { name: "JavaScript" },
+      { name: "JavaScript", mark: "javascript" },
     ],
   },
   {
@@ -139,7 +139,7 @@ const SKILLS: {
       { name: "PyTorch", mark: "pytorch" },
       { name: "scikit-learn" },
       { name: "OpenCV", mark: "opencv" },
-      { name: "YOLO" },
+      { name: "YOLO", mark: "yolo" },
     ],
   },
   {

@@ -273,14 +273,9 @@ export default function Exoskeleton() {
       </div>
 
       <figcaption className="mt-4 max-w-measure text-meta text-ink-faint italic">
-        Fig. 4 — One leg swings, one supports, and the swinging one is
-        simulated here in your browser: two links, full inertia and gravity,
-        with the dashed line where it ought to be. Both controllers are given
-        the machine&rsquo;s own inertia and neither is told what the wearer
-        weighs — so the tuned PID meets the same error every step, while the
-        adaptive law learns that part as it goes. Change the wearer and watch
-        which of the two minds. The paper&rsquo;s own numbers are from the
-        physical robot, not from this.
+        Fig. 4 — One leg swings and one supports, simulated here rather than
+        measured: both controllers are given the machine&rsquo;s inertia,
+        neither is told what the wearer weighs.
       </figcaption>
     </figure>
   );

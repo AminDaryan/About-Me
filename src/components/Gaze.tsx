@@ -188,12 +188,9 @@ export default function Gaze() {
       </div>
 
       <figcaption className="mt-4 max-w-measure text-meta text-ink-faint italic">
-        Fig. 2 — The same workbench, watched four ways. Gluing is a long stare
-        in one place, assembling a shuttle between the parts and the chassis,
-        walking quick and low and everywhere, waiting slow and aimless — and
-        those differences are what nineteen features in these four families
-        measure. The paths are drawn to show the kind of difference, not
-        recorded from the study.
+        Fig. 2 — The same workbench watched four ways, the scanpaths drawn to
+        show the kind of difference the study’s nineteen features measure
+        rather than recorded from it.
       </figcaption>
     </figure>
   );

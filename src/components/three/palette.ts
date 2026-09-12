@@ -22,4 +22,5 @@ const read = (name: string, fallback: string) => {
 
 export const INK = read("--color-ink", "#2a231a");
 export const RULE = read("--color-rule", "#d3cab7");
+export const SOFT = read("--color-ink-soft", "#5c5044");
 export const ACCENT = read("--color-accent", "#96442d");

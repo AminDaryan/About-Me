@@ -547,6 +547,43 @@
     font-style: italic;
   }
 
+  /* -- Fig. 3: the loop the arm is running ---------------------------------
+     Seven words under the figure, in the order the project's own flowchart has
+     them, with the one happening now in the accent. It is the figure's text
+     equivalent as much as its legend: a reader who cannot see the canvas still
+     gets the pipeline, in order, in words. */
+  .pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+    margin: 1.1rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.7rem;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+    line-height: 1.6;
+    color: var(--color-ink-faint);
+  }
+  .pipeline li {
+    position: relative;
+    transition: color 0.3s ease;
+  }
+  /* An arrow between the words, drawn rather than typed so it cannot be read
+     aloud seven times by a screen reader. */
+  .pipeline li + li::before {
+    content: "";
+    position: absolute;
+    left: -0.56rem;
+    top: 50%;
+    width: 0.24rem;
+    height: 1px;
+    background: var(--color-rule);
+  }
+  .pipeline li[data-now] {
+    color: var(--color-accent);
+  }
+
   /* -- Fig. 2: the gaze study ----------------------------------------------
      The room is drawn in rule weight and stays out of the way; the accent is
      on the eye alone, which is the one thing in the figure that is alive. */
@@ -1107,6 +1144,7 @@
     .road-pin { transition: none; }
     .rail a { transition: none; }
     .running-head { transition: none; }
+    .pipeline li { transition: none; }
     .to-top { transition: none; }
     .road-halo { animation: none; opacity: 0; }
     .signpost-arrow { transition: none; }
