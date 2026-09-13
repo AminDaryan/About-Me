@@ -1536,7 +1536,6 @@
     stroke-width: calc(var(--road-w) + 11px);
     stroke-linecap: butt;
   }
-  .road-future-end { fill: var(--color-paper); fill-opacity: 0.68; }
 
   .road-start path { fill: none; stroke: var(--color-paper); stroke-width: 4; stroke-dasharray: 4 4; }
 
@@ -1603,8 +1602,6 @@
     text-transform: uppercase;
   }
 
-  .road-flag path { fill: none; stroke: var(--color-ink-soft); stroke-width: 1.2; stroke-linejoin: round; }
-  .road-flag path + path { fill: var(--color-accent); stroke: var(--color-accent); }
 
   .road-cone-body { fill: var(--color-accent); }
   .road-cone-stripe,

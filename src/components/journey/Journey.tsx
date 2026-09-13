@@ -34,7 +34,8 @@ import { NOW, STEPS } from "./steps";
    pin. The route is read from its beginning: a small car waits behind the
    start line, under the banner, with the first stop open. It drives to
    whichever stop you point at — turning round when it has to go back — and
-   the centre line lights up behind it; past today the road is not yet paved.
+   the centre line lights up behind it; past today the road is not yet paved,
+   and past the last stop it does not end, but runs on and fades out.
    On a wide screen you can take hold of the car and drive it yourself, and if
    the figure is left alone for long enough the car drives the whole route on
    its own, from the start line.
@@ -480,23 +481,38 @@ export default function Journey() {
       { x: line.x, y: line.y - verge - 21, w: 50, h: 16, sag: 3, foot: 21 }
     : { x: line.x, y: line.y - 7, w: 46, h: 13, sag: 2, foot: 19 };
 
-  // The round cap past the road's last point, which the unpaved overlay's
-  // square end does not reach.
-  const roundEnd = (() => {
+  /* Where the road fades out. It used to end on a flag, which said the route
+     stops at the doctorate, and it does not: past the last stop the road runs
+     on and fades into the paper. The fade is a ramp from the road's `fade`
+     point to its last point, laid along the direction the road is heading at
+     the end — so it works on a straight run and round a turn alike — in a band
+     wide enough to take the road and narrow enough to miss the row above. */
+  const fade = (() => {
     const e = pointAt(geo.samples, geo.total);
-    const r = verge + 5.5;
-    const nx = -Math.sin(e.a) * r;
-    const ny = Math.cos(e.a) * r;
-    return `M ${e.x + nx} ${e.y + ny} A ${r} ${r} 0 0 0 ${e.x - nx} ${e.y - ny} Z`;
+    // The heading is taken a few pixels short of the end: the sampler's last
+    // two points can coincide, and the angle between them then comes out as
+    // zero — pointing right, whichever way the road was really going.
+    const a = pointAt(geo.samples, geo.total - 4).a;
+    const from = pointAt(geo.samples, geo.fade);
+    const back = Math.min(-24, (from.x - e.x) * Math.cos(a) + (from.y - e.y) * Math.sin(a));
+    /* The mask is alpha, and a transparent ramp painted over an opaque ground
+       takes nothing away from it, so the ground has a hole where the ramp
+       goes. The hole is a little smaller than the ramp on every side, so the
+       two overlap where both are opaque and no seam shows across the road. */
+    const corner = (lx: number, ly: number) =>
+      `${(e.x + lx * Math.cos(a) - ly * Math.sin(a)).toFixed(1)} ${(e.y + lx * Math.sin(a) + ly * Math.cos(a)).toFixed(1)}`;
+    const hole = `M ${corner(back - 20, -100)} L ${corner(60, -100)} L ${corner(60, 100)} L ${corner(back - 20, 100)} Z`;
+    return { x: e.x, y: e.y, deg: (a * 180) / Math.PI, back, hole };
   })();
 
   // Cones across the unbuilt road: halfway to the next stop if that is on a
-  // straight stretch, otherwise on the last bit of road beyond the final stop.
+  // straight stretch, otherwise just past the final stop, before the road
+  // begins to fade.
   const cones = (() => {
     if (!serp || NOW >= STEPS.length - 1) return null;
     const straight = (p: { a: number }) => Math.abs(Math.sin(p.a)) < 0.05;
     const mid = pointAt(geo.samples, (nowLen + geo.stops[NOW + 1].len) / 2);
-    const tail = pointAt(geo.samples, (geo.stops[STEPS.length - 1].len + geo.total) / 2 + 4);
+    const tail = pointAt(geo.samples, geo.stops[STEPS.length - 1].len + geo.spacing * 0.3);
     const c = straight(mid) ? mid : straight(tail) ? tail : null;
     if (!c) return null;
     return [-1, 1].map((side) => ({ x: c.x, y: c.y + side * (verge + 9) + (side < 0 ? 0 : 12) }));
@@ -602,25 +618,72 @@ export default function Journey() {
                   strokeDasharray={`${geo.home.toFixed(1)} ${Math.ceil(geo.total + 40)}`}
                 />
               </mask>
+
+              {/* Past the last stop, the road fading into the paper. */}
+              <linearGradient
+                id="road-fade-ramp"
+                gradientUnits="userSpaceOnUse"
+                x1={fade.back}
+                y1={0}
+                x2={0}
+                y2={0}
+              >
+                <stop offset="0" stopColor="#fff" stopOpacity={1} />
+                <stop offset="1" stopColor="#fff" stopOpacity={0} />
+              </linearGradient>
+              {/* An alpha mask, not a luminance one: luminance is taken in
+                  linear light, so a grey halfway along the ramp let through a
+                  fifth of the road rather than half of it. */}
+              <mask
+                id="road-fade"
+                style={{ maskType: "alpha" }}
+                maskUnits="userSpaceOnUse"
+                x={-40}
+                y={-40}
+                width={geo.width + 80}
+                height={geo.height + 80}
+              >
+                <path
+                  d={`M -40 -40 H ${geo.width + 40} V ${geo.height + 40} H -40 Z ${fade.hole}`}
+                  fill="#fff"
+                  fillRule="evenodd"
+                />
+                <g transform={`translate(${fade.x} ${fade.y}) rotate(${fade.deg})`}>
+                  <rect
+                    x={fade.back - 40}
+                    y={-110}
+                    width={110 - fade.back}
+                    height={220}
+                    fill="url(#road-fade-ramp)"
+                  />
+                </g>
+              </mask>
             </defs>
 
             {/* The road: verge, tarmac, edge lines, then tarmac again inside them. */}
-            <path className="road-shoulder road-draw" d={geo.d} pathLength={1} />
-            <path className="road-asphalt road-draw" d={geo.d} pathLength={1} />
-            <path className="road-lines road-draw" d={geo.d} pathLength={1} />
-            <path className="road-asphalt road-asphalt-inner road-draw" d={geo.d} pathLength={1} />
+            <g mask="url(#road-fade)">
+              <path className="road-shoulder road-draw" d={geo.d} pathLength={1} />
+              <path className="road-asphalt road-draw" d={geo.d} pathLength={1} />
+              <path className="road-lines road-draw" d={geo.d} pathLength={1} />
+              <path className="road-asphalt road-asphalt-inner road-draw" d={geo.d} pathLength={1} />
+            </g>
 
             <g className="road-late">
-              <path className="road-centre" d={geo.d} />
-              <path className="road-centre road-centre-lit" d={geo.d} mask="url(#road-travelled)" />
+              <g mask="url(#road-fade)">
+                <path className="road-centre" d={geo.d} />
+                <path className="road-centre road-centre-lit" d={geo.d} mask="url(#road-travelled)" />
+              </g>
 
-              {/* Beyond today the road is only planned. */}
+              {/* Beyond today the road is only planned. This veil is not faded
+                  with the road: it is paper laid over the tarmac, so it
+                  vanishes as the tarmac under it does. Faded as well, the two
+                  cancelled out, and the road kept its full tone to within a
+                  few paces of its end. */}
               <path
                 className="road-future"
                 d={geo.d}
                 strokeDasharray={`0 ${nowLen.toFixed(1)} ${Math.ceil(geo.total + 40)}`}
               />
-              <path className="road-future-end" d={roundEnd} />
 
               {/* the start line, and the banner the route sets off under */}
               <g
@@ -642,12 +705,6 @@ export default function Journey() {
                 <text y={banner.h / 2 + banner.sag / 2 + 3.2} textAnchor="middle">
                   Start
                 </text>
-              </g>
-
-              {/* the end of the road so far */}
-              <g transform={`translate(${geo.end.x} ${geo.end.y})`} className="road-flag">
-                <path d="M 0 0 V -30" />
-                <path d="M 0 -30 L 16 -25 L 0 -20" />
               </g>
 
               {cones?.map((c, k) => (

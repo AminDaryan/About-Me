@@ -131,38 +131,77 @@ const SPOKES = [0, 1, 2, 3]
    Each fills the box about as far as the gears do. Drawn as single hairlines
    in a narrow strip, they came out in a pin as a sliver nobody could read. */
 
-/* FUME in profile: the hip and knee driven, the ankle free — as in the paper,
-   and as on Fig. 5 — with a strap across each segment where the brace is tied
-   to the leg, and the hip belt the hip motor sits on. Curved cuffs read as
-   stray arcs and a pair of ticks as a break mark; a cuff drawn as a block
-   wrapped round the brace reads as the thing it is. The knee is bent well
-   forward: nearer straight, the motors and the cuffs stacked into one dark
-   column at the size of a phone's badge. */
-const HIP: Joint = [46, 24, 7];
-const KNEE: Joint = [78, 60, 7];
-const ANKLE: Joint = [52, 96, 4];
+/* FUME on the person wearing it, walking. The person is what makes it an
+   exoskeleton. Drawn as a mechanism alone — a jointed brace with no body in it
+   — it read as a robot arm standing on its end; a braced pair of legs with
+   nothing above them read as trousers on a stand; and a figure standing still
+   gave no hint of what the machine is for. FUME is for walking.
 
-/** A braced segment: the rails from joint to joint, broken for a cuff at the
-    middle — a block 16 across the brace and 7 along it. The rails stop at the
-    cuff's edges: run through it, they crossed it into a box with an X in it. */
-function braced(a: Joint, b: Joint) {
-  const mx = (a[0] + b[0]) / 2;
-  const my = (a[1] + b[1]) / 2;
+   Seen from the side, mid-stride: the near leg forward on its heel, the far
+   leg behind on its toes, the arms swinging against the legs. The brace is on
+   the near leg — the hip and knee driven and the ankle free, as in the paper
+   and on Fig. 5 — strapped to the thigh and the shin, with a plate under the
+   foot and a belt round the waist. The far leg is braced too on the real
+   machine; from this side its brace is behind it.
+
+   The body is outline only, one limb at a time through its joints, so the
+   proportions live in the joint positions below rather than in hand-placed
+   curves. */
+type P = readonly [number, number];
+
+/** A limb's two contours through `points`, `half[i]` either side of the centre
+    line at each point, along the normal averaged across each joint. `back` is
+    the left-hand side going down the limb — the back of a figure facing right. */
+function limb(points: readonly P[], half: readonly number[]) {
+  const normal = (i: number) => {
+    const a = points[Math.max(0, i - 1)];
+    const b = points[Math.min(points.length - 1, i + 1)];
+    const d = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    return [-(b[1] - a[1]) / d, (b[0] - a[0]) / d] as const;
+  };
+  const side = (s: number) =>
+    points.map((p, i): P => [p[0] + normal(i)[0] * half[i] * s, p[1] + normal(i)[1] * half[i] * s]);
+  return { back: side(1), front: side(-1) };
+}
+const poly = (ps: readonly P[]) => ps.map(([x, y]) => `${f(x)} ${f(y)}`).join(" L ");
+
+/** A strap across a limb at `t` of the way from `a` to `b`: two lines `reach`
+    either side of the centre line, a band wide. */
+function band(a: P, b: P, t: number, reach: number) {
   const d = Math.hypot(b[0] - a[0], b[1] - a[1]);
   const ux = (b[0] - a[0]) / d;
   const uy = (b[1] - a[1]) / d;
-  const point = (along: number, across = 0) =>
-    [mx + ux * along - uy * across, my + uy * along + ux * across] as const;
-  const xy = (p: readonly [number, number]) => `${f(p[0])} ${f(p[1])}`;
-  const stop = (along: number): Joint => [...point(along), 0];
-  const cuff = `M ${xy(point(-3.5, -8))} L ${xy(point(3.5, -8))} L ${xy(point(3.5, 8))} L ${xy(point(-3.5, 8))} Z`;
-  return {
-    rails: `${rails(a, stop(-3.5), 3)} ${rails(stop(3.5), b, 3)}`,
-    cuff,
-  };
+  const cx = a[0] + (b[0] - a[0]) * t;
+  const cy = a[1] + (b[1] - a[1]) * t;
+  return [-1.7, 1.7]
+    .map((o) => {
+      const x = cx + ux * o;
+      const y = cy + uy * o;
+      return `M ${f(x + uy * reach)} ${f(y - ux * reach)} L ${f(x - uy * reach)} ${f(y + ux * reach)}`;
+    })
+    .join(" ");
 }
-const THIGH = braced(HIP, KNEE);
-const SHANK = braced(KNEE, ANKLE);
+
+const NEAR: P[] = [[58, 60], [66, 82], [70, 102]];
+const FAR: P[] = [[53, 60], [47, 82], [38, 100]];
+const LEG_HALF = [6.5, 4.6, 3.2];
+const NEAR_LEG = limb(NEAR, LEG_HALF);
+const FAR_LEG = limb(FAR, LEG_HALF);
+const NEAR_ARM = limb([[54, 30], [45, 41], [39, 50]], [3.2, 2.7, 2.2]);
+const FAR_ARM = limb([[62, 31], [70, 41], [77, 47]], [3, 2.6, 2.1]);
+
+/** A limb's outline, closed at its end by `tip` — a foot, drawn out of the
+    back contour's last point, or a hand, rounded across to the front's. */
+const outline = (l: { back: P[]; front: P[] }, tip: string) =>
+  `M ${poly(l.back)} ${tip} L ${poly([...l.front].reverse())}`;
+const hand = (l: { back: P[]; front: P[] }, r: number) => {
+  const [x, y] = l.front[l.front.length - 1];
+  return outline(l, `A ${r} ${r} 0 0 0 ${f(x)} ${f(y)}`);
+};
+
+const EXO_HIP: Joint = [58, 61, 5];
+const EXO_KNEE: Joint = [66, 82, 4.6];
+const EXO_ANKLE: Joint = [70, 102, 2.8];
 
 /* The thesis system as its supervisor describes it: a double inverted
    pendulum on a fixed pivot, driven only at its second joint — so no cart,
@@ -186,12 +225,13 @@ export const FIGURES = {
   ],
 
   exoskeleton: [
-    `M 18 24 H ${f(HIP[0] - HIP[2])} M ${f(HIP[0] + HIP[2])} 24 H 76 ${motor(HIP)}`,
-    THIGH.rails,
-    motor(KNEE),
-    SHANK.rails,
-    `${circle(...ANKLE)} M 52 100 V 106 M 32 106 H 90`,
-    `${THIGH.cuff} ${SHANK.cuff}`,
+    `${circle(58, 12, 7)} M 49 27 Q 57 20 65 27 C 67 38 66 47 63 57 M 49 27 C 46 37 46 46 48 57`,
+    `${hand(NEAR_ARM, 2.2)} ${hand(FAR_ARM, 2.1)}`,
+    outline(FAR_LEG, "L 33 104 L 45 111 Q 49 111 47 107"),
+    outline(NEAR_LEG, "L 64 108 L 82 108 Q 86 107 82 103"),
+    "M 48 50 H 65 Q 68 50 68 53.5 Q 68 57 65 57 H 48 Q 45 57 45 53.5 Q 45 50 48 50 Z",
+    `${rails(EXO_HIP, EXO_KNEE, 1.6)} ${rails(EXO_KNEE, EXO_ANKLE, 1.6)} ${motor(EXO_HIP)} ${motor(EXO_KNEE)} ${circle(...EXO_ANKLE)}`,
+    `${band(NEAR[0], NEAR[1], 0.55, 6.5)} ${band(NEAR[1], NEAR[2], 0.5, 4.8)} M 70 104.8 V 111 H 85`,
   ],
 
   pendulum: [
@@ -255,12 +295,17 @@ export const FIGURES = {
     circle(N[4][0], N[4][1], 15),
   ],
 
-  road: [
-    "M 16 114 C 40 86 52 52 55 24",
-    "M 104 114 C 80 86 68 52 65 24",
-    "M 60 108 V 98 M 60 88 V 80 M 60 71 V 65 M 60 57 V 53 M 60 46 V 43",
-    "M 38 24 H 82",
-    "M 60 24 V 6 L 74 10 L 60 14",
+  /* The doctorate: a rolled diploma, tied with a ribbon and sealed. It used to
+     be a road running to a flag on the horizon, which said the route ends
+     there, and it does not. The M.Sc. already has the mortarboard, so this is
+     the other thing a degree is: the document. */
+  diploma: [
+    "M 24 26 H 92 M 24 54 H 92",
+    "M 24 26 A 7 14 0 0 0 24 54 A 7 14 0 0 0 24 26 M 24 33 C 20 34 20 46 24 47 C 27 47 27 37 24 38",
+    "M 92 26 C 100 26 102 33 97 36 M 92 54 A 7 14 0 0 0 92 26",
+    "M 53 26 V 54 M 63 26 V 54 M 55 54 L 52 74 M 61 54 L 64 74",
+    `${circle(58, 80, 11)} ${circle(58, 80, 6.5)}`,
+    "M 51 89 L 44 108 L 50 104 L 53 110 L 57 91 M 65 89 L 72 108 L 66 104 L 63 110 L 59 91",
   ],
 } satisfies Record<string, string[]>;
 

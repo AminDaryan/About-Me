@@ -45,8 +45,10 @@ export type Geometry = {
   home: number;
   /** Distance between neighbouring stops along a run. */
   spacing: number;
-  /** Road ends here, with a flag. */
-  end: { x: number; y: number };
+  /** How far along the road it starts to fade out. It never ends: past the
+      last stop it runs on and fades into the paper, because the route goes on
+      past anything anyone can put a stop on yet. */
+  fade: number;
   /** Which way the road is heading at each stop: +1 right or down, −1 left. */
   heading: (1 | -1)[];
   /** The inside of each U-turn, where there is room for a little scenery.
@@ -175,17 +177,11 @@ export function serpentine(width: number, count: number): Geometry {
     const y = TOP + k * 2 * R;
     const dir: 1 | -1 = k % 2 === 0 ? 1 : -1;
     const from = dir === 1 ? x0 : x1;
-    let to = dir === 1 ? x1 : x0;
+    const to = dir === 1 ? x1 : x0;
 
     for (let j = 0; j < perRun && stopsXY.length < count; j++) {
       stopsXY.push({ x: from + dir * (j + 0.5) * spacing, y });
       heading.push(dir);
-    }
-
-    // The road runs on a little past the last stop, not to the far edge.
-    if (k === runs - 1) {
-      const tail = stopsXY[stopsXY.length - 1].x + dir * spacing * 0.75;
-      to = dir === 1 ? Math.min(tail, x1) : Math.max(tail, x0);
     }
 
     const cur = s.samples[s.samples.length - 1];
@@ -202,7 +198,21 @@ export function serpentine(width: number, count: number): Geometry {
     }
   }
 
-  const end = s.samples[s.samples.length - 1];
+  /* The last run goes on to its far edge rather than stopping just past its
+     last stop, and fades out along the way. Where the last stop sits too near
+     that edge to leave road enough to fade along, the road starts round the
+     next turn and fades out going round it. */
+  const lastStop = stopsXY[stopsXY.length - 1];
+  const lastDir = heading[heading.length - 1];
+  const edge = lastDir === 1 ? x1 : x0;
+  const yLast = TOP + (runs - 1) * 2 * R;
+  const onward = Math.abs(edge - lastStop.x) < spacing * 1.25;
+  if (onward) {
+    if (lastDir === 1) s.arc(edge, yLast + R, R, -Math.PI / 2, 0);
+    else s.arc(edge, yLast + R, R, -Math.PI / 2, -Math.PI);
+    d += ` A ${R} ${R} 0 0 ${lastDir === 1 ? 1 : 0} ${f(edge + lastDir * R)} ${f(yLast + R)}`;
+  }
+
   const stops = stopsXY.map((p) => ({ ...p, len: lengthAt(s.samples, p.x, p.y) }));
   // The far point of each turn, now that the whole road has been sampled.
   for (const b of bends) b.len = lengthAt(s.samples, b.x + b.dir * R, b.y);
@@ -210,7 +220,7 @@ export function serpentine(width: number, count: number): Geometry {
   return {
     kind: "serpentine",
     width,
-    height: TOP + (runs - 1) * 2 * R + 68,
+    height: yLast + (onward ? R + 30 : 68),
     d,
     total: s.length(),
     samples: s.samples,
@@ -222,7 +232,7 @@ export function serpentine(width: number, count: number): Geometry {
     startLine: 20,
     home: 3,
     spacing,
-    end: { x: end.x, y: end.y },
+    fade: stops[stops.length - 1].len + spacing * 0.5,
     heading,
     bends,
   };
@@ -248,7 +258,8 @@ export function ribbon(width: number, count: number, open: number, gap: number):
   // behind the start line, and for the banner to hang across the road over
   // the line without crowding the badge below.
   const yStart = TOP - 74;
-  const yEnd = yOf(count - 1) + 74;
+  // Below the last stop the road runs on, and fades out (see `fade`).
+  const yEnd = yOf(count - 1) + 128;
   const s = sampler();
   let d = "";
   for (let y = yStart; y <= yEnd + 0.001; y += 4) {
@@ -263,7 +274,6 @@ export function ribbon(width: number, count: number, open: number, gap: number):
     return { x, y, len: lengthAt(s.samples, x, y) };
   });
   const labelX = CX + AMP + HEAD + 20;
-  const end = s.samples[s.samples.length - 1];
 
   return {
     kind: "ribbon",
@@ -280,7 +290,7 @@ export function ribbon(width: number, count: number, open: number, gap: number):
     startLine: 30,
     home: 10,
     spacing: STEP,
-    end: { x: end.x, y: end.y },
+    fade: stops[count - 1].len + 30,
     heading: stops.map(() => 1),
     bends: [],
   };
