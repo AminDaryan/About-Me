@@ -3,7 +3,7 @@ import Settle from "@/components/Settle";
 import Portrait from "@/components/Portrait";
 import Journey from "@/components/journey/Journey";
 import { LinkedInIcon, MailIcon } from "@/components/icons";
-import { Divider, ExternalLink, Leaf, SectionTitle, Wrap } from "@/components/ui";
+import { ExternalLink, Leaf, PageHeader, Section } from "@/components/ui";
 
 /* The front page is not a numbered document, and its two headings no longer
    pretend to be: sections I and II sat under three sections that have no
@@ -35,167 +35,128 @@ const PAGES = [
 export default function Home() {
   return (
     <>
-      {/* The three sections before the first heading still have somewhere to
-          be pointed at: the rail reads these names, and no heading is added to
-          a page that is deliberately one piece of prose. */}
-      <section
+      {/* The head and the background before the first heading still have
+          somewhere to be pointed at: the rail reads these names, and no heading
+          is added to a page that is deliberately one piece of prose.
+
+          A greeting rather than a nameplate. The page used to open with the
+          full name set large, which is how a title page addresses a committee
+          and not how a person introduces themselves — and the masthead was
+          saying the same three syllables an inch above it. The masthead keeps
+          the full name for anyone who needs to know whose site this is; this
+          line is for the reader. */}
+      <PageHeader
         id="top"
-        data-rail="Introduction"
-        className="pt-[clamp(3.5rem,9vw,7rem)] pb-[clamp(2.5rem,6vw,4rem)]"
+        rail="Introduction"
+        display
+        title={<>Hi, I&rsquo;m Amin.</>}
+        aside={<Portrait />}
       >
-        <Wrap>
-          <div className="grid items-start gap-[clamp(2.5rem,6vw,4rem)] md:grid-cols-[minmax(0,1fr)_15.5rem] md:gap-18">
-            <div>
-              {/* A greeting rather than a nameplate. The page used to open with
-                  the full name set large, which is how a title page addresses a
-                  committee and not how a person introduces themselves — and the
-                  masthead was saying the same three syllables an inch above it.
-                  The masthead keeps the full name for anyone who needs to know
-                  whose site this is; this line is for the reader. */}
-              <Settle>
-                <h1 className="text-display tracking-[-0.028em]">
-                  Hello — I&rsquo;m Amin.
-                </h1>
-              </Settle>
-              <Settle delay={0.08}>
-                <p className="mt-6 max-w-[30rem] text-lede italic">
-                  I work on explainable and trustworthy machine learning, with a
-                  background in computer vision, robot perception and
-                  model-based control.
-                </p>
-              </Settle>
-            </div>
+        <p className="text-lede italic">
+          I work on explainable and trustworthy machine learning, with a
+          background in computer vision, robot perception and model-based
+          control.
+        </p>
+      </PageHeader>
 
-            <Settle delay={0.24}>
-              <Portrait />
-            </Settle>
-          </div>
-        </Wrap>
-      </section>
-
-      <Divider />
-
-      <section id="background" data-rail="Background" className="py-[clamp(2.8rem,6vw,4.5rem)]">
-        <Wrap>
-          <Leaf>
-            <Settle className="note">
-              M.Sc. Automation &amp; Control,
-              <br />
-              RPTU Kaiserslautern, 2023 – expected 2027.
-            </Settle>
-            <Settle>
-              <p className="drop-cap max-w-measure">
-                At the moment I am a master&rsquo;s student in Automation and
-                Control at RPTU Kaiserslautern, writing my thesis with Fraunhofer
-                IOSB and KIT on explaining graph neural networks. A prediction is
-                only worth acting on if you can see why it was made — and on a
-                graph, where what the model has learned is spread across the
-                structure rather than sitting in any one place, saying what a
-                prediction rests on is harder than it sounds.
-              </p>
-            </Settle>
-
-            <Settle className="note">
-              B.Sc. Mechanical Engineering,
-              <br />
-              Ferdowsi University of Mashhad, 2014 – 2019.
-            </Settle>
-            <Settle>
-              <p className="max-w-measure">
-                I came to this from mechanical engineering, by way of a robotics
-                lab — where the work on a paraplegic exoskeleton became my first
-                paper — and four years building software professionally. I came
-                back to research because the questions I could not put down were
-                in machine learning, perception and control, and the engineering
-                habits came with me: I write research code that other people can
-                actually run.
-              </p>
-            </Settle>
-          </Leaf>
-        </Wrap>
-      </section>
-
-      <section id="route" data-rail="The route" className="py-[clamp(1rem,3vw,2rem)]">
-        <Wrap>
+      <Section id="background" rail="Background">
+        <Leaf>
+          <Settle className="note">
+            M.Sc. Automation &amp; Control,
+            <br />
+            RPTU Kaiserslautern, 2023 – expected 2027.
+          </Settle>
           <Settle>
-            <Journey />
+            <p className="drop-cap max-w-measure">
+              At the moment I am a master&rsquo;s student in Automation and
+              Control at RPTU Kaiserslautern, writing my thesis with Fraunhofer
+              IOSB and KIT on explaining graph neural networks. A prediction is
+              only worth acting on if you can see why it was made — and on a
+              graph, where what the model has learned is spread across the
+              structure rather than sitting in any one place, saying what a
+              prediction rests on is harder than it sounds.
+            </p>
           </Settle>
-        </Wrap>
-      </section>
 
-      <section className="py-[clamp(2.8rem,6vw,4.5rem)]">
-        <Wrap>
+          <Settle className="note">
+            B.Sc. Mechanical Engineering,
+            <br />
+            Ferdowsi University of Mashhad, 2014 – 2019.
+          </Settle>
           <Settle>
-            <SectionTitle>Read on</SectionTitle>
+            <p className="max-w-measure">
+              I came to this from mechanical engineering, by way of a robotics
+              lab — where the work on a paraplegic exoskeleton became my first
+              paper — and four years building software professionally. I came
+              back to research because the questions I could not put down were
+              in machine learning, perception and control, and the engineering
+              habits came with me: I write research code that other people can
+              actually run.
+            </p>
           </Settle>
-          <Settle delay={0.06}>
-            <ul className="m-0 max-w-measure list-none p-0">
-              {PAGES.map((page, i) => (
-                <li
-                  key={page.href}
-                  className={i ? "border-t border-rule-soft" : ""}
-                >
-                  <Link className="signpost" href={page.href}>
-                    <span className="signpost-name">{page.name}</span>
-                    <span className="signpost-note">{page.note}</span>
-                    <span className="signpost-arrow" aria-hidden="true">
-                      →
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </Settle>
-        </Wrap>
-      </section>
+        </Leaf>
 
-      <Divider />
+        {/* Fig. 1 stands straight on the page's edge after the prose it
+            illustrates, as Fig. 6 does on /research — in the same section, so
+            the plate's own margin is the only space above it. */}
+        <div id="route" data-rail="The route">
+          <Journey />
+        </div>
+      </Section>
 
-      <section id="contact" className="pb-4">
-        <Wrap>
-          <div className="max-w-measure">
-            <Settle>
-              <SectionTitle>Get in touch</SectionTitle>
-            </Settle>
-            <Settle>
-              <p>
-                I am glad to hear from anyone working on related problems — and
-                especially from groups with doctoral openings.
-              </p>
-            </Settle>
-            {/* Two ways to reach me, as icons. The address is the university
-                one, never a personal mailbox: it is published on a page this
-                crawlable, and it will be harvested. Each icon link names itself
-                for screen readers and shows a tooltip on hover and focus. */}
-            <Settle delay={0.08}>
-              <ul className="mt-9 flex list-none flex-wrap items-center gap-x-5 gap-y-8 border-t border-rule p-0 pt-7 pb-6">
-                <li>
-                  <a
-                    className="contact-icon"
-                    href="mailto:rax06jud@rptu.de"
-                    aria-label="Email: rax06jud@rptu.de"
-                    data-tip="rax06jud@rptu.de"
-                  >
-                    <MailIcon className="h-[1.6rem] w-auto" />
-                  </a>
-                </li>
-                <li>
-                  <ExternalLink
-                    className="contact-icon"
-                    href="https://www.linkedin.com/in/amin-dariani/"
-                    rel="me"
-                    label="LinkedIn profile"
-                    tip="LinkedIn"
-                  >
-                    <LinkedInIcon className="h-[1.75rem] w-[1.75rem]" />
-                  </ExternalLink>
-                </li>
-              </ul>
-            </Settle>
+      <Section title="Read on">
+        <ul className="m-0 max-w-measure list-none p-0">
+          {PAGES.map((page, i) => (
+            <li key={page.href} className={i ? "border-t border-rule-soft" : ""}>
+              <Link className="signpost" href={page.href}>
+                <span className="signpost-name">{page.name}</span>
+                <span className="signpost-note">{page.note}</span>
+                <span className="signpost-arrow" aria-hidden="true">
+                  →
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Section>
 
-          </div>
-        </Wrap>
-      </section>
+      <Section id="contact" title="Get in touch">
+        <div className="max-w-measure">
+          <p>
+            I am glad to hear from anyone working on related problems — and
+            especially from groups with doctoral openings.
+          </p>
+          {/* Two ways to reach me, as icons. The address is the university
+              one, never a personal mailbox: it is published on a page this
+              crawlable, and it will be harvested. Each icon link names itself
+              for screen readers and shows a tooltip on hover and focus. No
+              rule above them: the section's own rule is a line away, and a
+              second one here read as a section of its own. */}
+          <ul className="mt-6 flex list-none flex-wrap items-center gap-x-5 gap-y-8 p-0 pb-6">
+            <li>
+              <a
+                className="contact-icon"
+                href="mailto:rax06jud@rptu.de"
+                aria-label="Email: rax06jud@rptu.de"
+                data-tip="rax06jud@rptu.de"
+              >
+                <MailIcon className="h-[1.6rem] w-auto" />
+              </a>
+            </li>
+            <li>
+              <ExternalLink
+                className="contact-icon"
+                href="https://www.linkedin.com/in/amin-dariani/"
+                rel="me"
+                label="LinkedIn profile"
+                tip="LinkedIn"
+              >
+                <LinkedInIcon className="h-[1.75rem] w-[1.75rem]" />
+              </ExternalLink>
+            </li>
+          </ul>
+        </div>
+      </Section>
     </>
   );
 }

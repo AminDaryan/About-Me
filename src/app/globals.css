@@ -121,6 +121,15 @@
   --spacing-measure: 36rem;
   --spacing-margin-col: 10.5rem;
 
+  /* Half the space between two sections, given to each side of one — so the
+     gap between any two parts of any page, the page head included, is the same
+     twice this. It was three different paddings on four pages, and the head
+     of a page stood three hundred pixels clear of its first section where two
+     sections stood a hundred and forty apart. Two and a half entries' worth of
+     space: enough that a section break cannot be taken for the rule between
+     two entries. */
+  --spacing-section: clamp(2rem, 4.5vw, 3.25rem);
+
   /* The outer margin, where the chrome lives: the masthead's row and the
      section rail both sit on this line, so on a wide screen they read as one
      edge of the page rather than two things that nearly agree. It is the
@@ -437,30 +446,147 @@
     background: var(--color-accent);
     animation: arrived 2.4s ease-in 1.6s both;
   }
-  .entry:target::before { top: 2.1rem; bottom: 2.1rem; }
+  .entry:target::before { top: var(--entry-top); bottom: var(--entry-bottom); }
   h2:target::before { top: 0.1em; bottom: 0.5em; }
   @keyframes arrived {
     from { opacity: 1; }
     to { opacity: 0; }
   }
 
-  /* -- Body copy rhythm --------------------------------------------------- */
+  /* -- Body copy rhythm ---------------------------------------------------
+     The measure is the whole of readability before anything else is: a line
+     the eye cannot sweep in one movement is a line the eye loses. */
   .copy > p { margin-bottom: 1.35em; }
   .copy > p:last-child { margin-bottom: 0; }
 
-  /* -- University marks, hung to the left of a degree ---------------------
+  /* -- The head of a page ---------------------------------------------------
+     The same clearance under the masthead on every page, and the same section
+     space under the head as between any two sections below it. */
+  .page-head {
+    padding-top: clamp(3.5rem, 9vw, 7rem);
+    padding-bottom: var(--spacing-section);
+  }
+
+  /* -- A section opening ---------------------------------------------------
+     Headings stay flush with the page's left edge and the numeral sits above
+     the title. The margin column belongs to the records: only an entry hangs
+     anything in it, and it hangs the one thing that identifies it. A page that
+     indented its headings as well would have every left edge doing the same
+     job and none of them saying anything.
+
+     The deeper accent, not the accent: a roman numeral in letterspaced
+     capitals at caption size is small text, and 5.2:1 is not enough for it. */
+  .section-title {
+    margin-bottom: 1.75rem;
+    font-size: var(--text-section);
+  }
+  /* A lone roman numeral at caption size is not a numeral, it is a speck: at
+     twelve pixels "I" is a vertical stroke with two serifs and "III" is three
+     of them. It is set at caption *text* size with the tracking opened up, and
+     carried on a rule that runs out to the end of the heading's column — the
+     mark a book puts at the head of a chapter, which is also the one thing
+     that tells a reader at a glance that a section has started. A section with
+     no numeral keeps the rule, so every section opens on the same mark.
+
+     It is the strongest rule on the page, and it has to be. It was drawn in
+     the same hairline as the rule between two entries, with a fleuron above
+     it and an entry rule an inch below, and a reader faced with three equal
+     lines could not say which of them began a section. It is ink rather than
+     a hairline, mixed down to just past the 3:1 a mark a reader is meant to
+     see must clear — a printed chapter rule, still lighter than the type. */
+  .section-num {
+    display: flex;
+    align-items: center;
+    gap: 0.95rem;
+    margin-bottom: 0.9rem;
+    font-size: var(--text-meta);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-accent-deep);
+  }
+  .section-num::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    background: color-mix(in srgb, var(--color-ink-faint) 72%, var(--color-paper));
+  }
+
+  /* -- A record, and the rule between two ---------------------------------
+     The rule separates entries; it does not open a list. The section rule is
+     already standing a heading above the first entry, and a second line under
+     the heading boxed the title in and read as another section starting. The
+     last entry gives up its foot for the same reason: the section space after
+     it is the break, and padding on top of it was a gap with nothing in it. */
+  .entry {
+    --entry-top: 2.4rem;
+    --entry-bottom: 2.4rem;
+    padding: var(--entry-top) 0 var(--entry-bottom);
+    border-top: 1px solid var(--color-rule);
+  }
+  .entry:first-child {
+    --entry-top: 0.25rem;
+    border-top: 0;
+  }
+  .entry:last-child { --entry-bottom: 0; }
+
+  /* -- The margin of an entry ----------------------------------------------
+     Its date, and the institution's mark where there is one. Above 64rem the
+     page is one grid — a margin column and the measure — and this hangs in the
+     margin, right-ranged against the text like a shoulder note. Below it there
+     is no margin to hang anything in, so the two run along above the title as
+     a dateline.
+
      The logos are alpha masks, so they take the page's ink rather than their
      own colours, and warm to the accent while the entry is pointed at. They
      are decorative: the entry names the university in words. */
-  .entry-marked {
-    display: grid;
-    grid-template-columns: 2.6rem minmax(0, 1fr);
-    column-gap: 1.1rem;
+  .entry-aside {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 1rem;
+    margin-bottom: 0.85rem;
   }
+  .entry-when {
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    line-height: 1.6;
+    color: var(--color-ink-faint);
+    white-space: nowrap;
+  }
+  .entry-mark { flex: 0 0 auto; width: 2.6rem; }
   @media (min-width: 640px) {
-    .entry-marked { grid-template-columns: 3.4rem minmax(0, 1fr); column-gap: 1.6rem; }
+    .entry-mark { width: 3.4rem; }
   }
-  .entry-mark { padding-top: 0.3rem; }
+  .entry-body { max-width: var(--spacing-measure); }
+
+  @media (min-width: 64rem) {
+    .entry {
+      display: grid;
+      grid-template-columns: var(--spacing-margin-col) minmax(0, var(--spacing-measure));
+      column-gap: 3.5rem;
+      align-items: start;
+    }
+    .entry-aside {
+      display: block;
+      margin: 0.55rem 0 0;
+      text-align: right;
+    }
+    /* In the margin a date may wrap — "Mar 2023 – Apr 2027 (expected)" is
+       wider than ten and a half rem, and held on one line it ran out of the
+       margin and across the first line of the entry. */
+    .entry-when { white-space: normal; }
+    .entry-mark {
+      width: auto;
+      max-width: 3.4rem;
+      margin: 0 0 0.75rem auto;
+    }
+    .uni-mark {
+      -webkit-mask-position: right top;
+      mask-position: right top;
+    }
+  }
+
   .uni-mark {
     display: block;
     width: 100%;
@@ -490,24 +616,24 @@
   .uni-mark-fraunhofer { --mark: url("/logos/fraunhofer.png"); }
   .uni-mark-dfki { --mark: url("/logos/dfki.png"); }
 
-  /* A crest wants height; a wordmark wants width. The research posts are
-     marked with lockups, so their column is wider and the marks hang from its
-     left edge — centred, three shapes this different would each start in a
-     different place and the column would read as a mistake. */
-  /* On a phone a wordmark beside the title costs a fifth of the width and the
-     title wraps after three words, so it goes above the title instead and the
-     text gets the whole line. */
-  .entry-marked[data-wide] { grid-template-columns: minmax(0, 1fr); }
-  .entry-marked[data-wide] .entry-mark { padding-top: 0; margin-bottom: 0.9rem; }
+  /* A crest wants height; a wordmark wants width, so the lockups are set
+     shorter and wider than the crests and ranged the same way as everything
+     else in the margin. */
+  .entry-marked[data-wide] .entry-mark { width: 6.5rem; }
   .entry-marked[data-wide] .uni-mark {
     height: 1.5rem;
     -webkit-mask-position: left center;
     mask-position: left center;
   }
   @media (min-width: 640px) {
-    .entry-marked[data-wide] { grid-template-columns: 6.5rem minmax(0, 1fr); }
-    .entry-marked[data-wide] .entry-mark { padding-top: 0.3rem; margin-bottom: 0; }
     .entry-marked[data-wide] .uni-mark { height: 1.9rem; }
+  }
+  @media (min-width: 64rem) {
+    .entry-marked[data-wide] .entry-mark { width: auto; max-width: 6.5rem; }
+    .entry-marked[data-wide] .uni-mark {
+      -webkit-mask-position: right center;
+      mask-position: right center;
+    }
   }
 
   /* -- Technical skills: a mark, a heading and a short list, one per row ----
@@ -1269,12 +1395,8 @@
   .link { background: none !important; color: #000 !important; }
 
   /* Close the generous screen rhythm up to something that fits on paper. */
-  section { padding-top: 0.35rem !important; padding-bottom: 0.35rem !important; }
+  section, .page-head { padding-top: 0.35rem !important; padding-bottom: 0.35rem !important; }
   .entry { break-inside: avoid; padding: 0.55rem 0 !important; }
   .skill { break-inside: avoid; }
   h1, h2, h3 { break-after: avoid; }
-
-  /* The fleuron is a screen flourish; on paper a plain rule reads better. */
-  .divider { margin: 0.6rem 0 !important; }
-  .divider-mark { display: none !important; }
 }

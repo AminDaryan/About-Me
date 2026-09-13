@@ -70,6 +70,31 @@ contrast, size and hierarchy, and all four can be had inside the character.
   gloss with its ink drawing, a section opening, a rule. `/beyond` is the model.
   Motion is not a stimulant; a change of texture is.
 
+## 1b. How a page is set
+
+Every page is one grid, and the grid means something.
+
+- **Prose and headings are flush** with the page's left edge.
+- **The margin column belongs to the records and the glosses.** An entry hangs
+  the one thing that identifies it — its date, and the institution's mark where
+  there is one — in the margin, and sets the record itself at the measure beside
+  it. A `.note` inside a `<Leaf>` hangs there too. Nothing else goes in it: if
+  every left edge does the same job, none of them says anything.
+- **So a page has exactly two left edges.** Headings, entry rules and plates
+  stand on the outer one; running text stands on the inner one, with whatever
+  identifies it in the margin between. A plate inside an entry steps back over
+  the margin to reach the outer edge (`.copy .plate`); a plate that already
+  stands there — Fig. 1 and Fig. 6 sit straight in the `<Wrap>` — is left
+  alone, or it walks off the side of the sheet.
+- **The rules are ranked, and the ranking is load-bearing.** The strongest rule
+  on a page is the one between two entries (`--color-rule`); a figure's own
+  furniture takes the softer one (`--color-rule-soft`). Get this backwards and a
+  plate's caption reads as the start of a new section. Neither rule may be so
+  faint that it cannot be seen — they were 1.13:1 and 1.27:1, which is not a
+  delicate line but an invisible one.
+- The page is `53.5rem` wide: the gutters plus exactly the leaf — a 10.5rem
+  margin column, a 3.5rem gap and the 36rem measure. Do not widen it.
+
 ## 2. Design system — use it, do not extend it
 
 One stylesheet, `src/app/globals.css`, holds every token. Values are defined

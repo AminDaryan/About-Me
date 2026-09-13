@@ -35,42 +35,42 @@ export default function Entry({
 }) {
   const ref = useSettle<HTMLLIElement>(delay);
 
-  const body = (
-    <>
-      <div className="mb-[0.15rem] flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-        <h3 className="text-subhead">{title}</h3>
-        <span className="label whitespace-nowrap text-ink-faint">{when}</span>
-      </div>
-
-      {where && (
-        <p className="mt-1 mb-[0.85rem] italic">
-          {where}
-        </p>
-      )}
-
-      {children && <div className="copy">{children}</div>}
-    </>
-  );
-
   return (
+    /* Two columns, on the page's one grid: what identifies the record — its
+       date, and the institution's mark where there is one — hangs in the
+       margin, and the record itself is set at the measure beside it. That is
+       how a register is set, and it is also the only way the running text
+       here comes out at a length anyone can read: an <Entries> list has no
+       margin column of its own, so before this an entry ran the full wrap, a
+       hundred and ten characters to the line. */
     <li
       id={id}
       ref={ref}
       data-wide={mark && wideMark ? "" : undefined}
-      className={`settle entry border-t border-rule-soft py-[2.1rem] first:border-rule ${mark ? "entry-marked" : ""}`}
+      className={`settle entry border-t border-rule py-[2.4rem] ${mark ? "entry-marked" : ""}`}
     >
-      {mark ? (
-        <>
-          {/* Not aria-hidden: the mark is a link to the institution now, and
-              hiding a focusable element from assistive technology leaves
-              keyboard users landing on something their screen reader will not
-              name. Its own label carries the name. */}
-          <div className="entry-mark">{mark}</div>
-          <div className="min-w-0">{body}</div>
-        </>
-      ) : (
-        body
-      )}
+      <div className="entry-aside">
+        {/* Not aria-hidden: the mark is a link to the institution now, and
+            hiding a focusable element from assistive technology leaves
+            keyboard users landing on something their screen reader will not
+            name. Its own label carries the name. */}
+        {mark && <div className="entry-mark">{mark}</div>}
+        <span className="entry-when">{when}</span>
+      </div>
+
+      <div className="entry-body">
+        <h3 className="text-subhead">{title}</h3>
+
+        {/* Where is the record's metadata, not its text: set small and quiet so
+            the title above it keeps the entry's first glance. */}
+        {where && (
+          <p className="mt-[0.2rem] mb-[0.95rem] text-meta text-ink-faint italic">
+            {where}
+          </p>
+        )}
+
+        {children && <div className="copy">{children}</div>}
+      </div>
     </li>
   );
 }
