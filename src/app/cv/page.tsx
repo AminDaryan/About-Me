@@ -13,7 +13,13 @@ import {
   ToolMark,
 } from "@/components/icons";
 import type { ToolKey } from "@/components/toolMarks";
-import { Entries, ExternalLink, PageHeader, Section } from "@/components/ui";
+import {
+  Entries,
+  ExternalLink,
+  Labelled,
+  PageHeader,
+  Section,
+} from "@/components/ui";
 
 /* The record: what and when, one line per item, laid out to print. The why and
    the how of each project live on /research, and are linked rather than
@@ -208,9 +214,8 @@ function MarkLink({
 /** A degree's modules: name, a dotted leader, the mark, and the project it was. */
 function Modules({ items }: { items: Module[] }) {
   return (
-    <div>
-      <p className="label text-ink-faint">Selected modules</p>
-      <ul className="grades mt-2">
+    <Labelled label="Selected modules">
+      <ul className="grades">
         {items.map((m) => (
           <li key={m.name}>
             <span>{m.name}</span>
@@ -229,7 +234,7 @@ function Modules({ items }: { items: Module[] }) {
           </li>
         ))}
       </ul>
-    </div>
+    </Labelled>
   );
 }
 
@@ -253,13 +258,14 @@ export default function CV() {
             </span>
           ))}
         </p>
-        <p className="mt-5">
-          <span className="label block text-ink-faint">Research focus</span>
-          Explainable and trustworthy machine learning — making what a model has
-          learned inspectable, and checkable rather than simply believed.
-          Background in computer vision, robot perception and model-based
-          control.
-        </p>
+        <Labelled label="Research focus" className="mt-5">
+          <p>
+            Explainable and trustworthy machine learning — making what a model
+            has learned inspectable, and checkable rather than simply believed.
+            Background in computer vision, robot perception and model-based
+            control.
+          </p>
+        </Labelled>
       </PageHeader>
 
       <Section num="I" title="Education">
@@ -396,11 +402,12 @@ export default function CV() {
                 doi.org/10.1109/ICRoM48714.2019.9071886
               </ExternalLink>
             </p>
-            <p className="label mt-8 text-ink-faint">In preparation</p>
-            <p className="mt-2">
-              A. Amir-B.D., S. Walunj. Manuscript on gaze-based classification
-              of industrial activities from HoloLens 2 eye tracking, 2026.
-            </p>
+            <Labelled label="In preparation" className="mt-8">
+              <p>
+                A. Amir-B.D., S. Walunj. Manuscript on gaze-based classification
+                of industrial activities from HoloLens 2 eye tracking, 2026.
+              </p>
+            </Labelled>
           </div>
         </Settle>
       </Section>
@@ -454,8 +461,7 @@ export default function CV() {
                 <span className="skill-mark" aria-hidden="true">
                   <Icon />
                 </span>
-                <div>
-                  <p className="label text-ink-faint">{name}</p>
+                <Labelled label={name}>
                   {/* One item to a row, so a name is never orphaned by a line
                       break and the marks line up in a column of their own. The
                       gutter is there whether or not the item has a mark, which
@@ -470,7 +476,7 @@ export default function CV() {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </Labelled>
               </div>
             ))}
           </div>

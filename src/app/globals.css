@@ -128,10 +128,15 @@
      gap between any two parts of any page, the page head included, is the same
      twice this. It was three different paddings on four pages, and the head
      of a page stood three hundred pixels clear of its first section where two
-     sections stood a hundred and forty apart. Two and a half entries' worth of
-     space: enough that a section break cannot be taken for the rule between
-     two entries. */
-  --spacing-section: clamp(2rem, 4.5vw, 3.25rem);
+     sections stood a hundred and forty apart.
+
+     Space is ranked the way the rules are. Two sections now stand eighty
+     pixels apart and two entries fifty-six, with the section's own rule and
+     heading on top of the difference. At 3.25rem a side, with the entries
+     padded to match, a section break was a hundred and four pixels and an
+     entry break seventy-seven: the same size of gap, and a reader scrolling
+     could not tell which of the two had just gone past. */
+  --spacing-section: clamp(1.75rem, 3.5vw, 2.5rem);
 
   /* The outer margin, where the chrome lives: the masthead's row and the
      section rail both sit on this line, so on a wide screen they read as one
@@ -308,13 +313,36 @@
   .signpost:hover .signpost-arrow,
   .signpost:focus-visible .signpost-arrow { transform: translateX(0.3rem); }
 
-  /* -- Letterspaced labels: the workhorse of this design ------------------ */
-  .label {
+  /* -- Letterspaced capitals: the workhorse of this design -----------------
+     Everything on the site set in them takes its size, tracking and figures
+     from this one rule, and a new piece of caps joins the list rather than
+     copying the lines. They were copied, seven times, and the copies had
+     already begun to differ in the one line that mattered.
+
+     That line is the figures. The body is set with old-style figures, which
+     rise and fall around the x-height the way lower-case letters do and sit
+     well in a sentence. Among capitals they do not: "MAR 2026" read as a word
+     with its last four letters dropped half a line, and a margin full of
+     dates looked set by someone who had run out of the right sort. Capitals
+     take lining figures. */
+  .label,
+  .entry-when,
+  .plate-mark,
+  .control,
+  .choice,
+  .figure-said-now,
+  .graph-out-delta,
+  .road-when {
     font-size: var(--text-label);
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
-    line-height: 1.6;
     font-feature-settings: "kern" 1, "lnum" 1;
+  }
+  /* A label is secondary text wherever it stands, so it carries its colour
+     with it instead of every use repeating it. */
+  .label {
+    line-height: 1.6;
+    color: var(--color-ink-faint);
   }
 
   /* -- The leaf grid ------------------------------------------------------
@@ -465,31 +493,36 @@
      The deeper accent, not the accent: a roman numeral in letterspaced
      capitals at caption size is small text, and 5.2:1 is not enough for it. */
   .section-title {
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.5rem;
     font-size: var(--text-section);
   }
   /* A lone roman numeral at caption size is not a numeral, it is a speck: at
      twelve pixels "I" is a vertical stroke with two serifs and "III" is three
-     of them. It is set at caption *text* size with the tracking opened up, and
-     carried on a rule that runs out to the end of the heading's column — the
-     mark a book puts at the head of a chapter, which is also the one thing
-     that tells a reader at a glance that a section has started. A section with
-     no numeral keeps the rule, so every section opens on the same mark.
+     of them. It is set at caption *text* size and carried on a rule that runs
+     out to the end of the heading's column — the mark a book puts at the head
+     of a chapter, which is also the one thing that tells a reader at a glance
+     that a section has started. A section with no numeral keeps the rule, so
+     every section opens on the same mark.
+
+     Barely tracked. A roman numeral is a word spelt in capitals, and at the
+     0.3em it used to be set at, "IV" came apart into an I and a V standing a
+     letter's width from each other.
 
      It is the strongest rule on the page, and it has to be. It was drawn in
      the same hairline as the rule between two entries, with a fleuron above
      it and an entry rule an inch below, and a reader faced with three equal
      lines could not say which of them began a section. It is ink rather than
      a hairline, mixed down to just past the 3:1 a mark a reader is meant to
-     see must clear — a printed chapter rule, still lighter than the type. */
+     see must clear — a printed chapter rule, still lighter than the type —
+     and it is the only rule in a section's opening: the first entry under a
+     heading draws none of its own. */
   .section-num {
     display: flex;
     align-items: center;
-    gap: 0.95rem;
-    margin-bottom: 0.9rem;
+    gap: 0.9rem;
+    margin-bottom: 0.55rem;
     font-size: var(--text-meta);
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
+    letter-spacing: 0.06em;
     color: var(--color-accent-deep);
   }
   .section-num::after {
@@ -506,13 +539,13 @@
      last entry gives up its foot for the same reason: the section space after
      it is the break, and padding on top of it was a gap with nothing in it. */
   .entry {
-    --entry-top: 2.4rem;
-    --entry-bottom: 2.4rem;
+    --entry-top: 1.75rem;
+    --entry-bottom: 1.75rem;
     padding: var(--entry-top) 0 var(--entry-bottom);
     border-top: 1px solid var(--color-rule);
   }
   .entry:first-child {
-    --entry-top: 0.25rem;
+    --entry-top: 0;
     border-top: 0;
   }
   .entry:last-child { --entry-bottom: 0; }
@@ -535,9 +568,6 @@
     margin-bottom: 0.85rem;
   }
   .entry-when {
-    font-size: var(--text-label);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
     line-height: 1.6;
     color: var(--color-ink-faint);
     white-space: nowrap;
@@ -549,16 +579,28 @@
   .entry-body { max-width: var(--spacing-measure); }
 
   @media (min-width: 64rem) {
+    /* The date stands on the title's baseline. It used to hang from a fixed
+       offset at the top of the entry, which put it half a line below the
+       title in one face and a third of a line below in another — near enough
+       to look intended and far enough to look wrong. Aligning the baselines
+       holds in any face at any size. */
     .entry {
       display: grid;
       grid-template-columns: var(--spacing-margin-col) minmax(0, var(--spacing-measure));
       column-gap: 3.5rem;
-      align-items: start;
+      align-items: baseline;
     }
     .entry-aside {
       display: block;
-      margin: 0.55rem 0 0;
+      margin: 0;
       text-align: right;
+    }
+    /* Except under a mark, which hangs from the top of the entry with its date
+       below it: a baseline taken from a column that opens with a picture
+       would push the title down to wherever the date happened to end up. */
+    .entry-marked .entry-aside {
+      align-self: start;
+      margin-top: 0.3rem;
     }
     /* In the margin a date may wrap — "Mar 2023 – Apr 2027 (expected)" is
        wider than ten and a half rem, and held on one line it ran out of the
@@ -655,7 +697,7 @@
      one and scatters the marks; a row each keeps the marks in a column and
      every name on the same edge, marked or not. */
   .tools {
-    margin: 0.4rem 0 0;
+    margin: 0;
     padding: 0;
     list-style: none;
     display: grid;
@@ -815,9 +857,6 @@
   .plate-mark {
     margin-right: 0.5rem;
     font-style: normal;
-    font-size: var(--text-label);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
     color: var(--color-ink);
     white-space: nowrap;
   }
@@ -853,9 +892,6 @@
     border: 1px solid var(--color-rule);
     border-radius: 2px;
     background: none;
-    font-size: var(--text-label);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
     line-height: 1;
     color: var(--color-ink-soft);
     cursor: pointer;
@@ -890,9 +926,6 @@
     padding: 0;
     border: 0;
     background: none;
-    font-size: var(--text-label);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
     color: var(--color-ink-faint);
     cursor: pointer;
   }
@@ -976,9 +1009,6 @@
   }
   .figure-said-now {
     margin-right: 0.55rem;
-    font-size: var(--text-label);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
     color: var(--color-accent-deep);
     transition: color 0.25s ease;
   }
@@ -1159,11 +1189,8 @@
   /* What the prediction lost, said in figures beside the bar that shows it. */
   .graph-out-delta {
     margin-left: auto;
-    font-size: var(--text-label);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
     color: var(--color-accent-deep);
-    font-feature-settings: "lnum" 1, "tnum" 1;
+    font-feature-settings: "kern" 1, "lnum" 1, "tnum" 1;
   }
   .graph-out {
     display: block;
@@ -1275,15 +1302,27 @@
   @media (min-width: 1380px) {
     .rail { display: block; }
   }
+  /* The numerals are a column of their own, as wide as the widest of them and
+     ranged right, the way a book's contents sets them: "I" and "VII" end on
+     one edge, and every name starts on another. They were in a fixed column
+     ranged left, so each name began a different distance from its numeral —
+     and when the numerals went missing from that column altogether, they
+     turned up run into the names instead. */
   .rail ol {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
     margin: 0;
     padding: 0;
     list-style: none;
     border-left: 1px solid var(--color-rule-soft);
   }
+  .rail li,
   .rail a {
+    grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: 1.5rem minmax(0, 1fr);
+    grid-template-columns: subgrid;
+  }
+  .rail a {
     align-items: baseline;
     margin-left: -1px;
     padding: 0.4rem 0 0.4rem 0.85rem;
@@ -1298,14 +1337,17 @@
     color: var(--color-accent-deep);
     border-left-color: var(--color-accent);
   }
+  /* Tracked as lightly as the section's own numeral, for the same reason.
+     It takes the link's colour, so the current one is in the deeper accent
+     along with its name. */
   .rail-num {
-    font-size: 0.68rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    grid-column: 1;
+    padding-right: 0.6rem;
+    text-align: right;
+    font-size: var(--text-label);
+    letter-spacing: 0.06em;
   }
-  /* The deeper accent: a numeral this small in the plain accent is 5.2:1,
-     which is not enough for it. */
-  .rail a[aria-current] .rail-num { color: var(--color-accent-deep); }
+  .rail-text { grid-column: 2; }
 
   /* -- Back to the top -----------------------------------------------------
      Out of the way until the masthead is well out of sight, then a quiet mark
@@ -1478,12 +1520,7 @@
      label on the site — this figure's SVG is drawn one user unit to the pixel,
      so 0.7rem here was the same eleven pixels that made the rest of them hard
      to read. */
-  .road-when {
-    font-size: var(--text-label);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    fill: var(--color-ink-faint);
-  }
+  .road-when { fill: var(--color-ink-faint); }
   .road-name {
     font-size: var(--text-meta);
     fill: var(--color-ink-soft);

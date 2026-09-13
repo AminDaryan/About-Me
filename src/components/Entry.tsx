@@ -4,6 +4,15 @@ import type { ReactNode } from "react";
 import { useSettle } from "./Settle";
 
 /**
+ * "Mar 2023 – Apr 2027" → the same, with each month held to its year.
+ *
+ * In the margin a long date has to wrap, and left to itself it wrapped
+ * wherever the column ran out — "Mar 2023 – Apr" on one line and "2027" under
+ * it, which reads as two dates.
+ */
+const holdMonths = (when: string) => when.replace(/(\p{L}+) (\d{4})/gu, "$1 $2");
+
+/**
  * One record: a job, a degree, a piece of research.
  *
  * It settles itself rather than being wrapped in <Settle>, because it renders
@@ -43,11 +52,15 @@ export default function Entry({
        here comes out at a length anyone can read: an <Entries> list has no
        margin column of its own, so before this an entry ran the full wrap, a
        hundred and ten characters to the line. */
+    /* The rule and the padding are the stylesheet's alone. They used to be
+       utilities here as well, and a utility outranks a component rule — so
+       the "no rule above the first entry" in globals.css never took effect,
+       and every section heading had a second line drawn an inch under it. */
     <li
       id={id}
       ref={ref}
       data-wide={mark && wideMark ? "" : undefined}
-      className={`settle entry border-t border-rule py-[2.4rem] ${mark ? "entry-marked" : ""}`}
+      className={`settle entry ${mark ? "entry-marked" : ""}`}
     >
       <div className="entry-aside">
         {/* Not aria-hidden: the mark is a link to the institution now, and
@@ -55,7 +68,7 @@ export default function Entry({
             keyboard users landing on something their screen reader will not
             name. Its own label carries the name. */}
         {mark && <div className="entry-mark">{mark}</div>}
-        <span className="entry-when">{when}</span>
+        <span className="entry-when">{holdMonths(when)}</span>
       </div>
 
       <div className="entry-body">

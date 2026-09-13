@@ -132,10 +132,26 @@ once and used by name.
   `--text-section`, `--text-lede`, `--text-subhead`, `--text-body`,
   `--text-meta`, and `--text-label` with `--tracking-label` for the
   letterspaced caps, plus the `.label` and `.note` (margin gloss) classes. Do
-  not size text ad hoc, and do not set the caps by hand: `.label`, `.choice`,
-  `.control`, `.section-num` and `.entry-when` all take the label tokens, and a
-  copy of a size is a size that drifts. The comment above the scale explains
-  what went wrong when pages sized their own paragraphs; do not repeat it.
+  not size text ad hoc, and do not set the caps by hand: every class set in
+  them is listed in the one selector at `.label` in `globals.css`, which gives
+  the size, the tracking and the figures, and a new piece of caps joins that
+  list rather than copying the three lines — a copy of a size is a size that
+  drifts. The comment above the scale explains what went wrong when pages
+  sized their own paragraphs; do not repeat it.
+- **Figures.** Old-style in running text, lining among capitals. The body sets
+  old-style figures; the caps rule turns them to lining, because "MAR 2026"
+  with old-style digits reads as a word with its end dropped. Roman numerals
+  — `.section-num`, `.rail-num` — are words spelt in capitals and are tracked
+  barely at all; at 0.3em "IV" came apart into "I V".
+- **Components.** A page is built from `PageHeader`, `Section`, `Entries` and
+  `Entry`, `Leaf`, `Plate` and `Labelled`, and nothing hand-rolled in their
+  place: a page head, a section heading, a record, a gloss, a figure, a small
+  heading over a short list. If the thing you are about to set looks like one
+  of those, it is one. Their spacing and rules belong to the stylesheet, not to
+  utilities on the element — a utility outranks a component rule, and the
+  "no rule above the first entry" rule sat unused for exactly that reason. The
+  margin rail reads `data-rail` and `data-rail-num` off the page; it must never
+  go back to finding its entries by a class name inside the heading.
 - **Colour.** `--color-paper`, `--color-ink`, `--color-ink-soft`,
   `--color-ink-faint`, `--color-rule`, `--color-rule-soft`, `--color-accent`,
   `--color-accent-deep`. Never write a hex value in a component. The accent is

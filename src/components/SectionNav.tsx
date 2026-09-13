@@ -19,7 +19,8 @@ type Item = { id: string; num: string; text: string };
 const REACHED = 140;
 
 const same = (a: Item[], b: Item[]) =>
-  a.length === b.length && a.every((x, i) => x.id === b[i].id && x.text === b[i].text);
+  a.length === b.length &&
+  a.every((x, i) => x.id === b[i].id && x.num === b[i].num && x.text === b[i].text);
 
 /**
  * Where the reading line sits in the window, in px from its top.
@@ -40,26 +41,23 @@ export default function SectionNav() {
   const links = useRef<(HTMLAnchorElement | null)[]>([]);
 
   usePageContent(() => {
-    /* Two kinds of entry: a numbered heading, and a stretch of page that has
-       no heading but is still somewhere you can be — the home page opens with
-       its name, its story and Fig. 1 before the first h2, and a rail that
-       started at section I would claim the page begins halfway down. Those
-       carry `data-rail` with the name to use. */
-    const marked = Array.from(
-      document.querySelectorAll<HTMLElement>("main h2[id], main [data-rail][id]"),
-    );
-    const next = marked.map((el) => {
-      if (el.dataset.rail) {
-        return { id: el.id, num: "", text: el.dataset.rail };
-      }
-      const withoutNumber = el.cloneNode(true) as HTMLElement;
-      withoutNumber.querySelector(".label")?.remove();
-      return {
-        id: el.id,
-        num: el.querySelector(".label")?.textContent?.trim() ?? "",
-        text: (withoutNumber.textContent ?? "").trim(),
-      };
-    });
+    /* Every entry is marked in the page itself, by `data-rail` naming it and
+       `data-rail-num` giving its numeral where it has one. A section heading
+       carries both; a stretch of page with no heading carries a name alone,
+       because it is still somewhere you can be — the home page opens with its
+       greeting, its story and Fig. 1 before the first h2, and a rail that
+       started at its first heading would claim the page begins halfway down.
+
+       Attributes rather than the heading's own markup: the rail used to take
+       the numeral out of the h2 by a class name, and the day that class
+       changed, every entry came out with its numeral run into its name. */
+    const next = Array.from(
+      document.querySelectorAll<HTMLElement>("main [data-rail][id]"),
+    ).map((el) => ({
+      id: el.id,
+      num: el.dataset.railNum ?? "",
+      text: el.dataset.rail ?? "",
+    }));
     setItems((prev) => (same(prev, next) ? prev : next));
   });
 
@@ -112,7 +110,7 @@ export default function SectionNav() {
               }}
               href={`#${item.id}`}
             >
-              <span className="rail-num">{item.num}</span>
+              {item.num && <span className="rail-num">{item.num}</span>}
               <span className="rail-text">{item.text}</span>
             </a>
           </li>

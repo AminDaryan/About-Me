@@ -62,7 +62,7 @@ export function PageHeader({
 }) {
   const text = (
     <div>
-      {kicker && <p className="label text-ink-faint">{kicker}</p>}
+      {kicker && <p className="label">{kicker}</p>}
       <h1
         data-page-name={pageName || undefined}
         className={`${kicker ? "mt-2 " : ""}${
@@ -139,8 +139,18 @@ export function Section({
         {title && (
           /* The numeral stands on the rule that opens the section; a section
              without one still opens on the rule, so every section on every
-             page begins with the same mark. */
-          <h2 id={named} className="section-title">
+             page begins with the same mark.
+
+             The rail takes its entry from the data attributes, not from the
+             markup inside the heading. It used to find the numeral by a class
+             name, and when that class was renamed every entry in the rail
+             came out with its numeral run into its name — "IEducation". */
+          <h2
+            id={named}
+            data-rail={title}
+            data-rail-num={num}
+            className="section-title"
+          >
             <span className="section-num">{num}</span>
             <span>{title}</span>
           </h2>
@@ -234,13 +244,38 @@ export function Entries({ children }: { children: ReactNode }) {
   return <ul className="m-0 list-none p-0">{children}</ul>;
 }
 
+/**
+ * A short run under its own letterspaced heading: a degree's modules, a group
+ * of skills, the work still in preparation.
+ *
+ * The CV had four of these, each set by hand — a paragraph, a span forced to
+ * block, and three different gaps between the heading and what it heads —
+ * and side by side they looked like four different kinds of thing.
+ */
+export function Labelled({
+  label,
+  className,
+  children,
+}: {
+  label: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={className}>
+      <p className="label mb-1.5">{label}</p>
+      {children}
+    </div>
+  );
+}
+
 export function Footer() {
   return (
     <footer className="no-print mt-[clamp(3rem,8vw,5.5rem)] border-t border-rule">
-      <div className="label mx-auto flex max-w-[53.5rem] flex-wrap justify-between gap-x-8 gap-y-2 px-5 pt-[1.9rem] pb-[2.6rem] text-ink-faint sm:px-7">
+      <Wrap className="label flex flex-wrap justify-between gap-x-8 gap-y-2 pt-[1.9rem] pb-[2.6rem]">
         <span>Kaiserslautern, Germany</span>
         <span>Updated September 2026</span>
-      </div>
+      </Wrap>
     </footer>
   );
 }
