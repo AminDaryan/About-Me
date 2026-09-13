@@ -223,7 +223,7 @@ export function serpentine(width: number, count: number): Geometry {
  * @param gap    height to open up beneath it, in px
  */
 export function ribbon(width: number, count: number, open: number, gap: number): Geometry {
-  const TOP = 44;
+  const TOP = 62; // room above the first badge for the start banner
   const STEP = 96;
   const CX = 44;
   const AMP = 13;
@@ -232,7 +232,9 @@ export function ribbon(width: number, count: number, open: number, gap: number):
   const yOf = (i: number) => TOP + i * STEP + (open >= 0 && i > open ? gap : 0);
   const xAt = (y: number) => CX + AMP * Math.sin((y - TOP) / 52);
 
-  const yStart = TOP - 34;
+  // The road runs on above the first stop far enough for the start banner to
+  // hang across it without crowding the badge below.
+  const yStart = TOP - 52;
   const yEnd = yOf(count - 1) + 74;
   const s = sampler();
   let d = "";

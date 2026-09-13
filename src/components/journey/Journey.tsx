@@ -14,6 +14,7 @@ import {
 } from "react";
 import { InkFigure } from "@/components/ink";
 import useMedia from "@/components/useMedia";
+import { Plate } from "@/components/ui";
 import { FIGURES } from "./figures";
 import {
   fromStops,
@@ -24,7 +25,7 @@ import {
   toStops,
   type Geometry,
 } from "./road";
-import { CONE, GROUND, SCENERY, pinPath } from "./scenery";
+import { CONE, GROUND, SCENERY, bannerPath, pinPath } from "./scenery";
 import { NOW, STEPS } from "./steps";
 
 /* Fig. 1 — the route so far, as a road.
@@ -33,8 +34,9 @@ import { NOW, STEPS } from "./steps";
    where it reaches Germany. Each stop is a pin. A small car drives to
    whichever stop you point at — turning round when it has to go back — and the
    centre line lights up behind it; past today the road is not yet paved. On a
-   wide screen you can take hold of the car and drive it yourself, or let it
-   drive the whole route.
+   wide screen you can take hold of the car and drive it yourself, and if the
+   figure is left alone for long enough the car sets off from the start banner
+   and drives the whole route on its own.
 
    Inside each U-turn stands a scene for the chapter the road has just left,
    and the car works it: the gear train turns as the car sweeps past, and the
@@ -50,8 +52,13 @@ const HOVER = "(hover: hover)";
 
 /** How long the car takes to turn round, in ms. */
 const TURN_MS = 380;
-/** How long the tour stays at each stop, including the drive there. */
-const TOUR_MS = 2800;
+/** How long a drive of the whole route stays at each stop, including the
+    drive there. */
+const STOP_MS = 2800;
+/** How long the figure has to sit in view and untouched before the car sets
+    off by itself: once soon after it is first seen, and seldom after that. */
+const IDLE_FIRST = 7000;
+const IDLE_AGAIN = 45000;
 
 /** Road travelled either side of a turn over which its scene does its full
     sweep, in px, and how far the driving gear turns across it, in degrees. */
@@ -105,7 +112,9 @@ export default function Journey() {
   const [width, setWidth] = useState(552);
   const [gap, setGap] = useState(230);
   const [drawn, setDrawn] = useState(false);
-  const [touring, setTouring] = useState(false);
+  const [inView, setInView] = useState(false);
+  const [engaged, setEngaged] = useState(false);
+  const [driving, setDriving] = useState(false);
 
   const boxRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -121,6 +130,7 @@ export default function Journey() {
   const dragging = useRef(false);
   const against = useRef(0);
   const activeRef = useRef(active);
+  const droveOnce = useRef(false);
 
   const road = useMemo(() => serpentine(width, STEPS.length), [width]);
   const strip = useMemo(
@@ -154,7 +164,9 @@ export default function Journey() {
     return () => ro.disconnect();
   }, [wide]);
 
-  // Draw the road in the first time it comes into view.
+  // Draw the road in the first time it comes into view, and keep watching
+  // afterwards: the car sets off on its own only while the figure is on
+  // screen to be seen doing it.
   useEffect(() => {
     const el = svgRef.current;
     if (!el) return;
@@ -164,10 +176,8 @@ export default function Journey() {
     }
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setDrawn(true);
-          io.disconnect();
-        }
+        setInView(entry.isIntersecting);
+        if (entry.isIntersecting) setDrawn(true);
       },
       { threshold: 0.15 },
     );
@@ -319,29 +329,48 @@ export default function Journey() {
 
   useEffect(() => () => cancelAnimationFrame(frame.current), []);
 
-  /* ----------------------------- the tour ------------------------------ */
+  /* -------------------------- driving itself ---------------------------- */
 
+  // A drive under way, stop by stop. It holds where it is rather than running
+  // on unseen while the figure is scrolled off the screen.
   useEffect(() => {
-    if (!touring) return;
+    if (!driving || !inView) return;
     const id = window.setTimeout(() => {
-      if (activeRef.current >= STEPS.length - 1) setTouring(false);
-      else setActive((a) => Math.min(a + 1, STEPS.length - 1));
-    }, TOUR_MS);
+      // At the end of the route it comes back to today and parks there, which
+      // is where the figure rests: left standing at a stop that has not
+      // happened yet, it would light the road past today.
+      if (activeRef.current >= STEPS.length - 1) {
+        setActive(NOW);
+        setDriving(false);
+      } else setActive((a) => Math.min(a + 1, STEPS.length - 1));
+    }, STOP_MS);
     return () => window.clearTimeout(id);
-  }, [touring, active]);
+  }, [driving, inView, active]);
 
-  function toggleTour() {
-    if (touring) {
-      setTouring(false);
-      return;
-    }
-    setActive(0);
-    setTouring(true);
-  }
+  /* Left alone, the car goes back to the start and drives the route itself.
+     It waits for quiet first, and anything at all — the pointer crossing the
+     figure, a stop chosen, an arrow key — cancels the wait and then starts it
+     over, so a drive never begins under someone who is using the figure and
+     never outlasts their taking it back. That is also the whole of the stop
+     control now that the button has gone, which is why the car never sets off
+     under reduced motion, and why it stays off the phone, where the story
+     opening beneath each stop would shift the road about as it is read. */
+  useEffect(() => {
+    if (!wide || !inView || engaged || driving || reducedMotion()) return;
+    const id = window.setTimeout(
+      () => {
+        droveOnce.current = true;
+        setActive(0);
+        setDriving(true);
+      },
+      droveOnce.current ? IDLE_AGAIN : IDLE_FIRST,
+    );
+    return () => window.clearTimeout(id);
+  }, [wide, inView, engaged, driving, active]);
 
-  /** Anything the visitor does themselves takes the wheel back from the tour. */
+  /** Anything the visitor does themselves takes the wheel back. */
   function choose(i: number) {
-    setTouring(false);
+    setDriving(false);
     setActive(i);
   }
 
@@ -365,7 +394,7 @@ export default function Journey() {
   function onGrab(e: PointerEvent<HTMLDivElement>) {
     dragging.current = true;
     against.current = 0;
-    setTouring(false);
+    setDriving(false);
     motion.current.drive = null;
     try {
       e.currentTarget.setPointerCapture(e.pointerId);
@@ -412,6 +441,16 @@ export default function Journey() {
   const pin = useMemo(() => pinPath(road.head, road.lift), [road.head, road.lift]);
   const start = pointAt(geo.samples, 0);
   const car = carAt(geo, geo.stops[NOW].len, 0);
+
+  /* The banner the route sets off under, hung over the start line. On the
+     serpentine it stands clear of the verge on two poles, the way a banner
+     across a road does; on the phone, where the road runs down the page, it
+     spans the road instead, and the road leaves room for it above the first
+     badge. `foot` is how far the poles run below the cloth they carry. */
+  const banner =
+    serp ?
+      { x: start.x + 16, y: start.y - verge - 21, w: 50, h: 16, sag: 3, foot: 21 }
+    : { x: start.x, y: start.y + 5, w: 46, h: 13, sag: 2, foot: 19 };
 
   // The round cap past the road's last point, which the unpaved overlay's
   // square end does not reach.
@@ -484,7 +523,23 @@ export default function Journey() {
   );
 
   return (
-    <figure className="m-0">
+    <Plate
+      fig={1}
+      onPointerEnter={() => setEngaged(true)}
+      onPointerLeave={() => setEngaged(false)}
+      /* One sentence, and the clause about taking the wheel is only true
+         where there is a pointer to take it with. */
+      caption={
+        <>
+          The route so far, from mechanical engineering in Iran to explainable
+          AI at Fraunhofer IOSB in Germany:{" "}
+          {wide
+            ? "point at a stop, take the wheel, or leave it be and it drives the route itself"
+            : "tap a stop, or step through the route"}
+          {" "}— the arrow keys work too.
+        </>
+      }
+    >
       <div className={wide ? "grid grid-cols-[minmax(0,1fr)_16rem] items-start gap-10" : ""}>
         <div
           ref={boxRef}
@@ -539,13 +594,26 @@ export default function Journey() {
               />
               <path className="road-future-end" d={roundEnd} />
 
-              {/* the start line */}
+              {/* the start line, and the banner the route sets off under */}
               <g
                 className="road-start"
                 transform={`translate(${start.x} ${start.y}) rotate(${(start.a * 180) / Math.PI}) translate(${serp ? 16 : 12} 0)`}
               >
                 <path d={`M 0 ${-verge + 3} V ${verge - 3}`} />
                 <path d={`M 4 ${-verge + 3} V ${verge - 3}`} strokeDashoffset={4} />
+              </g>
+              <g className="road-banner" transform={`translate(${banner.x} ${banner.y})`}>
+                <path
+                  className="road-banner-pole"
+                  d={`M ${-banner.w / 2} -3 V ${banner.foot} M ${banner.w / 2} -3 V ${banner.foot}`}
+                />
+                <path
+                  className="road-banner-cloth"
+                  d={bannerPath(banner.w, banner.h, banner.sag)}
+                />
+                <text y={banner.h / 2 + banner.sag / 2 + 3.2} textAnchor="middle">
+                  Start
+                </text>
               </g>
 
               {/* the end of the road so far */}
@@ -777,29 +845,8 @@ export default function Journey() {
           {!wide && panel}
         </div>
 
-        {wide && (
-          <div className="sticky top-24">
-            <button type="button" className="road-tour" onClick={toggleTour}>
-              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-                {touring ? <rect x="1.5" y="1.5" width="7" height="7" rx="1" /> : <path d="M 2 1 L 9 5 L 2 9 Z" />}
-              </svg>
-              {touring ? "Stop the drive" : "Drive the route"}
-            </button>
-            <div className="mt-7">{panel}</div>
-          </div>
-        )}
+        {wide && <div className="sticky top-24 pt-2">{panel}</div>}
       </div>
-
-      {/* One sentence, and the clause about taking the wheel is only true
-          where there is a pointer to take it with. */}
-      <figcaption className="mt-6 max-w-measure text-meta text-ink-faint italic">
-        Fig. 1 — The route so far, from mechanical engineering in Iran to
-        explainable AI at Fraunhofer IOSB in Germany:{" "}
-        {wide
-          ? "point at a stop, take the wheel, or let it drive itself"
-          : "tap a stop, or step through the route"}
-        {" "}— the arrow keys work too.
-      </figcaption>
-    </figure>
+    </Plate>
   );
 }

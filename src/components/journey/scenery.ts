@@ -207,6 +207,18 @@ export function pinPath(r: number, lift: number) {
   return `M 0 0 L ${-tx} ${ty} A ${r} ${r} 0 1 1 ${tx} ${ty} Z`;
 }
 
+/**
+ * A cloth banner strung between two poles `w` px apart and `h` px deep, hanging
+ * from y = 0 and dipping `sag` px in the middle under its own weight. Both
+ * edges take the same dip, so the lettering across it never loses height.
+ */
+export function bannerPath(w: number, h: number, sag: number) {
+  const x = f(w / 2);
+  // A quadratic reaches only half way to its control point, so the dip doubles.
+  const c = f(2 * sag);
+  return `M ${-x} 0 Q 0 ${c} ${x} 0 L ${x} ${f(h)} Q 0 ${f(h + c)} ${-x} ${f(h)} Z`;
+}
+
 /** A traffic cone, 12px tall. */
 export const CONE = {
   body: "M -4.6 0 L -1.4 -12 H 1.4 L 4.6 0 Z",

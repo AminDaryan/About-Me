@@ -1404,6 +1404,13 @@
 
   .road-start path { fill: none; stroke: var(--color-paper); stroke-width: 4; stroke-dasharray: 4 4; }
 
+  /* The banner over the start line. Its cloth is paper, so the road reads on
+     either side of it, and it is lettered like the road signs — the accent
+     stays with the stop being read, which is the one live thing here. */
+  .road-banner-pole { fill: none; stroke: var(--color-ink-soft); stroke-width: 1.6; stroke-linecap: round; }
+  .road-banner-cloth { fill: var(--color-paper); stroke: var(--color-ink-soft); stroke-width: 1.2; stroke-linejoin: round; }
+  .road-banner text { fill: var(--color-ink); }
+
   /* Drawn in along its own length the first time it is seen (pathLength="1"). */
   .road-draw { stroke-dasharray: 1; stroke-dashoffset: 1; }
   .road.is-drawn .road-draw { animation: road-draw 1.5s cubic-bezier(0.33, 0.1, 0.2, 1) forwards; }
@@ -1464,6 +1471,7 @@
   .road-sign rect { fill: var(--color-ink); }
   .road-sign .road-sign-inset { fill: none; stroke: var(--color-paper); stroke-opacity: 0.55; stroke-width: 0.8; }
   .road-sign text,
+  .road-banner text,
   .road-country {
     font-size: 0.56rem;
     letter-spacing: 0.12em;
@@ -1605,27 +1613,6 @@
     cursor: pointer;
   }
   .road-hit:focus-visible { outline-offset: -2px; }
-
-  .road-tour {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    padding: 0.42rem 0.95rem 0.42rem 0.8rem;
-    border: 1px solid var(--color-rule);
-    border-radius: 999px;
-    font-size: 0.7rem;
-    letter-spacing: 0.17em;
-    text-transform: uppercase;
-    color: var(--color-accent-deep);
-    cursor: pointer;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
-  }
-  .road-tour svg { fill: currentColor; }
-  .road-tour:hover,
-  .road-tour:focus-visible {
-    border-color: var(--color-accent);
-    background-color: color-mix(in srgb, var(--color-accent) 8%, transparent);
-  }
 
   /* The panel's text fades in on every change; its drawing redraws itself
      through the .ink rules above. */
