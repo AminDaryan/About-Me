@@ -16,31 +16,67 @@
      than daylight.
 
      Everything derived from it is ink mixed into the sheet at fixed ratios —
-     4% for the panel, 7% for the soft rule, 13% for the rule — so the hairlines
-     keep the same relative presence whatever the ground becomes. Changing only
-     --color-paper would put the rules within a few percent of it and erase
-     them.
+     4% for the panel, 16% for the soft rule, 24% for the rule — so the
+     hairlines keep the same relative presence whatever the ground becomes.
+     Changing only --color-paper would put the rules within a few percent of it
+     and erase them.
 
-     Every ratio below is measured against the ground, and none may drop under
-     4.5:1: ink 12.2, ink-soft 6.1, ink-faint 4.8, accent 5.2, accent-deep 7.0. */
+     The two rules were 7% and 13%, which measure 1.13:1 and 1.27:1 against the
+     paper. That is not a delicate line, it is a line nobody over forty can see,
+     and the page was using them to say where one entry ended and the next
+     began. They are now 1.36:1 and 1.60:1 — still hairlines on a warm sheet,
+     but hairlines that are there. The ranking matters as much as the weight:
+     the strongest rule on the page has to be the one between two entries, or a
+     figure's own furniture reads as the start of a new section.
+
+     Every ratio below is measured against the ground, and the floor is 5.5:1
+     rather than the 4.5:1 the standard asks for: ink 12.2, ink-soft 7.0,
+     ink-faint 5.8, accent 5.2, accent-deep 7.0.
+
+     The two greys were lifted on 2026-09-12 from 6.1 and 4.8. The people this
+     site is written for are between thirty and seventy, and at that end of the
+     range a lens scatters more light and the contrast that reaches the retina
+     is lower than the one measured here — so running text is now at the AAA
+     ratio and the secondary tier clears AA with room in hand. The accent stays
+     where it is: it marks things, and a mark needs 3:1. Where it has to carry
+     small text — the live step under Fig. 4, the current section in the rail —
+     accent-deep does it instead. */
   --color-paper: #ece3ce;
   --color-paper-deep: #e4dbc7;
   --color-ink: #2a231a;
-  --color-ink-soft: #5c5044;
-  --color-ink-faint: #6f6049;
-  --color-rule: #d3cab7;
-  --color-rule-soft: #ded6c1;
+  --color-ink-soft: #544739;
+  --color-ink-faint: #625340;
+  --color-rule: #bdb5a3;
+  --color-rule-soft: #cdc4b1;
   /* Oxblood rather than brick: deeper and less orange than the #9c5039 it
      replaces, which is both warmer against this ground and a point of contrast
      better than the one before it. */
   --color-accent: #96442d;
   --color-accent-deep: #7a3522;
 
-  /* No web fonts. This stack resolves to Iowan Old Style, Palatino or Georgia
-     depending on the visitor's OS — which avoids loading Google Fonts (ruled a
-     GDPR violation in Germany) and dodges the Playfair-Display "template" look. */
-  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
-    "URW Palladio L", Georgia, Cambria, "Times New Roman", serif;
+  /* No web fonts, and one family for the whole site. The stack avoids loading
+     Google Fonts (ruled a GDPR violation in Germany) and dodges the
+     Playfair-Display "template" look.
+
+     It is a serif, deliberately, and stays one. The case for a sans was put and
+     is a fair one — but nothing that was hard to read here was hard to read
+     because of the letterforms. It was a hundred and ten characters to the
+     line, body text at 6.1:1 and captions at 4.8:1, and eleven-pixel capitals
+     tracked a fifth of an em. Those are fixed. A sans would have bought a few
+     per cent of legibility and cost the whole character of a page that is meant
+     to read like a book from a college library.
+
+     What did change is the order. Windows was falling through to Palatino
+     Linotype, which is a beautiful face with a small body: at seventeen pixels
+     its x-height is noticeably shorter than the faces below it, and a short
+     x-height is exactly what a reader over fifty has least of to work with.
+     Constantia now comes first on Windows — a warm humanist serif drawn for
+     reading on a screen, with old-style figures of its own, which is both the
+     more legible face and the closer one to the brief. Iowan Old Style keeps
+     the front of the stack on macOS for the same reasons. */
+  --font-serif: "Iowan Old Style", Constantia, "Sitka Text", "Palatino Linotype",
+    Palatino, "Book Antiqua", "URW Palladio L", Charter, Georgia, Cambria,
+    "Times New Roman", serif;
 
   --text-display: clamp(2.9rem, 7.5vw, 4.6rem);
   --text-title: clamp(2.4rem, 5.5vw, 3.6rem);
@@ -57,15 +93,30 @@
      plus .label (letterspaced caps) and .note (margin glosses). */
   --text-lede: clamp(1.18rem, 2.4vw, 1.42rem);
   --text-lede--line-height: 1.55;
-  --text-subhead: 1.24rem;
-  --text-subhead--line-height: 1.35;
+  /* The title of an entry or a card. It was 1.24rem against a 1.09rem body —
+     a seventh larger, which on a page where the two also differ in colour was
+     just enough to tell them apart, and stopped being enough the moment the
+     body face grew a larger x-height under it. A heading has to win at a
+     glance, not on inspection. */
+  --text-subhead: 1.35rem;
+  --text-subhead--line-height: 1.3;
   /* Set a shade larger and looser than a screen would ask for, because a page
      read at arm's length in no hurry wants a book's measure rather than an
      interface's: 17.4px on a 68-character line, leading at 1.76. */
   --text-body: 1.09rem;
   --text-body--line-height: 1.76;
-  --text-meta: 0.9rem;
+  --text-meta: 0.95rem;
   --text-meta--line-height: 1.6;
+
+  /* The letterspaced caps, given a name because two rules set them — .label and
+     the pipeline under Fig. 4 — and a copy of a size is a size that drifts.
+     They were 0.7rem at 0.19em, which is eleven pixels with a fifth of an em
+     between every pair of letters: the tracking that makes a word look set at
+     display size is the tracking that pulls it apart at caption size. Both
+     moved on 2026-09-12 — a little larger, a little tighter — after a line of
+     it under Fig. 4 turned out to be unreadable at arm's length. */
+  --text-label: 0.78rem;
+  --tracking-label: 0.155em;
 
   --spacing-measure: 36rem;
   --spacing-margin-col: 10.5rem;
@@ -247,8 +298,8 @@
 
   /* -- Letterspaced labels: the workhorse of this design ------------------ */
   .label {
-    font-size: 0.7rem;
-    letter-spacing: 0.19em;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     line-height: 1.6;
     font-feature-settings: "kern" 1, "lnum" 1;
@@ -263,7 +314,7 @@
     margin: 0 0 0.9rem;
     padding-left: 0.9rem;
     border-left: 1px solid var(--color-rule);
-    font-size: 0.83rem;
+    font-size: 0.88rem;
     line-height: 1.6;
     color: var(--color-ink-faint);
     font-style: italic;
@@ -811,7 +862,7 @@
     padding: 0.4rem 0 0.4rem 0.85rem;
     border-left: 1px solid transparent;
     color: var(--color-ink-faint);
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     line-height: 1.4;
     transition: color 0.25s ease, border-color 0.25s ease;
   }
@@ -821,11 +872,13 @@
     border-left-color: var(--color-accent);
   }
   .rail-num {
-    font-size: 0.62rem;
+    font-size: 0.68rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
   }
-  .rail a[aria-current] .rail-num { color: var(--color-accent); }
+  /* The deeper accent: a numeral this small in the plain accent is 5.2:1,
+     which is not enough for it. */
+  .rail a[aria-current] .rail-num { color: var(--color-accent-deep); }
 
   /* -- Back to the top -----------------------------------------------------
      Out of the way until the masthead is well out of sight, then a quiet mark
@@ -987,9 +1040,13 @@
   .road-pin[data-active] .road-art path { stroke: var(--color-paper); }
   .road-pin[data-active] .road-pin-body { stroke-dasharray: none; }
 
+  /* The year under each pin, on the same scale as every other letterspaced
+     label on the site — this figure's SVG is drawn one user unit to the pixel,
+     so 0.7rem here was the same eleven pixels that made the rest of them hard
+     to read. */
   .road-when {
-    font-size: 0.7rem;
-    letter-spacing: 0.19em;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     fill: var(--color-ink-faint);
   }

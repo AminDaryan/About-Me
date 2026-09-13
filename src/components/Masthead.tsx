@@ -72,9 +72,9 @@ export default function Masthead() {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`border-b pb-0.5 text-[0.68rem] tracking-[0.06em] whitespace-nowrap uppercase transition-colors sm:text-[0.8rem] sm:tracking-[0.11em] ${
+                className={`border-b pb-0.5 text-[0.74rem] tracking-[0.06em] whitespace-nowrap uppercase transition-colors sm:text-[0.82rem] sm:tracking-[0.11em] ${
                   active
-                    ? "border-accent text-accent"
+                    ? "border-accent text-accent-deep"
                     : "border-transparent text-ink-soft hover:border-rule hover:text-ink"
                 }`}
               >

@@ -35,6 +35,41 @@ than any visual flaw on the page.
 - Sources live in `docs/sources/<topic>/` behind a `MANIFEST.md` that records
   where the file came from, when, and its SHA-256.
 
+## 1a. The character, and who is reading
+
+Amin's brief, in his words and kept in them: the site should feel like reading a
+paper from **1800s academia — Oxford, wooden, warm, written with a quill** — and
+it should be **easy to read**. Those two pull against each other only if you
+think readability is a matter of letterforms. It is not. It is measure,
+contrast, size and hierarchy, and all four can be had inside the character.
+
+- **The reader is between thirty and seventy.** Treat WCAG 2.1 AA as a floor and
+  not a target: running text at **7:1**, secondary text at **5.5:1 or better**,
+  and no mark a reader is meant to see — a rule, a dashed outline, a meter's
+  track — under **3:1**. With age a lens scatters more light, so the contrast
+  reaching the retina is lower than the contrast measured on the page.
+- **The measure is the first thing, before any of the rest.** Running text is
+  capped at `--spacing-measure` — 36rem, which at the body size is about 72
+  characters to the line. The number is not arbitrary and it is not mine:
+  45–75 characters is the range every typographer since Bringhurst gives, 66
+  is the figure he calls ideal, and 80 is where the W3C stops. A line the eye
+  cannot sweep in one movement is a line the eye loses.
+- **But the measure applies to prose, and only to prose.** A drawing is not a
+  sentence. Plates run the full width of the column the page is built on — the
+  margin and the measure together — so a figure gets the room it needs and the
+  page does not read as a narrow strip down one side of a wide sheet.
+- **It is a serif, and it stays one.** A sans was proposed and considered. What
+  was hard to read here was never the letterforms — it was 110 characters to the
+  line, body text at 6.1:1 and eleven-pixel capitals tracked a fifth of an em. A
+  sans would have bought a few per cent and cost the whole character. What did
+  change is the order of the stack: Constantia and Iowan Old Style lead it,
+  because both are book faces drawn to be read on a screen and both have the
+  x-height that Palatino, which Windows was falling through to, does not.
+- **Pace the page.** A reader should never scroll a full screen of uniform grey
+  text: something has to change every screenful or so — a figure, a marginal
+  gloss with its ink drawing, a section opening, a rule. `/beyond` is the model.
+  Motion is not a stimulant; a change of texture is.
+
 ## 2. Design system — use it, do not extend it
 
 One stylesheet, `src/app/globals.css`, holds every token. Values are defined
@@ -91,7 +126,9 @@ link.
 - Icon-only links carry an `aria-label`; an unlabelled icon asks the visitor to
   guess.
 - Visible focus everywhere. Never remove an outline without replacing it.
-- Contrast: body text ≥ 4.5:1, large text and meaningful non-text ≥ 3:1.
+- Contrast, at this site's floors rather than the standard's: running text
+  ≥ 7:1, secondary text ≥ 5.5:1, and any mark a reader is meant to see ≥ 3:1.
+  See §1a for why.
 - Honour `prefers-reduced-motion` in the same change that adds the motion, not
   later. Every animated rule in `globals.css` has an entry in the reduced-motion
   block; keep that true.
