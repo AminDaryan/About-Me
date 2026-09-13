@@ -1,27 +1,48 @@
-/* No margin above: it held the drawing clear of the gloss that used to sit over
-   it, and with the gloss gone it only pushed the drawing below the top of the
-   paragraph it stands beside. */
+/* A study is set three lines deep, as a drop cap is: from the capitals of its
+   paragraph's first line (the margin above it is .figure-note's, in
+   globals.css) to the baseline of the third. Every viewBox is cropped to its
+   drawing, so the height is the drawing's and the width follows from it. They
+   used to share a width of 164px, each drawn somewhere inside a 200-by-144
+   sheet, and so started 20 to 50px below the top of their paragraphs, stopped
+   at four different distances from the text, and the two taller than their
+   paragraphs pushed the next one down. */
 .figure {
-  width: 164px;
+  width: fit-content;
   max-width: 100%;
   color: var(--color-ink-soft);
   -webkit-tap-highlight-color: transparent;
 }
-.figure svg { display: block; width: 100%; height: auto; overflow: visible; }
+.figure svg {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 4.6rem;
+  height: calc(2lh + 1cap);
+  overflow: visible;
+}
+/* Strokes are weighed on the screen, not in the drawing: scaled each to its own
+   frame, the same stroke came out at four different weights. A dash measured
+   along its path by pathLength is left in the drawing's units — on the screen
+   it came out a different length in every frame, and the moving thought lost
+   its place on its loop — and so is the reveal mask, whose width only has to
+   cover the ink under it. The psychology study is drawn at two-thirds of its
+   size, so its thought is drawn half as heavy again to stand at the others'
+   weight. */
+.figure svg :is(path, ellipse, circle) { vector-effect: non-scaling-stroke; }
+.figure svg :is(mask path, .thought) { vector-effect: none; }
+.figure svg .thought { stroke-width: 1.85; }
 .figure:focus-visible { outline: 1px solid var(--color-accent); outline-offset: 5px; }
-.figure[data-subject="ornament"] { width: 144px; margin: 0; }
+.figure[data-subject="ornament"] svg { width: 144px; height: auto; }
 .detail, .writtenLine { opacity: .58; }
 .hatching { opacity: .62; stroke-width: .8; }
 .paper { fill: var(--color-paper); }
 .accent { stroke: var(--color-accent); }
-.boardFill { fill: var(--color-paper); stroke: none; }
-.square { fill: var(--color-ink-faint); fill-opacity: .12; stroke: none; }
-.destination { stroke: var(--color-accent); opacity: .55; }
-.route { stroke: var(--color-accent); opacity: .5; }
+.boardEdge { fill: currentColor; fill-opacity: .45; }
+.darkSquares { fill: currentColor; fill-opacity: .64; stroke: none; }
+.route { stroke: var(--color-accent); stroke-dasharray: 1.5 2.5; }
 .bookQuill { transform: translate(107px,100px); }
 .ornamentQuill { transform: translate(25px,72px); }
 .thought { stroke: var(--color-accent); stroke-dasharray: .16 .84; opacity: 0; }
 .bowstring { transform-origin: 50px 72px; transform: scaleX(.001); }
 .arrow { transform: translateX(-.024px); }
-@media (min-width: 64rem) { .figure { margin-left: auto; } }
 @media print { .figure { break-inside: avoid; } }

@@ -14,6 +14,7 @@ require.extensions[".ts"] = (module, filename) => {
 };
 const { studies } = require("./motion.ts");
 const { writingCurve, ornamentCurve } = require("./geometry.ts");
+const { board, project, knightFrom, knightTo, knightPose, KNIGHT_UNITS } = require("./board.ts");
 const { createIllustrationPlayback } = require("./illustrationPlayback.ts");
 require.extensions[".ts"] = previousLoader;
 
@@ -59,9 +60,32 @@ test("the bowstring vertex stays attached to the arrow nock throughout", () => {
   }
 });
 
-test("the knight lands two files and one rank away, then returns", () => {
-  assert.deepEqual(coords(studies.chess.tracks.knight(.5).transform), [40, -9]);
-  assert.deepEqual(coords(studies.chess.tracks.knight(.96).transform), [0, 0]);
+test("the knight stands on g1 at rest, lands on f3, then returns", () => {
+  const knight = studies.chess.tracks.knight;
+  assert.equal(knight(0).transform, knightPose(knightFrom));
+  assert.equal(knight(.5).transform, knightPose(knightTo));
+  assert.equal(knight(.96).transform, knightPose(knightFrom));
+  assert.deepEqual([knightFrom, knightTo], [{ file: 6.5, rank: .5 }, { file: 5.5, rank: 2.5 }]);
+});
+
+test("the board is drawn in perspective, the right way round, inside its own frame", () => {
+  const [, , width, height] = board.frame.split(" ").map(Number);
+  const breadth = rank => project(8, rank).x - project(0, rank).x;
+  const depth = rank => project(0, rank).y - project(0, rank + 1).y;
+  // Files converge up the board, and each rank is shallower than the one before it.
+  assert.ok(breadth(8) < breadth(0));
+  for (let rank = 0; rank < 7; rank++) assert.ok(depth(rank + 1) < depth(rank));
+  // Upright things stay upright: lifting a point moves it straight up.
+  assert.equal(project(3.5, 4.5, 1).x, project(3.5, 4.5).x);
+  // a1 is dark and h1 light: 32 dark squares, the first of them a1.
+  assert.equal(board.dark.match(/M/g).length, 32);
+  const a1 = project(0, 0);
+  assert.ok(board.dark.startsWith(`M${Number(a1.x.toFixed(3))} ${Number(a1.y.toFixed(3))}L`));
+  // The knight, at the top of its hop and at its furthest, stays inside the frame.
+  for (let i = 0; i <= 200; i++) {
+    const [x, y, scale] = coords(studies.chess.tracks.knight(i / 200).transform);
+    assert.ok(y - scale * KNIGHT_UNITS >= 0 && x >= 0 && x <= width && y <= height, `the knight leaves the frame at ${i / 200}`);
+  }
 });
 
 test("finishing, renewed hover, visibility and reduced motion preserve the controller contract", () => {

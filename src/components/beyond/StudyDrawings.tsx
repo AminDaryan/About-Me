@@ -1,5 +1,6 @@
 import styles from "./MarginalStudy.module.css";
 import { QuillWriting } from "./Quill";
+import { board, knightFrom, knightPose, knightTo, ring } from "./board";
 
 export type Subject = "reading" | "psychology" | "archery" | "chess" | "ornament";
 
@@ -7,7 +8,7 @@ export const descriptions: Record<Subject, string> = {
   reading: "Reading: a feather quill follows a curved line in an open book, beside an inkwell",
   psychology: "Psychology: an engraved profile with unfolding lines of thought",
   archery: "Archery: the bow draws and relaxes, with its arrow resting against the string",
-  chess: "Chess: a knight considers two positions, moving two files and one rank, then returning",
+  chess: "Chess: on a board seen from White's side, a knight moves from g1 to f3 and back",
   ornament: "A feather quill traces an ink flourish",
 };
 
@@ -30,16 +31,18 @@ function Reading() {
   );
 }
 
-/** A squat glass inkwell on the table line, with ink standing in its neck. */
+/** A squat glass inkwell on the table line, with ink standing in its neck. It
+    stands in front of the book's corner: beside it, the drawing was too wide
+    to be set three lines deep inside the margin. */
 function Inkwell() {
   return (
     <>
-      <path className={styles.detail} d="M150 124.5H192" />
-      <path className={styles.paper} d="M160 124Q154 111 162 104H182Q190 111 184 124Z" />
-      <path className={styles.paper} d="M166 104V99.5H178V104" />
-      <path d="M163.5 99.5H180.5" />
-      <ellipse cx="172" cy="99.5" rx="4.6" ry="1.3" fill="currentColor" stroke="none" />
-      <path className={styles.hatching} d="M163 110Q161 116 163.5 121M166 108Q165 115 167 121" />
+      <path className={styles.detail} d="M125 124.5H167" />
+      <path className={styles.paper} d="M135 124Q129 111 137 104H157Q165 111 159 124Z" />
+      <path className={styles.paper} d="M141 104V99.5H153V104" />
+      <path d="M138.5 99.5H155.5" />
+      <ellipse cx="147" cy="99.5" rx="4.6" ry="1.3" fill="currentColor" stroke="none" />
+      <path className={styles.hatching} d="M138 110Q136 116 138.5 121M141 108Q140 115 142 121" />
     </>
   );
 }
@@ -64,7 +67,7 @@ function Archery() {
       <ellipse className={styles.detail} cx="175" cy="72" rx="8" ry="23" />
       <ellipse className={styles.accent} cx="175" cy="72" rx="3" ry="9" />
       <path d="M50 24Q108 72 50 120M52 28Q101 72 52 116" />
-      <path strokeWidth="3" d="M78 67V77" />
+      <path strokeWidth="2.5" d="M78 67V77" />
       {/* Scaling around the limb tips keeps both ends fixed while the nock draws. */}
       <path data-motion="bowstring" className={styles.bowstring} vectorEffect="non-scaling-stroke" d="M50 24L26 72L50 120" />
       <g data-motion="arrow" className={styles.arrow}>
@@ -75,21 +78,22 @@ function Archery() {
 }
 
 function Chess() {
+  const target = ring(knightTo, 0.3);
   return (
     <>
-      {/* An eight-by-eight board, foreshortened to fit the margin. */}
-      <path className={styles.boardFill} d="M20 51H180V123H20Z" />
-      <path className={styles.detail} d="M20 51H180V123H20ZM20 60H180M20 69H180M20 78H180M20 87H180M20 96H180M20 105H180M20 114H180M40 51V123M60 51V123M80 51V123M100 51V123M120 51V123M140 51V123M160 51V123" />
-      {[0, 1, 2, 3, 4, 5, 6, 7].flatMap(row => [0, 1, 2, 3, 4, 5, 6, 7].filter(col => (row + col) % 2 === 0).map(col => (
-        <rect key={`${row}-${col}`} className={styles.square} x={20 + col * 20} y={51 + row * 9} width="20" height="9" />
-      )))}
-      <path className={styles.route} pathLength={1} d="M50 109.5H90V100.5" />
-      <circle className={styles.destination} cx="90" cy="100.5" r="3" />
-      <g transform="translate(-7.5 4.5)">
-      <g data-motion="knight">
-        <path className={styles.paper} d="M43 105V101L47 97H68L72 101V105ZM48 97C48 85 58 86 59 75L50 80L43 75L54 59L54 50L64 57C79 60 79 74 71 85L68 97Z" />
-        <path className={styles.detail} d="M48 72L54 67M62 61H64M47 101H68M68 65Q76 75 65 87" />
-      </g>
+      <path className={styles.paper} d={board.rim} />
+      <path className={styles.boardEdge} d={board.edge} />
+      <path className={styles.darkSquares} d={board.dark} />
+      <path className={styles.detail} d={board.surface} />
+      <path className={styles.route} d={board.route} />
+      <ellipse className={styles.accent} {...target} />
+      {/* Drawn standing on its own base, KNIGHT_UNITS tall, and set on the
+          board by a transform that scales it with the square it stands on. */}
+      <g data-motion="knight" style={{ transform: knightPose(knightFrom) }}>
+        <path className={styles.paper} d="M-15-4V0A15 6.8 0 0 0 15 0V-4A15 6.8 0 0 0-15-4Z" />
+        <path className={styles.detail} d="M-15-4A15 6.8 0 0 0 15-4" />
+        <path className={styles.paper} d="M-9-6C-11-14-8-22-3-25C-7-25-12-25-15.5-28C-18-30-17-34.5-13.5-36.5C-10-41-6-46-2-48L0-55L3.5-48.5C10-47 14-40 14-31C14-22 9-14 10-6Q0-2.5-9-6Z" />
+        <path className={styles.detail} d="M5-45.5C11-40 12-32 8.5-23M-6.5-40.5H-4.5" />
       </g>
     </>
   );
@@ -98,3 +102,17 @@ function Chess() {
 function Ornament() { return <QuillWriting ornament />; }
 
 export const drawings = { reading: Reading, psychology: Psychology, archery: Archery, chess: Chess, ornament: Ornament };
+
+/** Each drawing's viewBox, cropped to the drawing at rest, so that the edges
+    of the drawing are the edges of the frame it is set in: its top on the
+    capitals of the paragraph's first line, its foot on the third line's
+    baseline, and its right edge on the margin's. What moves may leave it — a
+    bowstring drawn back, a quill lifted. The ornament is not set beside a
+    paragraph and keeps the frame it was drawn in. */
+export const frames: Record<Subject, string> = {
+  reading: "13.44 54.79 153.56 69.71",
+  psychology: "49.89 19.79 93.11 109.21",
+  archery: "49.98 24 138.02 102",
+  chess: board.frame,
+  ornament: "0 0 200 100",
+};

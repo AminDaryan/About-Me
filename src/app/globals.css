@@ -454,10 +454,15 @@
   }
 
   @media (min-width: 64rem) {
+    /* Its top stands on the capitals of the paragraph's first line, which sit
+       half of what the line has to spare above them: (1lh - 1cap) / 2 lands
+       within a fifth of a pixel of Constantia's and Iowan's cap height. The rem
+       is the same distance for a browser without the two units. */
     .leaf > .figure-note {
       grid-column: 1;
       justify-self: end;
-      margin: 0.3rem 0 0;
+      margin: 0.54rem 0 0;
+      margin-top: calc((1lh - 1cap) / 2);
     }
   }
 

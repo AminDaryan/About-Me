@@ -1,6 +1,7 @@
 import type { MotionTrack } from "./useIllustrationLoop";
 import type { Subject } from "./StudyDrawings";
 import { writingCurve, writingReturn, ornamentCurve, ornamentReturn } from "./geometry";
+import { knightFrom, knightPose, knightTo } from "./board";
 
 const round = (value: number) => Number(value.toFixed(5));
 const smooth = (value: number) => {
@@ -52,12 +53,17 @@ export const studies: Record<Subject, Study> = {
   chess: {
     duration: 6000,
     tracks: {
+      // The knight travels over the board rather than across the drawing, so
+      // it shrinks as it moves away up the board and its hop stays upright.
       knight: p => {
         const there = segment(p, .1, .4);
         const back = segment(p, .58, .88);
-        const x = 40 * (there - back);
-        const lift = 12 * (Math.sin(Math.PI * there) + Math.sin(Math.PI * back));
-        return { transform: translate(x, -9 * (there - back) - lift) };
+        const away = there - back;
+        const lift = .45 * (Math.sin(Math.PI * there) + Math.sin(Math.PI * back));
+        return { transform: knightPose({
+          file: knightFrom.file + (knightTo.file - knightFrom.file) * away,
+          rank: knightFrom.rank + (knightTo.rank - knightFrom.rank) * away,
+        }, lift) };
       },
     },
   },

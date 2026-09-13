@@ -32,7 +32,9 @@ export function byLength(curve: Curve): Curve {
 
 export const writingPath = "M107 100Q133 90 157 95";
 export const writingCurve = byLength(quadratic({ x: 107, y: 100 }, { x: 133, y: 90 }, { x: 157, y: 95 }));
-export const writingReturn = cubic({ x: 157, y: 95 }, { x: 174, y: 61 }, { x: 87, y: 57 }, { x: 107, y: 100 });
+// The quill lifts only a little on its way back to the start of the line: on
+// a higher arc its feather rose half a line above the drawing's frame.
+export const writingReturn = cubic({ x: 157, y: 95 }, { x: 170, y: 76 }, { x: 92, y: 74 }, { x: 107, y: 100 });
 export const ornamentPath = "M25 72C70 48 113 96 172 70";
 export const ornamentCurve = byLength(cubic({ x: 25, y: 72 }, { x: 70, y: 48 }, { x: 113, y: 96 }, { x: 172, y: 70 }));
 export const ornamentReturn = cubic({ x: 172, y: 70 }, { x: 165, y: 36 }, { x: 33, y: 37 }, { x: 25, y: 72 });
