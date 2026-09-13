@@ -124,7 +124,7 @@ export function toolPoint(p: Pose): Point3 {
    same direction, makes every carry a move across the picture. The shortest
    one is now a fifth of the frame wide, where the widest arc of bench put one
    at nine pixels — a lift and a drop in the same place. */
-export const BENCH = { near: 0.54, far: 0.63, from: -0.1, to: 0.45 };
+export const BENCH = { near: 0.57, far: 0.65, from: -0.1, to: 0.45 };
 /* The bench itself — one surface, with the arm bolted to it, as the lab had
    it. Bounded rather than an endless floor: a table is a thing with edges, and
    an infinite grid under half a metre of arm reads as neither.
@@ -134,12 +134,28 @@ export const BENCH = { near: 0.54, far: 0.63, from: -0.1, to: 0.45 };
    reader. Ending it inside the frame put a hard line across the foreground
    with the object sitting below it, apparently in mid-air. */
 export const TABLE = { x0: -0.55, x1: 1.2, z0: -0.2, z1: 0.95, step: 0.142 };
-/** Where the object always goes, which the report calls a predefined location. */
-export const TARGET: Point3 = { x: 0.13, y: 0.03, z: 0.32 };
-/** The obstacle the planner is told about, standing between the two. */
-export const OBSTACLE = { x: 0.02, z: 0.45, w: 0.1, h: 0.22 };
 /** Half the cuboid: 6 cm across, because the Panda's fingers open to 8. */
 export const OBJECT_HALF = 0.03;
+/** Where the object always goes, which the report calls a predefined location.
+    It rests on the bench like any other cuboid, so its height is the object's
+    own half-width rather than a second number that has to be kept in step. */
+export const TARGET: Point3 = { x: 0.075, y: OBJECT_HALF, z: 0.239 };
+/* The obstacle the planner is told about. It stands in the middle of the band
+   the carry passes through for every position the object can be put down in,
+   which is the only place an obstacle is worth drawing.
+
+   It used to stand a hand's width from the target, and at more than twice the
+   object's height — near enough and big enough that readers took the obstacle
+   for the destination and the destination's mark for a shadow under it. It is
+   now shorter than it is far from either end of the carry. */
+export const OBSTACLE = { x: 0.109, z: 0.395, w: 0.085, h: 0.18 };
+/** How far the dashed square round the object stands off the cuboid it marks:
+    close enough to belong to it, wide enough not to touch its corners.
+
+    Three things have to stand clear of one another on a stretch of bench a
+    third of a metre long — the square the object starts in, the obstacle, and
+    the square it ends in — and at three centimetres they did not. */
+export const MARK_HALF = OBJECT_HALF + 0.022;
 
 /** A resting pose over the bench, which is where a scan starts from. */
 export const SCAN_FROM: Point3 = { x: 0.04, y: 0.44, z: 0.5 };
@@ -221,51 +237,125 @@ export function alongPath(path: Point3[], u: number): Point3 {
 
 /* ------------------------------- the framing ------------------------------ */
 
-/* Fitted rather than guessed. Every joint, the object, the path and the two
-   places were projected for two dozen object positions across the whole cycle,
-   and this is the nearest the camera can come with none of them leaving the
-   canvas: the run fills two thirds of the height, where the old camera — aimed
-   at an arm that only ever waved — left it filling two fifths. The bench is
-   allowed to run off the sides, as a bench does.
+/* Fitted rather than guessed. Every joint, the base, the object, the path, the
+   obstacle and the two marks were projected for two dozen object positions
+   across the whole cycle, and the frame is the smallest one none of them
+   leaves. The bench is allowed to run off the sides, as a bench does.
 
-   It stands off to one side on purpose, and that is the harder half. A camera
-   in the middle of the arm's yaw spends part of every cycle looking straight
-   down the plane the arm bends in, where a shoulder and an elbow draw as one
-   flat line; from here the closest it comes to that is a full radian. */
+   The camera stands off to one side on purpose, and that is the harder half. A
+   camera in the middle of the arm's yaw spends part of every cycle looking
+   straight down the plane the arm bends in, where a shoulder and an elbow draw
+   as one flat line; from here the closest it comes to that is a full radian.
+
+   What is *not* fixed is the field of view. The run is about as tall as it is
+   wide; the figure's box is not, and its shape swings from nearly square on a
+   phone to half as tall as it is wide on a desk. A single field of view fitted
+   to one of those wastes the other — the old 34° left the run at 45% of the
+   width on a desk — so what is recorded here is the angle the run needs across
+   and up, as tangents, and the camera works out the rest from the canvas it
+   finds itself in. */
 export const CAMERA = {
-  eye: [1.71, 1.11, 0.42] as const,
-  look: [-0.04, 0.375, 0.3] as const,
-  fov: 34,
+  eye: [1.711, 1.11, 0.42] as const,
+  look: [-0.001, 0.294, 0.264] as const,
+  halfAcross: 0.2332,
+  halfUp: 0.2471,
 };
+
+/** The vertical field of view, in degrees, that shows the whole run on a canvas
+    of this aspect ratio — the larger of what the height and the width ask for. */
+export function fovFor(aspect: number): number {
+  const up = Math.max(CAMERA.halfUp, CAMERA.halfAcross / Math.max(aspect, 0.2));
+  return (2 * Math.atan(up) * 180) / Math.PI;
+}
 
 /* -------------------------------- the loop -------------------------------- */
 
-/** What the robot is doing, in the order the project's own flowchart has it. */
+/* What the robot is doing, in the order the project's own flowchart has it.
+
+   Each line is a sentence rather than the label it used to be. "clear of the
+   obstacles it was told about" was set in eleven-point letterspaced capitals
+   with no subject, and a reader had to reconstruct both what was clear of them
+   and why that was worth saying; the figure now names the stage and finishes
+   the thought. Nothing here is new about the project — every clause is in the
+   report or the two READMEs — but it is now readable at arm's length. */
 export const STAGES = [
-  { key: "scan", name: "Scan", detail: "moving to the scan pose" },
-  { key: "detect", name: "Detect", detail: "custom-trained YOLO, best box in the frame" },
-  { key: "pose", name: "Pose", detail: "PnP against the CAD model, constrained to the table" },
-  { key: "plan", name: "Plan", detail: "MoveIt, four planners tried in turn" },
-  { key: "grasp", name: "Grasp", detail: "franka_gripper, to a width and a force" },
-  { key: "carry", name: "Carry", detail: "clear of the obstacles it was told about" },
-  { key: "place", name: "Place", detail: "at the one predefined target" },
+  {
+    key: "scan",
+    name: "Scan",
+    detail:
+      "The camera rides on the hand, so looking means moving: out over the bench first, then in for a closer look.",
+  },
+  {
+    key: "detect",
+    name: "Detect",
+    detail:
+      "A YOLO detector trained on this cuboid alone, keeping the best box in the frame and nothing else.",
+  },
+  {
+    key: "pose",
+    name: "Pose",
+    detail:
+      "PnP against the cuboid’s CAD model, held to the table top. The frames that disagree are thrown out and the rest averaged.",
+  },
+  {
+    key: "plan",
+    name: "Plan",
+    detail:
+      "MoveIt is asked for a path that touches nothing, and tries four planners in turn until one answers.",
+  },
+  {
+    key: "grasp",
+    name: "Grasp",
+    detail: "The fingers close on the cuboid to a set width and a set force.",
+  },
+  {
+    key: "carry",
+    name: "Carry",
+    detail:
+      "The arm follows the path it drew, which goes over the obstacle rather than through it.",
+  },
+  {
+    key: "place",
+    name: "Place",
+    detail:
+      "The cuboid goes down in the one place it is ever put, and the hand lifts clear and returns to the scan pose.",
+  },
 ] as const;
 
 export type Stage = (typeof STAGES)[number]["key"];
 
-/** Seconds each stage lasts. The two scans are one stage; the second is the
-    closer look the project takes before it trusts a detection. */
+/* Seconds each stage lasts. The two scans are one stage; the second is the
+   closer look the project takes before it trusts a detection.
+
+   Place now carries the journey back to the scan pose as well as the release,
+   which is why it is the second-longest stage. Without it the loop ended with
+   the hand over the target and began with it over the bench, half a metre
+   away, and the arm jumped that gap in a single frame once a cycle. */
 export const SECONDS: Record<Stage, number> = {
   scan: 2.6,
-  detect: 1.1,
-  pose: 1.6,
-  plan: 1.3,
-  grasp: 0.9,
+  detect: 1.2,
+  pose: 1.8,
+  plan: 1.5,
+  grasp: 1,
   carry: 2.8,
-  place: 1.6,
+  place: 2.6,
 };
 
 export const CYCLE = Object.values(SECONDS).reduce((a, b) => a + b, 0);
+
+/** When each stage begins, in seconds from the top of the cycle — which is what
+    a reader who clicks one of the seven words is asking to be taken to. */
+export const STAGE_AT: number[] = STAGES.map((_, i) =>
+  STAGES.slice(0, i).reduce((t, st) => t + SECONDS[st.key], 0),
+);
+
+/* The frame the figure holds on for a reader who has asked for less motion:
+   the arm over the obstacle with the cuboid in its fingers, the path drawn and
+   the destination lit. It is the one instant that says the whole thing, and it
+   is not the top of the cycle — the top of the cycle is the seam, where the
+   cuboid of the run just finished has faded out and the next one has not yet
+   faded in, and a still of that is an empty bench. */
+export const STILL = STAGE_AT[5] + SECONDS.carry * 0.55;
 
 /** Which stage a time in the cycle falls in, and how far through it is. */
 export function stageAt(t: number): { stage: Stage; u: number; index: number } {
@@ -300,9 +390,28 @@ export interface Shot {
   boxIn: number;
   /** The pose estimate settling: 1 while the frames are still disagreeing. */
   poseSpread: number;
+  /** The accent crossing from where the object is to where it is going: 0 while
+      the arm is still working on the object where it lies, 1 once it holds it.
+      One thing in the figure is the live one at a time, and this says which. */
+  handover: number;
+  /** How much of the outline standing in for the placed object is drawn. It
+      goes out as the real cuboid lands inside it, there being nothing left for
+      it to stand in for — and comes back at the end of the cycle, when the
+      cuboid it stood in for is taken away again. */
+  goalGhost: number;
+  /** The cuboid, and the square it was put down in, fading in at the top of a
+      cycle and out at the bottom of it.
+
+      The loop has to start over somewhere, and the object is somewhere else
+      when it does: the run that has just finished left it on the target, and
+      the next one wants it back out on the bench. Cutting between the two put
+      a jump in the figure once every cycle. It is now carried away and a fresh
+      one set down, which is also what happened in the lab. */
+  appear: number;
 }
 
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+const unit = (t: number) => clamp(t, 0, 1);
 const mix = (a: Point3, b: Point3, k: number): Point3 => ({
   x: a.x + (b.x - a.x) * k,
   y: a.y + (b.y - a.y) * k,
@@ -329,12 +438,16 @@ export function shot(t: number, object: Point3, path: Point3[]): Shot {
   let planDrawn = 0;
   let boxIn = 0;
   let poseSpread = 1;
+  let handover = 0;
+  let goalGhost = 1;
+  let appear = 1;
 
   switch (stage) {
     case "scan":
       /* Two looks, as the project takes: one from the scan pose, then a closer
          one, which is what the second half of this stage is. */
       tool = u < 0.55 ? mix(SCAN_FROM, over, ease(u / 0.55)) : mix(over, close, ease((u - 0.55) / 0.45));
+      appear = ease(unit(u / 0.16));
       break;
     case "detect":
       tool = close;
@@ -357,6 +470,10 @@ export function shot(t: number, object: Point3, path: Point3[]): Shot {
       planDrawn = 1;
       boxIn = 1;
       poseSpread = 0;
+      /* The attention crosses the moment the fingers meet: until then the
+         live thing in the figure is the object where it was put down, and
+         after it the place it is going. */
+      handover = ease(unit((u - 0.55) / 0.45));
       break;
     case "carry":
       travelled = ease(u);
@@ -364,16 +481,32 @@ export function shot(t: number, object: Point3, path: Point3[]): Shot {
       grip = 0;
       held = true;
       planDrawn = 1;
+      handover = 1;
       break;
-    case "place":
-      /* Let go, then lift clear — and leave the path drawn until the arm is
-         off it, so the last thing the reader sees is where the object went. */
-      grip = ease(Math.min(1, u * 2.2));
-      held = u < 0.25;
+    case "place": {
+      /* Let go, lift clear, then go back to the scan pose the cycle starts
+         from — the return is part of this stage rather than a word of its own,
+         because it is the same act finishing and a reader counting steps
+         should count seven. The path stays drawn until the arm is off it, so
+         the last thing seen is where the object went. */
+      grip = ease(Math.min(1, u * 2.4));
+      held = u < 0.22;
       travelled = 1;
-  tool = mix(TARGET, { x: TARGET.x, y: TARGET.y + 0.17, z: TARGET.z }, ease(Math.max(0, (u - 0.35) / 0.65)));
-      planDrawn = 1 - ease(Math.max(0, (u - 0.5) / 0.5));
+      handover = 1;
+      const above = { x: TARGET.x, y: TARGET.y + 0.17, z: TARGET.z };
+      tool = mix(
+        mix(TARGET, above, ease(unit((u - 0.18) / 0.3))),
+        SCAN_FROM,
+        ease(unit((u - 0.52) / 0.48)),
+      );
+      planDrawn = 1 - ease(unit((u - 0.45) / 0.35));
+      /* The outline goes out as the cuboid lands in it, and comes back as the
+         cuboid is taken away, so the next cycle starts on a marked target. */
+      const landed = ease(unit(u * 3.5));
+      appear = 1 - ease(unit((u - 0.84) / 0.16));
+      goalGhost = 1 - landed * appear;
       break;
+    }
   }
 
   const pose = reach(tool);
@@ -389,5 +522,8 @@ export function shot(t: number, object: Point3, path: Point3[]): Shot {
     travelled,
     boxIn,
     poseSpread,
+    handover,
+    goalGhost,
+    appear,
   };
 }

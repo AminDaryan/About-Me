@@ -4,18 +4,23 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import { useMemo, useRef, useState, type RefObject } from "react";
 import * as THREE from "three";
-import type { Line2 } from "three-stdlib";
+import type { Line2, LineMaterial, LineSegments2 } from "three-stdlib";
 import useMedia from "@/components/useMedia";
 import { ACCENT, INK, RULE, SOFT } from "./palette";
 import {
   CAMERA,
+  CYCLE,
   DRAWN,
-  TABLE,
+  MARK_HALF,
   OBJECT_HALF,
   OBSTACLE,
   PLANNERS,
   STAGES,
+  STAGE_AT,
+  STILL,
+  TABLE,
   TARGET,
+  fovFor,
   objectAt,
   planPath,
   shot,
@@ -45,6 +50,130 @@ import {
 /** The bench, and the cuboid on it. */
 const CUBE = OBJECT_HALF * 2;
 
+type Vec3 = [number, number, number];
+type Wire = Line2 | LineSegments2;
+
+/* Three things in this figure are box-shaped and none of them means the same
+   as the others, so each is drawn in its own hand and the reader never has to
+   be told which is which:
+
+     the cuboid       solid, full ink, the heaviest line on the bench
+     where it goes    dashed and light — an outline waiting to be filled
+     the obstacle     solid and hatched, the mark a section drawing uses for
+                      material you cannot pass through
+
+   Before this they were two plain wireframes a few centimetres apart, and the
+   obstacle — the larger of them, and the nearer to the target's mark — read as
+   the destination. */
+
+/** The twelve edges of a box, as segment pairs, its centre `cy` above the
+    origin. Metres. */
+function boxEdges(w: number, h: number, d: number, cy = 0): Vec3[] {
+  const [a, b, c] = [w / 2, h / 2, d / 2];
+  const v: Vec3[] = [
+    [-a, cy - b, -c], [a, cy - b, -c], [a, cy - b, c], [-a, cy - b, c],
+    [-a, cy + b, -c], [a, cy + b, -c], [a, cy + b, c], [-a, cy + b, c],
+  ];
+  const pairs = [
+    [0, 1], [1, 2], [2, 3], [3, 0],
+    [4, 5], [5, 6], [6, 7], [7, 4],
+    [0, 4], [1, 5], [2, 6], [3, 7],
+  ];
+  return pairs.flatMap(([i, j]) => [v[i], v[j]]);
+}
+
+/** A square lying flat on the bench, as four segments. Metres. */
+function benchSquare(half: number, y: number): Vec3[] {
+  const c: Vec3[] = [
+    [-half, y, -half], [half, y, -half], [half, y, half], [-half, y, half],
+  ];
+  return c.flatMap((p, i) => [p, c[(i + 1) % 4]]);
+}
+
+/**
+ * Diagonal hatch across a rectangle 2·`halfU` by 2·`halfV`, clipped to it, as
+ * pairs of points in the rectangle's own two axes. `step` is the spacing of the
+ * intercepts, not of the lines, so the lines come out a little closer together
+ * than the number reads — which is what a hatch wants.
+ */
+function hatch(halfU: number, halfV: number, step: number): [number, number][] {
+  const out: [number, number][] = [];
+  for (let c = -halfU - halfV + step; c < halfU + halfV; c += step) {
+    // The line v = u − c, clipped to the rectangle at both ends.
+    const uA = Math.max(-halfU, c - halfV);
+    const uB = Math.min(halfU, c + halfV);
+    if (uB - uA < 1e-6) continue;
+    out.push([uA, uA - c], [uB, uB - c]);
+  }
+  return out;
+}
+
+/* The obstacle, hatched on the face that looks at the camera — the camera
+   stands well out along +x, so that face is the only one seen square on. */
+const OBSTACLE_WIRE: Vec3[] = [
+  ...boxEdges(OBSTACLE.w, OBSTACLE.h, OBSTACLE.w, OBSTACLE.h / 2),
+  ...hatch(OBSTACLE.w / 2, OBSTACLE.h / 2, 0.038).map(
+    ([z, y]) => [OBSTACLE.w / 2, y + OBSTACLE.h / 2, z] as Vec3,
+  ),
+];
+
+/* The hand. It is a plate with two fingers hanging off it, which is what a
+   Panda's is, and it is drawn because without it the two fingers stood in the
+   air beside the wrist attached to nothing.
+
+   The fingers also used to close to 1.8 cm on a 6 cm cuboid — straight through
+   the thing they were supposed to be holding. They now shut on its faces. */
+/* The plate's top edge is the wrist's last point, not a centimetre below it:
+   a gap there is the gap that made the fingers look unattached. */
+const HAND_TOP = 0;
+const HAND_BOTTOM = 0.036;
+const HAND_HALF = 0.052;
+/** Where a finger sits: against the cuboid's face when shut, a hand's width
+    apart when open. */
+const FINGER_SHUT = OBJECT_HALF + 0.004;
+const FINGER_OPEN = FINGER_SHUT + 0.012;
+
+/** The cuboid itself. */
+const OBJECT_WIRE: Vec3[] = boxEdges(CUBE, CUBE, CUBE);
+
+/** Where the object was put down: a square round it, wherever that turns out
+    to be. It is the only mark in the figure that is not in the same place
+    twice, which is the whole of what the perception half was for. */
+const START_WIRE: Vec3[] = benchSquare(MARK_HALF, 0.002);
+
+/* Where the object is going: the square it lands in, and an outline of the
+   cuboid standing in the space it will fill. */
+const GOAL_WIRE: Vec3[] = [
+  ...benchSquare(MARK_HALF, 0.002),
+  ...boxEdges(CUBE, CUBE, CUBE, OBJECT_HALF),
+];
+
+/* The destination changes colour rather than appearing, so the reader watches
+   one thing become live instead of hunting for what moved. Kept at module
+   scope: a colour allocated per frame is a colour collected per frame.
+
+   Nothing is drawn under 3:1 against the paper, which is where a mark stops
+   being a mark. That is why the quiet state of the destination is the soft ink
+   at seven tenths rather than a hairline at a half, and why the square the
+   object started in goes out altogether once it is empty: a ghost of it at the
+   rule colour was 1.3:1, which is a line nobody can see. Where it came from is
+   still said — the planned path is drawn from it and stays drawn. */
+const LIVE = new THREE.Color(ACCENT);
+const INK_DARK = new THREE.Color(INK);
+const QUIET = new THREE.Color(SOFT);
+const brush = new THREE.Color();
+const blend = (a: THREE.Color, b: THREE.Color, k: number) => brush.lerpColors(a, b, k);
+
+/** Paint one wire, and take it out of the drawing when it has nothing left. */
+function paint(wire: Wire | null, colour: THREE.Color, opacity: number) {
+  if (!wire) return;
+  wire.visible = opacity > 0.01;
+  if (!wire.visible) return;
+  const material = wire.material as LineMaterial;
+  material.color.copy(colour);
+  material.opacity = opacity;
+}
+
 /** The bench: a bounded grid with a rule round its edge, so it reads as the
     table the arm is bolted to rather than as a floor going on for ever. */
 function Bench() {
@@ -73,43 +202,6 @@ function Bench() {
   );
 }
 
-/** A wireframe box, drawn as its twelve edges. */
-function Box({
-  w,
-  h,
-  d,
-  colour,
-  width = 1.3,
-}: {
-  w: number;
-  h: number;
-  d: number;
-  colour: string;
-  width?: number;
-}) {
-  const edges = useMemo(() => {
-    const [a, b, c] = [w / 2, h / 2, d / 2];
-    const v: [number, number, number][] = [
-      [-a, -b, -c], [a, -b, -c], [a, -b, c], [-a, -b, c],
-      [-a, b, -c], [a, b, -c], [a, b, c], [-a, b, c],
-    ];
-    const pairs = [
-      [0, 1], [1, 2], [2, 3], [3, 0],
-      [4, 5], [5, 6], [6, 7], [7, 4],
-      [0, 4], [1, 5], [2, 6], [3, 7],
-    ];
-    return pairs.map(([i, j]) => [v[i], v[j]] as [number, number, number][]);
-  }, [w, h, d]);
-
-  return (
-    <group>
-      {edges.map((e, i) => (
-        <Line key={i} points={e} color={colour} lineWidth={width} />
-      ))}
-    </group>
-  );
-}
-
 /** The detection, drawn the way a detector's output is drawn: a box with its
     corners marked, facing the camera because that is the frame it lives in. */
 function Detection({ group }: { group: RefObject<THREE.Group | null> }) {
@@ -117,8 +209,11 @@ function Detection({ group }: { group: RefObject<THREE.Group | null> }) {
   useFrame(() => {
     if (group.current) group.current.quaternion.copy(camera.quaternion);
   });
-  const s = 0.115;
-  const tick = 0.045;
+  /* Sized on the cuboid it is drawn round — a little wider than the 6 cm box's
+     own diagonal, and no wider. It used to be drawn at 23 cm, four times the
+     thing it was detecting, which read as a frame round the scene. */
+  const s = 0.052;
+  const tick = 0.02;
   const corners: [number, number][] = [[-1, -1], [1, -1], [1, 1], [-1, 1]];
   return (
     <group ref={group}>
@@ -162,17 +257,53 @@ function Axes() {
 /** How many per-frame estimates are drawn scattering and then agreeing. */
 const CANDIDATES = 7;
 
+/* The frame, fitted to the run rather than to the box the figure sits in. The
+   canvas is nearly square on a phone and half as tall as it is wide on a desk,
+   and one field of view cannot serve both — see the note on CAMERA.
+
+   Done on the frame the canvas first reports its size on, and again on any
+   frame where that size has changed shape, because a lens refitted only at
+   startup is a lens that is wrong the moment the window is dragged wider. */
+function Framing() {
+  const fitted = useRef(0);
+  useFrame(({ camera, size }) => {
+    const aspect = size.width / size.height;
+    if (aspect === fitted.current) return;
+    fitted.current = aspect;
+    const lens = camera as THREE.PerspectiveCamera;
+    lens.fov = fovFor(aspect);
+    lens.lookAt(...CAMERA.look);
+    lens.updateProjectionMatrix();
+  });
+  return null;
+}
+
 interface SceneProps {
   index: number;
   running: boolean;
+  /** Where on the cycle the figure opens, which is not the same for a reader
+      who has asked for less motion — see STILL. */
+  start: number;
   onStage: (s: Shot) => void;
+  onCycle: () => void;
+  /** Where on the cycle a reader has asked to be taken, from the row of seven
+      words under the figure. Wrapped in an object so that asking for the same
+      step twice is still a new request. */
+  seekTo: { at: number } | null;
 }
 
-function Scene({ index, running, onStage }: SceneProps) {
+function Scene({ index, running, start, onStage, onCycle, seekTo }: SceneProps) {
   const object = useMemo(() => objectAt(index), [index]);
   const path = useMemo(() => planPath(object, TARGET), [object]);
+  /* The plan's geometry is built at the path's full length and stays there;
+     only the values in it change. A line drawn with fewer points than it was
+     built with draws nothing extra — see the note where it is rewritten. */
+  const planPoints = useMemo(
+    () => path.map((p) => [p.x, p.y, p.z] as [number, number, number]),
+    [path],
+  );
 
-  const clock = useRef(0);
+  const clock = useRef(start);
   const j1 = useRef<THREE.Group>(null);
   const j2 = useRef<THREE.Group>(null);
   const j4 = useRef<THREE.Group>(null);
@@ -180,11 +311,18 @@ function Scene({ index, running, onStage }: SceneProps) {
   const fingerL = useRef<THREE.Group>(null);
   const fingerR = useRef<THREE.Group>(null);
   const cube = useRef<THREE.Group>(null);
+  const cubeWire = useRef<Wire>(null);
   const detection = useRef<THREE.Group>(null);
   const axes = useRef<THREE.Group>(null);
   const plan = useRef<Line2>(null);
+  const startMark = useRef<Wire>(null);
+  const goalMark = useRef<Wire>(null);
   const candidates = useRef<(THREE.Mesh | null)[]>([]);
   const lastStage = useRef(-1);
+  const cycles = useRef(0);
+  const shown = useRef(index);
+  const planShown = useRef(-1);
+  const sought = useRef(seekTo);
 
   /* The candidates scatter deterministically, so the same run looks the same
      twice — and two of them are far enough out to be the ones thrown away. */
@@ -204,18 +342,29 @@ function Scene({ index, running, onStage }: SceneProps) {
     if (j4.current) j4.current.rotation.x = s.pose.elbow;
     if (j6.current) j6.current.rotation.x = s.pose.wrist;
 
-    const open = 0.018 + s.grip * 0.042;
+    const open = FINGER_SHUT + s.grip * (FINGER_OPEN - FINGER_SHUT);
     if (fingerL.current) fingerL.current.position.x = -open;
     if (fingerR.current) fingerR.current.position.x = open;
 
     if (cube.current) cube.current.position.set(s.object.x, s.object.y, s.object.z);
+    paint(cubeWire.current, INK_DARK, s.appear);
+
+    /* The accent belongs to one thing at a time. It sits on the square the
+       object was put down in while the perception works on it, and crosses to
+       the square it is going to as the fingers close. */
+    paint(startMark.current, LIVE, (1 - s.handover) * s.appear);
+    paint(
+      goalMark.current,
+      blend(QUIET, LIVE, s.handover),
+      s.goalGhost * (0.72 + 0.28 * s.handover),
+    );
 
     const showBox = s.boxIn > 0;
     if (detection.current) {
       detection.current.visible = showBox;
       detection.current.position.set(s.object.x, s.object.y + 0.02, s.object.z);
       // The box tightens onto the object as the arm takes its closer look.
-      detection.current.scale.setScalar(1.5 - 0.5 * s.boxIn);
+      detection.current.scale.setScalar(1.9 - 0.9 * s.boxIn);
     }
     if (axes.current) {
       axes.current.visible = s.poseSpread < 1;
@@ -237,13 +386,33 @@ function Scene({ index, running, onStage }: SceneProps) {
       }
     });
 
+    /* The plan draws itself in, and it does so by moving the points it already
+       has rather than by adding more: the tail of the line is parked on the
+       last point drawn, where it takes up no length.
+
+       This is not a flourish. WebGL draws these lines as instanced segments,
+       and the renderer counts the instances the first time it sees a geometry
+       and never counts again. The line used to be born as a two-point stub and
+       given its real points afterwards, so the count it kept was one — one
+       segment, a millimetre long, which is why the path has never appeared in
+       this figure. Built at full length, the count is right from the start. */
     if (plan.current) {
       const drawn = Math.max(2, Math.round(s.planDrawn * path.length));
       plan.current.visible = s.planDrawn > 0.01;
-      if (plan.current.visible) {
-        plan.current.geometry.setPositions(
-          path.slice(0, drawn).flatMap((p) => [p.x, p.y, p.z]),
-        );
+      if (plan.current.visible && drawn !== planShown.current) {
+        planShown.current = drawn;
+        const tip = path[drawn - 1];
+        const xyz = new Float32Array(path.length * 3);
+        for (let i = 0; i < path.length; i++) {
+          const p = i < drawn ? path[i] : tip;
+          xyz[i * 3] = p.x;
+          xyz[i * 3 + 1] = p.y;
+          xyz[i * 3 + 2] = p.z;
+        }
+        plan.current.geometry.setPositions(xyz);
+        // The dashes are spaced along the line's measured length, so it has to
+        // be measured again whenever the points move.
+        plan.current.computeLineDistances();
       }
     }
 
@@ -254,40 +423,74 @@ function Scene({ index, running, onStage }: SceneProps) {
   };
 
   useFrame((_, delta) => {
+    /* A new object means a new run from the top, whether the reader asked for
+       it or the cycle came round. Pressing the button mid-carry used to
+       teleport the cuboid out of the closed gripper. */
+    if (shown.current !== index) {
+      shown.current = index;
+      clock.current = running ? 0 : start;
+      cycles.current = 0;
+      lastStage.current = -1;
+      planShown.current = -1;
+    }
+    if (sought.current !== seekTo) {
+      sought.current = seekTo;
+      if (seekTo) {
+        clock.current = seekTo.at;
+        lastStage.current = -1;
+        planShown.current = -1;
+      }
+    }
     if (running) clock.current += Math.min(delta, 0.05);
+    const turn = Math.floor(clock.current / CYCLE);
+    if (turn !== cycles.current) {
+      cycles.current = turn;
+      onCycle();
+    }
     apply(shot(clock.current, object, path));
   });
 
-  const first = shot(0, object, path);
+  const first = shot(start, object, path);
 
   return (
     <group>
-      {/* the bench, the obstacle the planner knows about, and the one place
-          the object is ever put down */}
+      {/* the bench, the obstacle the planner knows about, and the two places
+          on it that matter: where the object was put down and where it goes */}
       <Bench />
-      <group position={[OBSTACLE.x, OBSTACLE.h / 2, OBSTACLE.z]}>
+      <group position={[OBSTACLE.x, 0, OBSTACLE.z]}>
         {/* The planner is told about this one. Drawn in the soft ink rather
             than in rule weight: an obstacle you cannot see makes the arc over
             it look like a flourish. */}
-        <Box w={OBSTACLE.w} h={OBSTACLE.h} d={OBSTACLE.w} colour={SOFT} width={1.4} />
+        <Line points={OBSTACLE_WIRE} segments color={SOFT} lineWidth={1.4} />
       </group>
-      <group position={[TARGET.x, 0.002, TARGET.z]} rotation={[-Math.PI / 2, 0, 0]}>
-        <Line
-          points={[
-            [-0.085, -0.085, 0], [0.085, -0.085, 0],
-            [0.085, 0.085, 0], [-0.085, 0.085, 0], [-0.085, -0.085, 0],
-          ]}
-          color={ACCENT}
-          lineWidth={1.3}
-          dashed
-          dashSize={0.035}
-          gapSize={0.028}
-        />
-      </group>
+      <Line
+        ref={startMark}
+        position={[object.x, 0, object.z]}
+        points={START_WIRE}
+        segments
+        color={ACCENT}
+        lineWidth={1.7}
+        dashed
+        dashSize={0.026}
+        gapSize={0.02}
+        transparent
+      />
+      <Line
+        ref={goalMark}
+        position={[TARGET.x, 0, TARGET.z]}
+        points={GOAL_WIRE}
+        segments
+        color={SOFT}
+        lineWidth={1.6}
+        dashed
+        dashSize={0.02}
+        gapSize={0.016}
+        transparent
+      />
 
       {/* the object, and what the perception makes of it */}
       <group ref={cube} position={[first.object.x, first.object.y, first.object.z]}>
-        <Box w={CUBE} h={CUBE} d={CUBE} colour={INK} width={1.6} />
+        <Line ref={cubeWire} points={OBJECT_WIRE} segments color={INK} lineWidth={2.2} transparent />
       </group>
       <Detection group={detection} />
       <group ref={axes}>
@@ -303,29 +506,38 @@ function Scene({ index, running, onStage }: SceneProps) {
           visible={false}
         >
           <ringGeometry args={[0.008, 0.013, 12]} />
-          <meshBasicMaterial color={ACCENT} side={THREE.DoubleSide} transparent opacity={0.5} />
+          {/* Three quarters, not a half: at a half these rings came out at
+              2.1:1 against the paper, which is not a mark. */}
+          <meshBasicMaterial color={ACCENT} side={THREE.DoubleSide} transparent opacity={0.75} />
         </mesh>
       ))}
 
-      {/* the plan, drawn before it is followed */}
+      {/* The plan, drawn before it is followed, at the path's full length from
+          the first frame.
+
+          It carries no `visible` prop, and must not: every prop this component
+          does not recognise is set on the line *and* on its material, so the
+          `visible={false}` that used to stand here switched the material off
+          for good and no amount of setting the line visible brought it back.
+          Taking the line out of the drawing is `plan.current.visible` in the
+          frame loop, which reaches the object alone. */}
       <Line
         ref={plan}
-        points={[
-          [0, 0, 0],
-          [0, 0, 0],
-        ]}
+        points={planPoints}
         color={ACCENT}
-        lineWidth={1.2}
+        lineWidth={1.5}
         dashed
-        dashSize={0.045}
-        gapSize={0.035}
-        visible={false}
+        dashSize={0.04}
+        gapSize={0.03}
       />
 
-      {/* the arm */}
+      {/* the arm, standing on the plate it is bolted to. The plate is drawn as
+          a hairline rather than the solid band it was: at full ink it was the
+          heaviest mark in the figure, and the eye went to the thing that never
+          moves instead of to the bench, where the work happens. */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[0.16, 0.185, 40]} />
-        <meshBasicMaterial color={INK} side={THREE.DoubleSide} />
+        <ringGeometry args={[0.158, 0.166, 48]} />
+        <meshBasicMaterial color={SOFT} side={THREE.DoubleSide} />
       </mesh>
 
       <group ref={j1} rotation={[0, first.pose.yaw, 0]}>
@@ -347,11 +559,15 @@ function Scene({ index, running, onStage }: SceneProps) {
                   <Segment length={DRAWN.wrist} width={1.2} />
                   <group position={[0, DRAWN.wrist, 0]}>
                     <Knuckle axis="roll" r={0.034} />
-                    {/* the parallel gripper: two fingers that really close */}
-                    <group ref={fingerL} position={[-0.06, 0, 0]}>
+                    {/* The parallel gripper: a hand, and two fingers that
+                        really close. The hand is the rail they slide on —
+                        without it the two fingers hung in the air beside the
+                        wrist, joined to the arm by nothing at all. */}
+                    <Hand />
+                    <group ref={fingerL} position={[-FINGER_OPEN, 0, 0]}>
                       <Finger />
                     </group>
-                    <group ref={fingerR} position={[0.06, 0, 0]}>
+                    <group ref={fingerR} position={[FINGER_OPEN, 0, 0]}>
                       <Finger />
                     </group>
                   </group>
@@ -389,16 +605,33 @@ function Knuckle({ r = 0.055, axis }: { r?: number; axis: "pitch" | "roll" }) {
   );
 }
 
-/** One finger of the parallel gripper. */
+/** The plate the fingers hang from, drawn as its four edges. */
+function Hand() {
+  return (
+    <Line
+      points={[
+        [-HAND_HALF, HAND_TOP, 0], [HAND_HALF, HAND_TOP, 0],
+        [HAND_HALF, HAND_TOP, 0], [HAND_HALF, HAND_BOTTOM, 0],
+        [HAND_HALF, HAND_BOTTOM, 0], [-HAND_HALF, HAND_BOTTOM, 0],
+        [-HAND_HALF, HAND_BOTTOM, 0], [-HAND_HALF, HAND_TOP, 0],
+      ]}
+      segments
+      color={INK}
+      lineWidth={1.8}
+    />
+  );
+}
+
+/** One finger of the parallel gripper, hanging off the plate. */
 function Finger() {
   return (
     <Line
       points={[
-        [0, 0, 0],
+        [0, HAND_BOTTOM, 0],
         [0, DRAWN.tool, 0],
       ]}
       color={INK}
-      lineWidth={1.4}
+      lineWidth={1.7}
     />
   );
 }
@@ -412,56 +645,124 @@ export default function ArmScene() {
   /* The pipeline under the figure is real text — it is the only account of the
      loop a reader who cannot see the canvas gets — but it changes seven times a
      cycle, which is no reason to re-render React. The scene says when the stage
-     turns over and these two refs do the rest. */
-  const names = useRef<(HTMLLIElement | null)[]>([]);
+     turns over and these refs do the rest.
+
+     Two things can be under discussion at once: the stage that is running, and
+     the stage a reader is pointing at. They are kept apart on purpose. The row
+     of words always shows what is running; the sentence below shows whatever
+     is being pointed at, and says so by changing how it is set. */
+  const words = useRef<(HTMLButtonElement | null)[]>([]);
+  const said = useRef<HTMLParagraphElement>(null);
+  const now = useRef<HTMLSpanElement>(null);
   const detail = useRef<HTMLSpanElement>(null);
   const planner = useRef(0);
+  const live = useRef(0);
+  const peek = useRef<number | null>(null);
+  const [seekTo, setSeekTo] = useState<{ at: number } | null>(null);
+
+  const write = (i: number, isLive: boolean) => {
+    if (now.current) now.current.textContent = STAGES[i].name;
+    if (detail.current) {
+      const text = STAGES[i].detail;
+      /* The planner named is not always the first one. The project tried four
+         in turn with growing timeouts when a plan did not come back, and that
+         loop is the most honest thing in its flowchart. It is named only while
+         the plan is actually being made: there is no planner of the moment to
+         report about a step nobody is taking. */
+      detail.current.textContent =
+        isLive && STAGES[i].key === "plan"
+          ? `${text} ${PLANNERS[planner.current]}, this time.`
+          : text;
+    }
+    said.current?.toggleAttribute("data-peek", !isLive);
+  };
 
   const onStage = (s: Shot) => {
-    names.current.forEach((li, i) => li?.toggleAttribute("data-now", i === s.index));
-    if (!detail.current) return;
-    /* The planner named is not always the first one. The project tried four in
-       turn with growing timeouts when a plan did not come back, and that loop
-       is the most honest thing in its flowchart. */
+    live.current = s.index;
+    words.current.forEach((b, i) => {
+      b?.toggleAttribute("data-now", i === s.index);
+      if (i === s.index) b?.setAttribute("aria-current", "step");
+      else b?.removeAttribute("aria-current");
+    });
     if (s.stage === "plan") planner.current = (planner.current + 1) % PLANNERS.length;
-    const text = STAGES[s.index].detail;
-    detail.current.textContent =
-      s.stage === "plan" ? `${text} — ${PLANNERS[planner.current]} this time` : text;
+    if (peek.current === null) write(s.index, true);
+  };
+
+  /** Point at a step to read about it; point at nothing to go back to the one
+      that is running. */
+  const show = (i: number | null) => {
+    peek.current = i;
+    words.current.forEach((b, k) => b?.toggleAttribute("data-peek", i === k));
+    write(i ?? live.current, i === null);
   };
 
   return (
     <div>
-      <div className="h-[17rem] w-full sm:h-[21rem]">
+      {/* Four to three, because the run is about as tall as it is wide and a
+          band across the column left two thirds of the canvas empty. Capped in
+          absolute terms so a wide column does not turn the figure into a
+          full-page plate. */}
+      <div className="aspect-[4/3] max-h-[26rem] w-full">
         <Canvas
           dpr={[1, 2]}
           gl={{ antialias: true, alpha: true }}
-          camera={{ position: [...CAMERA.eye], fov: CAMERA.fov }}
+          camera={{ position: [...CAMERA.eye] }}
           style={{ background: "transparent" }}
-          onCreated={({ camera }) => camera.lookAt(...CAMERA.look)}
         >
-          <Scene index={index} running={running} onStage={onStage} />
+          <Framing />
+          <Scene
+            index={index}
+            running={running}
+            start={running ? 0 : STILL}
+            onStage={onStage}
+            onCycle={() => setIndex((n) => n + 1)}
+            seekTo={seekTo}
+          />
         </Canvas>
       </div>
 
-      <ol className="pipeline" aria-label="The loop this figure runs">
+      {/* The seven words carry the loop, and each is a control: point at one to
+          read what that step does, press it to watch that step. Each carries
+          its own sentence for a reader with no canvas, and for one with no
+          JavaScript, who sees only the first of the seven below. */}
+      <div className="plate-foot">
+      <ol className="choices pipeline" aria-label="The loop this figure runs">
         {STAGES.map((st, i) => (
-          <li
-            key={st.key}
-            ref={(el) => {
-              names.current[i] = el;
-            }}
-            data-now={i === 0 ? "" : undefined}
-          >
-            {st.name}
+          <li key={st.key}>
+            <button
+              type="button"
+              className="choice"
+              ref={(el) => {
+                words.current[i] = el;
+              }}
+              data-now={i === 0 ? "" : undefined}
+              aria-current={i === 0 ? "step" : undefined}
+              onPointerEnter={() => show(i)}
+              onPointerLeave={() => show(null)}
+              onFocus={() => show(i)}
+              onBlur={() => show(null)}
+              /* Pressing a step takes the figure to it. It deliberately does
+                 not set the loop running: a reader who has turned motion down
+                 gets a stepper they work by hand, and the one control that
+                 starts the loop is the one that says so. */
+              onClick={() => {
+                setSeekTo({ at: STAGE_AT[i] });
+                show(i);
+              }}
+            >
+              <span className="choice-word">{st.name}</span>
+              <span className="sr-only">. {st.detail}</span>
+            </button>
           </li>
         ))}
       </ol>
 
-      <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t border-rule pt-4">
-        <p className="label text-ink-faint">
-          <span ref={detail} className="normal-case">
-            {STAGES[0].detail}
+      <div className="plate-row">
+        <p ref={said} className="figure-said">
+          <span ref={now} className="figure-said-now">
+            {STAGES[0].name}
           </span>
+          <span ref={detail}>{STAGES[0].detail}</span>
         </p>
         <button
           type="button"
@@ -469,10 +770,11 @@ export default function ArmScene() {
             setIndex((n) => n + 1);
             setStarted(true);
           }}
-          className="label tap link cursor-pointer text-ink-faint"
+          className="control"
         >
           Put it somewhere else
         </button>
+      </div>
       </div>
     </div>
   );
