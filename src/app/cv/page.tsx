@@ -17,6 +17,7 @@ import {
   Entries,
   ExternalLink,
   Labelled,
+  Leaf,
   PageHeader,
   Section,
 } from "@/components/ui";
@@ -385,10 +386,14 @@ export default function CV() {
         </Entries>
       </Section>
 
+      {/* Set as records, like every other section of the CV: the date — or,
+          for the manuscript, where it stands — in the margin, and the citation
+          at the measure beside it. A citation is its own title, so neither
+          entry sets one. */}
       <Section num="III" title="Publications">
-        <Settle>
-          <div className="max-w-measure">
-            <p>
+        <Entries>
+          <Entry when="Nov 2019">
+            <p className="mb-2">
               A. Amir-B.D., S. M. Tahamipour-Z., A. Akbarzadeh.{" "}
               <em>
                 &ldquo;Adaptive Tracking Control Based on GFHM for a
@@ -397,19 +402,19 @@ export default function CV() {
               7th International Conference on Robotics and Mechatronics
               (ICRoM), Tehran, 20–21 November 2019, pp. 74–79.
             </p>
-            <p className="mt-2 text-meta">
+            <p className="text-meta">
               <ExternalLink href="https://doi.org/10.1109/ICRoM48714.2019.9071886">
                 doi.org/10.1109/ICRoM48714.2019.9071886
               </ExternalLink>
             </p>
-            <Labelled label="In preparation" className="mt-8">
-              <p>
-                A. Amir-B.D., S. Walunj. Manuscript on gaze-based classification
-                of industrial activities from HoloLens 2 eye tracking, 2026.
-              </p>
-            </Labelled>
-          </div>
-        </Settle>
+          </Entry>
+          <Entry when="In preparation">
+            <p>
+              A. Amir-B.D., S. Walunj. Manuscript on gaze-based classification
+              of industrial activities from HoloLens 2 eye tracking, 2026.
+            </p>
+          </Entry>
+        </Entries>
       </Section>
 
       <Section num="IV" title="Selected projects">
@@ -457,27 +462,25 @@ export default function CV() {
         <Settle>
           <div className="skills">
             {SKILLS.map(({ icon: Icon, name, items, single }) => (
-              <div key={name} className="skill">
+              <Labelled key={name} label={name} className="skill">
                 <span className="skill-mark" aria-hidden="true">
                   <Icon />
                 </span>
-                <Labelled label={name}>
-                  {/* One item to a row, so a name is never orphaned by a line
-                      break and the marks line up in a column of their own. The
-                      gutter is there whether or not the item has a mark, which
-                      is what keeps the names on one edge. */}
-                  <ul className="tools" data-single={single || undefined}>
-                    {items.map((item) => (
-                      <li key={item.name} className="tool">
-                        <span className="tool-gutter" aria-hidden="true">
-                          {item.mark && <ToolMark mark={item.mark} />}
-                        </span>
-                        {item.name}
-                      </li>
-                    ))}
-                  </ul>
-                </Labelled>
-              </div>
+                {/* One item to a row, so a name is never orphaned by a line
+                    break and the marks line up in a column of their own. The
+                    gutter is there whether or not the item has a mark, which
+                    is what keeps the names on one edge. */}
+                <ul className="tools" data-single={single || undefined}>
+                  {items.map((item) => (
+                    <li key={item.name} className="tool">
+                      <span className="tool-gutter" aria-hidden="true">
+                        {item.mark && <ToolMark mark={item.mark} />}
+                      </span>
+                      {item.name}
+                    </li>
+                  ))}
+                </ul>
+              </Labelled>
             ))}
           </div>
         </Settle>
@@ -505,11 +508,13 @@ export default function CV() {
         </Entries>
       </Section>
 
+      {/* On the inner edge with the rest of the CV's running text, so the
+          quotations end where the records above them end. */}
       <Section num="VII" title="References">
-        <div className="max-w-measure">
+        <Leaf>
           {REFERENCES.map((r) => (
-            <Settle key={r.name}>
-              <figure className="m-0 mb-10 border-l border-rule pl-6">
+            <Settle key={r.name} className="max-w-measure">
+              <figure className="m-0 mb-10 border-l border-rule pl-6 lg:mb-6">
                 <blockquote className="m-0">
                   <p className="italic">&ldquo;{r.quote}&rdquo;</p>
                 </blockquote>
@@ -519,14 +524,14 @@ export default function CV() {
               </figure>
             </Settle>
           ))}
-          <Settle>
+          <Settle className="max-w-measure">
             <p>
               Further references, from my master&rsquo;s project advisor at RPTU
               and my thesis supervisor at Fraunhofer IOSB, are available on
               request.
             </p>
           </Settle>
-        </div>
+        </Leaf>
       </Section>
     </BookPage>
   );

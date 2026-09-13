@@ -83,7 +83,7 @@ contrast, size and hierarchy, and all four can be had inside the character.
 
 Every page is one grid, and the grid means something.
 
-- **Prose and headings are flush** with the page's left edge.
+- **Headings are flush** with the page's left edge.
 - **The margin column belongs to the records and the glosses.** An entry hangs
   the one thing that identifies it — its date, and the institution's mark where
   there is one — in the margin, and sets the record itself at the measure beside
@@ -95,12 +95,28 @@ Every page is one grid, and the grid means something.
   the margin to reach the outer edge (`.copy .plate`); a plate that already
   stands there — Fig. 1 and Fig. 6 sit straight in the `<Wrap>` — is left
   alone, or it walks off the side of the sheet.
-- **The rules are ranked, and the ranking is load-bearing.** The strongest rule
-  on a page is the one between two entries (`--color-rule`); a figure's own
-  furniture takes the softer one (`--color-rule-soft`). Get this backwards and a
-  plate's caption reads as the start of a new section. Neither rule may be so
-  faint that it cannot be seen — they were 1.13:1 and 1.27:1, which is not a
-  delicate line but an invisible one.
+- **Every section is the same width.** Its content spans the margin and the
+  measure and ends on the right where the section rule ends — whatever the
+  content is. Running text that is not in an `<Entry>` goes in a `<Leaf>`, and a
+  list of records (the signposts, the skills) is laid on the same two columns.
+  A block held at the measure on the outer edge stops a margin's width short of
+  everything around it, and "Read on" did exactly that.
+- **The page head is the exception.** It is a title block, not a section: the
+  lines under its title stand on the title's own edge, at the measure. Set on
+  the inner edge they left a hole a margin wide under the title, with the drop
+  cap floating at the far side of it, and Amin called the head messy.
+- **The rules are ranked, and the ranking is load-bearing.** A section opens on
+  a thick-and-thin double rule the width of the column (`.section-num::before`)
+  — a different kind of line, not only a darker one, because in a view of a
+  whole page a slightly darker hairline cannot be told from the one between
+  two entries. Records are divided by a single hairline in ink mixed to 3:1
+  (`.entry`, `.signposts`). A figure draws no line across the column at all:
+  its instruments are set off from the drawing by space. It used to open them
+  on a hairline, a hand's width above the rule that begins the next entry, and
+  Amin could not tell which of the two lines ended the record. Every line
+  across the column means a new part has begun. No rule may be so faint that
+  it cannot be seen — they were 1.13:1 and 1.27:1, which is not a delicate
+  line but an invisible one.
 - The page is `53.5rem` wide: the gutters plus exactly the leaf — a 10.5rem
   margin column, a 3.5rem gap and the 36rem measure. Do not widen it.
 

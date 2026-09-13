@@ -36,7 +36,8 @@ export default function Entry({
   /** The mark is a wordmark rather than a crest, so it wants width instead of
       height: a wider column, and the marks hung from its left edge. */
   wideMark?: boolean;
-  title: string;
+  /** Left out where the record is its own title: a citation. */
+  title?: string;
   when: string;
   where?: string;
   delay?: number;
@@ -72,7 +73,7 @@ export default function Entry({
       </div>
 
       <div className="entry-body">
-        <h3 className="text-subhead">{title}</h3>
+        {title && <h3 className="text-subhead">{title}</h3>}
 
         {/* Where is the record's metadata, not its text: set small and quiet so
             the title above it keeps the entry's first glance. */}

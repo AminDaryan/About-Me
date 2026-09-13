@@ -295,6 +295,7 @@
   }
   .signpost-note {
     grid-area: 2 / 1 / 3 / -1;
+    max-width: var(--spacing-measure);
     margin-top: 0.2rem;
     font-size: var(--text-meta);
     line-height: var(--text-meta--line-height);
@@ -312,6 +313,33 @@
   }
   .signpost:hover .signpost-arrow,
   .signpost:focus-visible .signpost-arrow { transform: translateX(0.3rem); }
+
+  /* On the page's one grid, like an entry: the page's name in the margin
+     column and what is on it set beside it, with the arrow at the column's end.
+     The list used to be capped at the measure and stood on the headings' edge,
+     so its rows and their rules stopped a margin's width short of every other
+     section on the page.
+
+     The name ranges left, on the headings' edge, not right against the text as
+     an entry's date does. A date is a shoulder note to the record beside it;
+     these names are the records, and three of different lengths ranged right
+     began at three different places, which is not where the eye looks for the
+     start of a word it is meant to read first. */
+  @media (min-width: 64rem) {
+    .signpost {
+      grid-template-columns: var(--spacing-margin-col) minmax(0, var(--spacing-measure));
+      column-gap: 3.5rem;
+      align-items: baseline;
+    }
+    .signpost-note {
+      grid-area: 1 / 2;
+      margin-top: 0;
+      padding-right: 2.5rem;
+    }
+    .signpost-arrow {
+      justify-self: end;
+    }
+  }
 
   /* -- Letterspaced capitals: the workhorse of this design -----------------
      Everything on the site set in them takes its size, tracking and figures
@@ -498,38 +526,39 @@
   }
   /* A lone roman numeral at caption size is not a numeral, it is a speck: at
      twelve pixels "I" is a vertical stroke with two serifs and "III" is three
-     of them. It is set at caption *text* size and carried on a rule that runs
-     out to the end of the heading's column — the mark a book puts at the head
-     of a chapter, which is also the one thing that tells a reader at a glance
-     that a section has started. A section with no numeral keeps the rule, so
-     every section opens on the same mark.
+     of them. It is set at caption *text* size, under the rule that opens the
+     section.
 
      Barely tracked. A roman numeral is a word spelt in capitals, and at the
      0.3em it used to be set at, "IV" came apart into an I and a V standing a
      letter's width from each other.
 
-     It is the strongest rule on the page, and it has to be. It was drawn in
-     the same hairline as the rule between two entries, with a fleuron above
-     it and an entry rule an inch below, and a reader faced with three equal
-     lines could not say which of them began a section. It is ink rather than
-     a hairline, mixed down to just past the 3:1 a mark a reader is meant to
-     see must clear — a printed chapter rule, still lighter than the type —
-     and it is the only rule in a section's opening: the first entry under a
-     heading draws none of its own. */
+     The rule is a thick line over a thin one — the Oxford rule a Victorian
+     printer set at the head of a chapter — and it runs the full width of the
+     page's column, from the edge the headings stand on to the edge the text
+     ends on. It has to be a different kind of line, not only a darker one.
+     It used to be a hairline starting after the numeral, a shade darker than
+     the hairline between two entries, and in a view of a whole page the two
+     could not be told apart: a reader scrolling could not see where one
+     section ended and the next began. A double rule is read as a chapter
+     break before anyone looks at what is under it. It is the only rule in a
+     section's opening — the first entry under a heading draws none of its
+     own — and a section with no numeral keeps it, so every section on every
+     page opens on the same mark. */
   .section-num {
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
+    display: block;
     margin-bottom: 0.55rem;
     font-size: var(--text-meta);
     letter-spacing: 0.06em;
     color: var(--color-accent-deep);
   }
-  .section-num::after {
+  .section-num::before {
     content: "";
-    flex: 1 1 auto;
-    height: 1px;
-    background: color-mix(in srgb, var(--color-ink-faint) 72%, var(--color-paper));
+    display: block;
+    height: 6px;
+    margin-bottom: 1rem;
+    border-top: 3px solid var(--color-ink-faint);
+    border-bottom: 1px solid var(--color-ink-faint);
   }
 
   /* -- A record, and the rule between two ---------------------------------
@@ -537,12 +566,23 @@
      already standing a heading above the first entry, and a second line under
      the heading boxed the title in and read as another section starting. The
      last entry gives up its foot for the same reason: the section space after
-     it is the break, and padding on top of it was a gap with nothing in it. */
+     it is the break, and padding on top of it was a gap with nothing in it.
+
+     One hairline, the width of the column, in ink mixed down to just past the
+     3:1 a mark a reader is meant to see must clear. It was --color-rule, at
+     1.6:1, which a reader over fifty sees only when looking for it; the one
+     line that says where one record ends had to be there at a glance. It
+     stays a single thin line under the section's double one, and a figure's
+     own furniture stays in the softer rule below both. The signposts on the
+     home page are records of the same rank and take the same line. */
+  .entry,
+  .signposts > li + li {
+    border-top: 1px solid color-mix(in srgb, var(--color-ink-faint) 72%, var(--color-paper));
+  }
   .entry {
     --entry-top: 1.75rem;
     --entry-bottom: 1.75rem;
     padding: var(--entry-top) 0 var(--entry-bottom);
-    border-top: 1px solid var(--color-rule);
   }
   .entry:first-child {
     --entry-top: 0;
@@ -668,8 +708,8 @@
 
   /* -- Technical skills: a mark, a heading and a short list, one per row ----
      The marks are decorative and the heading beside each one names the group.
-     One column, capped at the measure: the section is read straight down, and
-     the marks are what give the eye a place to land. */
+     One group under the other: the section is read straight down, and the
+     marks are what give the eye a place to land. */
   .skills {
     display: grid;
     gap: 1.5rem;
@@ -681,10 +721,34 @@
     column-gap: 0.9rem;
     align-items: start;
   }
+  .skill > .label { grid-area: 1 / 2; }
+  .skill > .tools { grid-area: 2 / 2; }
   .skill-mark {
+    grid-area: 1 / 1 / 3 / 2;
     display: block;
     padding-top: 0.2rem;
     color: var(--color-ink-faint);
+  }
+
+  /* On the page's one grid, like the records either side of it: the mark
+     hangs in the margin, where an entry hangs its institution's, and the
+     group's name and its list are set at the measure. Held at the measure on
+     the headings' edge, this was the one section of the CV that stopped a
+     margin's width short of the rest. The name stays with its list rather than
+     joining the mark: in ten rem of margin "Machine learning and computer
+     vision" broke over four lines. */
+  @media (min-width: 64rem) {
+    .skills { max-width: none; }
+    .skill {
+      grid-template-columns: var(--spacing-margin-col) minmax(0, var(--spacing-measure));
+      column-gap: 3.5rem;
+    }
+    .skill-mark {
+      grid-area: 1 / 1 / 3 / 2;
+      justify-self: end;
+      width: 1.35rem;
+      padding-top: 0.05rem;
+    }
   }
   .skill-mark svg {
     display: block;

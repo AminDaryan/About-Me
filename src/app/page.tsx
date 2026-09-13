@@ -106,9 +106,9 @@ export default function Home() {
       </Section>
 
       <Section title="Read on">
-        <ul className="m-0 max-w-measure list-none p-0">
-          {PAGES.map((page, i) => (
-            <li key={page.href} className={i ? "border-t border-rule-soft" : ""}>
+        <ul className="signposts m-0 list-none p-0">
+          {PAGES.map((page) => (
+            <li key={page.href}>
               <BookLink className="signpost" href={page.href}>
                 <span className="signpost-name">{page.name}</span>
                 <span className="signpost-note">{page.note}</span>
@@ -122,41 +122,45 @@ export default function Home() {
       </Section>
 
       <Section id="contact" title="Get in touch">
-        <div className="max-w-measure">
-          <p>
-            I am glad to hear from anyone working on related problems — and
-            especially from groups with doctoral openings.
-          </p>
-          {/* Two ways to reach me, as icons. The address is the university
-              one, never a personal mailbox: it is published on a page this
-              crawlable, and it will be harvested. Each icon link names itself
-              for screen readers and shows a tooltip on hover and focus. No
-              rule above them: the section's own rule is a line away, and a
-              second one here read as a section of its own. */}
-          <ul className="mt-6 flex list-none flex-wrap items-center gap-x-5 gap-y-8 p-0 pb-6">
-            <li>
-              <a
-                className="contact-icon"
-                href="mailto:rax06jud@rptu.de"
-                aria-label="Email: rax06jud@rptu.de"
-                data-tip="rax06jud@rptu.de"
-              >
-                <MailIcon className="h-[1.6rem] w-auto" />
-              </a>
-            </li>
-            <li>
-              <ExternalLink
-                className="contact-icon"
-                href="https://www.linkedin.com/in/amin-dariani/"
-                rel="me"
-                label="LinkedIn profile"
-                tip="LinkedIn"
-              >
-                <LinkedInIcon className="h-[1.75rem] w-[1.75rem]" />
-              </ExternalLink>
-            </li>
-          </ul>
-        </div>
+        {/* On the grid with the rest of the page: running text stands on the
+            inner edge, so it ends where every other section's text ends. */}
+        <Leaf>
+          <div className="max-w-measure">
+            <p>
+              I am glad to hear from anyone working on related problems — and
+              especially from groups with doctoral openings.
+            </p>
+            {/* Two ways to reach me, as icons. The address is the university
+                one, never a personal mailbox: it is published on a page this
+                crawlable, and it will be harvested. Each icon link names
+                itself for screen readers and shows a tooltip on hover and
+                focus. No rule above them: the section's own rule is a line
+                away, and a second one here read as a section of its own. */}
+            <ul className="mt-6 flex list-none flex-wrap items-center gap-x-5 gap-y-8 p-0 pb-6">
+              <li>
+                <a
+                  className="contact-icon"
+                  href="mailto:rax06jud@rptu.de"
+                  aria-label="Email: rax06jud@rptu.de"
+                  data-tip="rax06jud@rptu.de"
+                >
+                  <MailIcon className="h-[1.6rem] w-auto" />
+                </a>
+              </li>
+              <li>
+                <ExternalLink
+                  className="contact-icon"
+                  href="https://www.linkedin.com/in/amin-dariani/"
+                  rel="me"
+                  label="LinkedIn profile"
+                  tip="LinkedIn"
+                >
+                  <LinkedInIcon className="h-[1.75rem] w-[1.75rem]" />
+                </ExternalLink>
+              </li>
+            </ul>
+          </div>
+        </Leaf>
       </Section>
     </BookPage>
   );

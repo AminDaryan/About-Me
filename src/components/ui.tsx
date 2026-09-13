@@ -71,6 +71,13 @@ export function PageHeader({
       >
         {title}
       </h1>
+      {/* The lines under the title stand on the title's own edge, at the
+          measure. They were moved in to the inner edge once, so that they
+          would end where the rules below end, and that left a hole a margin
+          wide under the title with the drop cap floating at the far side of
+          it: the head read as two blocks that had slipped apart. A page head
+          is a title block, not a section, and a title and the paragraph that
+          opens under it share one edge. */}
       {children && <div className="mt-8 max-w-measure">{children}</div>}
     </div>
   );
