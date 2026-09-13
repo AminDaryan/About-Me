@@ -1076,35 +1076,80 @@
     display: block;
     width: 100%;
     height: auto;
-    max-width: 30rem;
     margin-inline: auto;
   }
+  /* Only the colour is eased. Every opacity and every radius in this figure is
+     written on the frame it belongs to, and a transition over a value rewritten
+     sixty times a second does not smooth it — it drags it a third of a second
+     behind the thing it is meant to be describing. */
   .graph-edge {
     stroke: var(--color-rule);
-    stroke-width: 1.2;
-    transition: opacity 0.35s ease, stroke 0.35s ease;
+    stroke-width: 1.6;
+    transition: stroke 0.35s ease;
   }
   .graph-rim {
     fill: var(--color-paper);
     stroke: var(--color-ink-soft);
-    stroke-width: 1.2;
+    stroke-width: 1.6;
   }
   .graph-core { fill: var(--color-ink); }
   .graph-halo {
     fill: none;
     stroke: var(--color-accent);
-    stroke-width: 1.6;
-    transition: opacity 0.35s ease;
+    stroke-width: 2.1;
+    transition: stroke 0.35s ease;
+  }
+  /* A message in flight. The accent is on these while they are in the air and
+     on nothing else: for that beat they are the only thing happening. */
+  .graph-msg { fill: var(--color-accent); }
+  /* The hole a node leaves while it is out of the graph — dashed, because it
+     is the place of a thing rather than a thing. */
+  .graph-gap {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 1.9;
+    stroke-dasharray: 4.5 5;
+  }
+
+  .graph-out-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.15rem 0.8rem;
+    margin: 0;
+    font-size: var(--text-meta);
+    line-height: 1.4;
+  }
+  .graph-out-value {
+    color: var(--color-ink);
+    font-feature-settings: "lnum" 1, "tnum" 1;
+  }
+  /* What the prediction lost, said in figures beside the bar that shows it. */
+  .graph-out-delta {
+    margin-left: auto;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-accent-deep);
+    font-feature-settings: "lnum" 1, "tnum" 1;
   }
   .graph-out {
     display: block;
     width: 100%;
-    max-width: 30rem;
     height: 4px;
+    /* The tick standing where the prediction was stands taller than the bar. */
+    overflow: visible;
     margin: 0.4rem auto 0;
   }
-  .graph-out-track { fill: var(--color-rule-soft); }
+  /* Visible when empty, like the meters above it: a gauge whose channel cannot
+     be seen is a gauge that reads as a bar of nothing in particular. */
+  .graph-out-track { fill: color-mix(in srgb, var(--color-ink-faint) 26%, var(--color-paper)); }
   .graph-out-fill { fill: var(--color-accent-deep); }
+  .graph-out-mark { fill: var(--color-ink); }
+  /* Fig. 2's sentence lines up on the bar above it rather than being indented
+     off a rule — until it is describing a beat the figure is not on, when it
+     takes the gloss rule like Fig. 4's does. */
+  .graph-said { margin: 0; }
 
   /* -- Fig. 5: the exoskeleton ---------------------------------------------
      Hairlines at the same weight as the rules, so the drawing belongs to the
