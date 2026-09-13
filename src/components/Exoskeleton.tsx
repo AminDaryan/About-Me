@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import useMedia from "./useMedia";
+import { Plate } from "@/components/ui";
 import {
   CYCLE,
   FRAME,
@@ -87,7 +88,7 @@ export default function Exoskeleton() {
   const torso = useRef<SVGPathElement>(null);
   const joints = useRef<(SVGCircleElement | null)[]>([]);
   const traceLine = useRef<SVGPolylineElement>(null);
-  const errorText = useRef<HTMLSpanElement>(null);
+  const errorText = useRef<HTMLElement>(null);
 
   /* A wearer's mass is not a smooth dial: it is a different person. Each press
      hands the controller a limb it has not seen, which is the case the paper's
@@ -184,7 +185,16 @@ export default function Exoskeleton() {
   };
 
   return (
-    <figure className="m-0 mt-8">
+    <Plate
+      fig={5}
+      caption={
+        <>
+          One leg swings and one supports, simulated here rather than measured:
+          both controllers are given the machine&rsquo;s inertia, neither is told
+          what the wearer weighs.
+        </>
+      }
+    >
       <div className="exo">
         <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
           {/* the floor */}
@@ -237,46 +247,41 @@ export default function Exoskeleton() {
         </svg>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 border-t border-rule pt-4">
-        <p className="label text-ink-faint">
-          error <span ref={errorText} className="text-ink">0.0</span>°
-          <span className="mx-2 text-rule">·</span>
-          <span className="normal-case">hips and knees driven, ankles passive</span>
+      <div className="plate-foot">
+        <div className="plate-row">
+        <p className="readout">
+          <span className="label">error</span>
+          <b ref={errorText}>0.0</b>°
+          <span className="readout-sep">·</span>
+          hips and knees driven, ankles passive
         </p>
 
-        <div className="flex flex-wrap gap-x-6 gap-y-2">
-          <div className="flex gap-x-4" role="group" aria-label="Controller">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <div className="choices" role="group" aria-label="Controller">
             {(["pid", "adaptive"] as const).map((k) => (
               <button
                 key={k}
                 type="button"
                 aria-pressed={law === k}
                 onClick={press(() => setLaw(k))}
-                className={`label tap cursor-pointer border-b pb-0.5 transition-colors ${
-                  law === k
-                    ? "border-accent text-accent"
-                    : "border-transparent text-ink-faint hover:text-ink"
-                }`}
+                className="choice"
               >
-                {k === "pid" ? "Tuned PID" : "Adaptive"}
+                <span className="choice-word">
+                  {k === "pid" ? "Tuned PID" : "Adaptive"}
+                </span>
               </button>
             ))}
           </div>
           <button
             type="button"
             onClick={press(() => setWearer((n) => n + 1))}
-            className="label tap link cursor-pointer text-ink-faint"
+            className="control"
           >
             New wearer
           </button>
         </div>
+        </div>
       </div>
-
-      <figcaption className="mt-4 max-w-measure text-meta text-ink-faint italic">
-        Fig. 5 — One leg swings and one supports, simulated here rather than
-        measured: both controllers are given the machine&rsquo;s inertia,
-        neither is told what the wearer weighs.
-      </figcaption>
-    </figure>
+    </Plate>
   );
 }

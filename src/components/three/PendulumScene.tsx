@@ -472,9 +472,9 @@ export default function PendulumScene() {
   const [held, setHeld] = useState<Held>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
 
-  const t1Ref = useRef<HTMLSpanElement>(null);
-  const t2Ref = useRef<HTMLSpanElement>(null);
-  const uRef = useRef<HTMLSpanElement>(null);
+  const t1Ref = useRef<HTMLElement>(null);
+  const t2Ref = useRef<HTMLElement>(null);
+  const uRef = useRef<HTMLElement>(null);
   const pullRow = useRef<HTMLSpanElement>(null);
 
   // This component is only ever mounted client-side (dynamic, ssr: false),
@@ -631,18 +631,21 @@ export default function PendulumScene() {
         </Canvas>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 border-t border-rule pt-4">
-        <p className="label text-ink-faint">
-          θ₁ <span ref={t1Ref} className="text-ink">0.000</span> rad
-          <span className="mx-2 text-rule">·</span>
-          θ₂ <span ref={t2Ref} className="text-ink">0.000</span> rad
-          <span className="mx-2 text-rule">·</span>
-          motor <span ref={uRef} className="text-ink">0.0</span> N
-          <span className="ml-2 normal-case">(limit ±{UMAX} N)</span>
-          <span ref={pullRow} hidden className="ml-2 text-accent" />
+      <div className="plate-foot">
+        <div className="plate-row">
+        <p className="readout">
+          <span className="label">θ₁</span>
+          <b ref={t1Ref}>0.000</b> rad
+          <span className="readout-sep">·</span>
+          <span className="label">θ₂</span>
+          <b ref={t2Ref}>0.000</b> rad
+          <span className="readout-sep">·</span>
+          <span className="label">motor</span>
+          <b ref={uRef}>0.0</b> N (limit ±{UMAX} N)
+          <span ref={pullRow} hidden className="ml-2 text-accent-deep" />
         </p>
 
-        <div className="flex gap-6">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <button
             type="button"
             onClick={() => {
@@ -650,7 +653,7 @@ export default function PendulumScene() {
                 (Math.random() > 0.5 ? 1 : -1) * (1.4 + Math.random() * 1.4);
               setRunning(true);
             }}
-            className="label tap link cursor-pointer text-accent"
+            className="control"
           >
             Disturb it
           </button>
@@ -661,10 +664,11 @@ export default function PendulumScene() {
               xRef.current = 0;
               kickRef.current = 0;
             }}
-            className="label tap link cursor-pointer text-ink-faint"
+            className="control"
           >
             Recentre
           </button>
+        </div>
         </div>
       </div>
     </div>

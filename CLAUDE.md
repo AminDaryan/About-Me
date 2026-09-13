@@ -95,15 +95,38 @@ Every page is one grid, and the grid means something.
 - The page is `53.5rem` wide: the gutters plus exactly the leaf — a 10.5rem
   margin column, a 3.5rem gap and the 36rem measure. Do not widen it.
 
+## 1c. Figures are plates
+
+A figure is a plate in a monograph: a drawing, the instruments that read it, and
+a caption. Four kinds of text end up within an inch of each other down there,
+and a reader could not tell a caption from a button until they were given four
+different faces. Use them; do not invent a fifth.
+
+| | |
+| --- | --- |
+| `.figure-said` | what the figure is doing now — running text, in a sentence |
+| `.readout` | its live numbers: the quantity in small caps, the figure in ink |
+| `.choice` | one of a set — underlined when it is the one in force |
+| `.control` | a thing you press, in a hairline box, because a thing you press should look like one |
+
+The drawing and its instruments sit inside `.plate`, the instruments in a
+`.plate-foot` band under a single rule, and the caption below them behind its
+own `FIG. n` (`.plate-mark`) — set off by space, not by a third hairline. Every
+figure on the site is built this way; a new one that is not will look like a
+mistake, because it is.
+
 ## 2. Design system — use it, do not extend it
 
 One stylesheet, `src/app/globals.css`, holds every token. Values are defined
 once and used by name.
 
-- **Type.** Five roles and nothing else: `--text-display`, `--text-title`,
+- **Type.** These roles and nothing else: `--text-display`, `--text-title`,
   `--text-section`, `--text-lede`, `--text-subhead`, `--text-body`,
-  `--text-meta`, plus the `.label` (letterspaced caps) and `.note` (margin
-  gloss) classes. Do not size text ad hoc. The comment above the scale explains
+  `--text-meta`, and `--text-label` with `--tracking-label` for the
+  letterspaced caps, plus the `.label` and `.note` (margin gloss) classes. Do
+  not size text ad hoc, and do not set the caps by hand: `.label`, `.choice`,
+  `.control`, `.section-num` and `.entry-when` all take the label tokens, and a
+  copy of a size is a size that drifts. The comment above the scale explains
   what went wrong when pages sized their own paragraphs; do not repeat it.
 - **Colour.** `--color-paper`, `--color-ink`, `--color-ink-soft`,
   `--color-ink-faint`, `--color-rule`, `--color-rule-soft`, `--color-accent`,

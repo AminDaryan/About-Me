@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { Plate } from "@/components/ui";
 
 /* WebGL only ever runs in the browser, so both scenes are loaded client-side.
    The placeholder reserves the same height to keep the layout from shifting.
@@ -10,11 +11,11 @@ import dynamic from "next/dynamic";
    thesis), Fig. 3 (the gaze study), Fig. 4 (the arm, below), Fig. 5 (the
    exoskeleton) and Fig. 6 (the pendulum, below). Adding a figure above one of
    these means renumbering every figure under it — four files, last time.
-   Both captions here use the one caption style. */
+   Both plates here are captioned the one way, through <Plate>. */
 
 const ArmScene = dynamic(() => import("./ArmScene"), {
   ssr: false,
-  loading: () => <div className="h-[21rem] w-full sm:h-[25rem]" />,
+  loading: () => <div className="aspect-[4/3] max-h-[26rem] w-full" />,
 });
 
 const PendulumScene = dynamic(() => import("./PendulumScene"), {
@@ -22,30 +23,36 @@ const PendulumScene = dynamic(() => import("./PendulumScene"), {
   loading: () => <div className="h-[19rem] w-full sm:h-[22rem]" />,
 });
 
-const CAPTION = "mt-4 max-w-measure text-meta text-ink-faint italic";
-
 export function ArmFigure() {
   return (
-    <figure className="m-0 mt-8">
+    <Plate
+      fig={4}
+      caption={
+        <>
+          The loop the project ran: find the cuboid wherever it has been put
+          down, get a pose out of the detection, plan a path around the
+          obstacle it already knows about, and set it on the one target.
+        </>
+      }
+    >
       <ArmScene />
-      <figcaption className={CAPTION}>
-        Fig. 4 — The loop the project ran: find the cuboid wherever it has
-        been put down, get a pose out of the detection, plan a path around the
-        obstacle it already knows about, and set it on the one target.
-      </figcaption>
-    </figure>
+    </Plate>
   );
 }
 
 export function PendulumFigure() {
   return (
-    <figure className="m-0">
+    <Plate
+      fig={6}
+      caption={
+        <>
+          Both joints turn freely and the one motor drives the cart, where its
+          arrow is, so a pull on the lower link — yours is the accent arrow —
+          sends the whole machine the other way.
+        </>
+      }
+    >
       <PendulumScene />
-      <figcaption className={CAPTION}>
-        Fig. 6 — Both joints turn freely and the one motor drives the cart,
-        where its arrow is, so a pull on the lower link — yours is the accent
-        arrow — sends the whole machine the other way.
-      </figcaption>
-    </figure>
+    </Plate>
   );
 }

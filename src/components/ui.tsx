@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 /* Shared presentational pieces. None of them holds state or runs an effect, so
    each renders on the server or inside a client figure alike. (Entry lives in
@@ -148,6 +148,31 @@ export function Section({
         {children}
       </Wrap>
     </section>
+  );
+}
+
+/**
+ * A figure, set as a plate in a monograph: the drawing and its instruments,
+ * then the caption behind its own FIG. n. Every figure on the site is one of
+ * these; see .plate in globals.css for what goes inside.
+ */
+export function Plate({
+  fig,
+  caption,
+  children,
+  ...figure
+}: Omit<ComponentProps<"figure">, "className"> & {
+  fig: number;
+  caption: ReactNode;
+}) {
+  return (
+    <figure {...figure} className="plate">
+      {children}
+      <figcaption className="plate-caption">
+        <span className="plate-mark">Fig. {fig}</span>
+        {caption}
+      </figcaption>
+    </figure>
   );
 }
 

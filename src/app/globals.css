@@ -724,41 +724,267 @@
     font-style: italic;
   }
 
-  /* -- Fig. 4: the loop the arm is running ---------------------------------
-     Seven words under the figure, in the order the project's own flowchart has
-     them, with the one happening now in the accent. It is the figure's text
-     equivalent as much as its legend: a reader who cannot see the canvas still
-     gets the pipeline, in order, in words. */
-  .pipeline {
+  /* == Plates ==============================================================
+     A figure on this site is a plate in a monograph: the drawing, the
+     instruments that read it, and a caption naming it.
+
+     Four kinds of text end up within an inch of each other down there — what
+     the figure is doing now, the numbers it is reading, the choices you can
+     make, and the caption — and until this they were all one size, in the same
+     letterspaced capitals, in two shades of the same brown. A reader could not
+     tell a caption from a button, and said so.
+
+     They are now four things to look at rather than one:
+
+       .figure-said    running commentary, set as running text
+       .readout        live numbers, the names in caps and the figures in ink
+       .choice         one of a set, underlined when it is the one
+       .control        a thing you press, in a hairline box, because a thing
+                       you press should look like a thing you press
+
+     and the caption sits below a rule behind its own FIG. n, so the plate ends
+     where the caption says it ends and the page picks up again after it. */
+
+  /* A plate is not running text, and it is not held to the measure.
+
+     The measure exists because a line of prose longer than about seventy-five
+     characters is a line the eye loses on the way back — it is a rule about
+     reading a sentence, and a drawing is not a sentence. In a monograph the
+     plates run wider than the type block, often the full width of the page,
+     and here they run the full width of the column the page is built on: the
+     margin and the measure together, so a plate's left edge is the same edge
+     the section headings and the entry rules use. Two edges on a page, each
+     meaning one thing — prose here, everything else there — and the drawings
+     get the forty per cent more room they were short of. */
+  .plate { margin: clamp(1.9rem, 3.6vw, 2.6rem) 0 0; }
+
+  /* Only a plate inside an entry has to break out: an entry's text is indented
+     into the second column, and the plate steps back over the margin to reach
+     the page's own left edge. A plate that already stands on that edge — Fig. 1
+     and Fig. 6 sit straight in the wrap — must be left where it is, or it walks
+     off the side of the sheet. */
+  @media (min-width: 64rem) {
+    .copy .plate {
+      width: calc(100% + var(--spacing-margin-col) + 3.5rem);
+      margin-left: calc(-1 * (var(--spacing-margin-col) + 3.5rem));
+    }
+  }
+
+  /* The instruments: everything the drawing needs said in words and figures,
+     in a band under one rule. It is the only rule inside a plate — the rules
+     on this page are ranked, and the strongest of them has to be the one
+     between two entries, or a figure's own furniture reads as a new section. */
+  .plate-foot {
+    display: grid;
+    gap: 0.85rem;
+    margin-top: 1.1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-rule-soft);
+  }
+  /* One row of them. Centred rather than on the baseline: a boxed control has
+     no baseline worth aligning a sentence to. */
+  .plate-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem 0.9rem;
-    margin: 1.1rem 0 0;
-    padding: 0;
-    list-style: none;
-    font-size: 0.7rem;
-    letter-spacing: 0.19em;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.85rem 2rem;
+  }
+
+  /* Set off by space and by its own FIG. n rather than by a rule: a caption
+     is not a new section, and a third hairline in six centimetres of page is
+     three hairlines nobody can rank. */
+  .plate-caption {
+    max-width: var(--spacing-measure);
+    margin-top: 1.5rem;
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    color: var(--color-ink-faint);
+    font-style: italic;
+  }
+  /* The plate's number, upright and in full ink inside an italic caption: it
+     is a label on the drawing above, not part of the sentence. */
+  .plate-mark {
+    margin-right: 0.5rem;
+    font-style: normal;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
-    line-height: 1.6;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  /* -- What a figure is reading ------------------------------------------
+     An instrument panel: the quantity named in small letterspaced capitals,
+     the number itself in full ink and in lining figures of one width, so a
+     digit changing does not move the ones beside it. */
+  .readout {
+    margin: 0;
+    font-size: var(--text-meta);
+    line-height: 1.5;
     color: var(--color-ink-faint);
   }
-  .pipeline li {
-    position: relative;
-    transition: color 0.3s ease;
+  .readout b {
+    margin-left: 0.3rem;
+    font-weight: 400;
+    color: var(--color-ink);
+    font-feature-settings: "lnum" 1, "tnum" 1;
   }
+  .readout .label { color: inherit; }
+  .readout-sep { margin: 0 0.55rem; color: var(--color-rule); }
+
+  /* -- A thing you press --------------------------------------------------
+     A hairline box, which is the quietest mark that still reads as a control
+     on a printed page. These used to be set exactly like the captions beside
+     them, and nothing but the words told you one was a button. */
+  .control {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    border: 1px solid var(--color-rule);
+    border-radius: 2px;
+    background: none;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--color-ink-soft);
+    cursor: pointer;
+    transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease;
+  }
+  .control:hover,
+  .control:focus-visible {
+    border-color: var(--color-accent);
+    color: var(--color-accent-deep);
+    background-color: color-mix(in srgb, var(--color-accent) 7%, transparent);
+  }
+
+  /* -- One of a set -------------------------------------------------------
+     Not boxed: these are not actions, they are the same act done to different
+     things, and a row of boxes would read as a row of buttons that each do
+     something else. The one in force carries the deeper accent and a rule
+     under the word; the rest are quiet until pointed at. */
+  .choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 1.1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .choice {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+    cursor: pointer;
+  }
+  .choice-word {
+    border-bottom: 2px solid transparent;
+    padding-bottom: 0.14rem;
+    transition: color 0.25s ease, border-color 0.25s ease;
+  }
+  .choice:hover .choice-word,
+  .choice:focus-visible .choice-word {
+    color: var(--color-ink);
+    border-bottom-color: var(--color-rule);
+  }
+  /* The deeper accent, not the accent: this is where the accent has to carry
+     letterspaced capitals at caption size, and 5.2:1 is not enough for that.
+     The rule under the word is what makes the choice unmissable at a glance —
+     colour alone was not doing it, and colour alone never should. */
+  .choice[aria-pressed="true"] .choice-word,
+  .choice[data-now] .choice-word {
+    color: var(--color-accent-deep);
+    border-bottom-color: var(--color-accent);
+  }
+
+  /* -- Fig. 4: the loop the arm is running ---------------------------------
+     Seven words under the figure, in the order the project's own flowchart has
+     them, each one a choice you can point at to read about and press to watch.
+     It is the figure's text equivalent as much as its legend: a reader who
+     cannot see the canvas still gets the pipeline, in order, in words. */
+  .pipeline {
+    gap: 0.2rem 1.15rem;
+    margin-top: 1.1rem;
+    line-height: 1.6;
+  }
+  .pipeline li { position: relative; }
   /* An arrow between the words, drawn rather than typed so it cannot be read
      aloud seven times by a screen reader. */
   .pipeline li + li::before {
     content: "";
     position: absolute;
-    left: -0.56rem;
+    left: -0.68rem;
     top: 50%;
-    width: 0.24rem;
+    width: 0.28rem;
     height: 1px;
     background: var(--color-rule);
   }
-  .pipeline li[data-now] {
-    color: var(--color-accent);
+  /* Pointed at, but not running. Deliberately not the accent — the accent says
+     which step the figure is on, and a second thing wearing it would take that
+     away. */
+  .pipeline .choice[data-peek] .choice-word {
+    color: var(--color-ink);
+    border-bottom-color: var(--color-rule);
+  }
+
+  /* What a running figure is doing, in a sentence. Fig. 2 and Fig. 4 both have
+     one; it is the same thing in both, so it is one class.
+
+     Under Fig. 4 it used to be set in the same letterspaced capitals as the
+     seven words above it, lower-cased and in the faintest ink — eleven pixels,
+     tracked a fifth of an em, at 4.8:1 — and it was the least readable line on
+     the site. It is now running text at caption size, and it names its own
+     subject, because a sentence that begins "clear of the obstacles it was
+     told about" asks the reader to supply the half that matters. */
+  .figure-said {
+    --said-lines: 2;
+    flex: 1 1 20rem;
+    max-width: var(--spacing-measure);
+    margin: 0;
+    /* The sentence is set as a gloss on the row of words above it, indented off
+       a rule that is there whether or not it is coloured — so that colouring it
+       shifts nothing. It is the site's own mark for a note beside the text; see
+       .leaf > .note, which is set the same way. */
+    border-left: 2px solid transparent;
+    padding-left: 0.8rem;
+    transition: border-color 0.25s ease;
+    /* Lines held open, so the block does not jump as the sentence changes
+       several times a round. */
+    min-height: calc(var(--said-lines) * var(--text-meta) * var(--text-meta--line-height));
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    color: var(--color-ink-soft);
+  }
+  .figure-said-now {
+    margin-right: 0.55rem;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-accent-deep);
+    transition: color 0.25s ease;
+  }
+  /* A step being read about rather than watched. It is set in plain ink and
+     indented off a rule, the way a gloss is set: the reader can see at once
+     that this sentence is not about what the figure is doing. */
+  .figure-said[data-peek] {
+    /* Ink, not the hairline colour the margin glosses use: this rule is not
+       decoration, it is the only thing telling a reader that the sentence has
+       stopped describing what the figure is doing. */
+    border-left-color: var(--color-ink-faint);
+  }
+  .figure-said[data-peek] .figure-said-now {
+    color: var(--color-ink);
   }
 
   /* -- Fig. 3: the gaze study ----------------------------------------------
@@ -806,15 +1032,20 @@
   }
 
   /* -- Meters ---------------------------------------------------------------
-     A row of named quantities under a figure, each a hairline that fills. Two
-     figures use them: the four families of gaze feature, and the two things
-     the thesis measures about an explanation. */
+     A row of named quantities under a figure, each a channel that fills.
+
+     The channel has to be visible when it is empty, and it was not: the track
+     was laid in the softest rule, which is 1.1:1 against the paper, so all a
+     reader saw was the filled part — a bar of changing length sitting under a
+     word in letterspaced capitals, which on this page is the mark for the
+     choice you have made. Two different things wore the same face. The track
+     now shows, the channel is deeper, and it stands off its label rather than
+     underlining it. */
   .meters {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem 2rem;
-    max-width: 30rem;
-    margin: 1.35rem auto 0;
+    gap: 0.7rem 2rem;
+    margin: 0;
   }
   .meters[data-four] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   @media (min-width: 40rem) {
@@ -822,12 +1053,12 @@
   }
   .meter {
     display: grid;
-    gap: 0.3rem;
+    gap: 0.42rem;
   }
   .meter-bar {
     display: block;
-    height: 3px;
-    background: var(--color-rule-soft);
+    height: 4px;
+    background: color-mix(in srgb, var(--color-ink-faint) 26%, var(--color-paper));
   }
   .meter-bar > span {
     display: block;
@@ -883,7 +1114,6 @@
     display: block;
     width: 100%;
     height: auto;
-    max-width: 30rem;
     margin-inline: auto;
     overflow: visible;
   }
@@ -1370,8 +1600,9 @@
     .road-pin { transition: none; }
     .rail a { transition: none; }
     .running-head { transition: none; }
-    .pipeline li { transition: none; }
+    .choice-word { transition: none; }
     .graph-edge, .graph-halo { transition: none; }
+    .figure-said, .figure-said-now { transition: none; }
     .meter-bar > span { transition: none; }
     .to-top { transition: none; }
     .road-halo { animation: none; opacity: 0; }
