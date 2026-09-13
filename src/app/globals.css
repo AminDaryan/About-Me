@@ -355,7 +355,6 @@
      take lining figures. */
   .label,
   .entry-when,
-  .plate-mark,
   .control,
   .choice,
   .figure-said-now,
@@ -819,14 +818,14 @@
   }
 
   /* == Plates ==============================================================
-     A figure on this site is a plate in a monograph: the drawing, the
-     instruments that read it, and a caption naming it.
+     A figure on this site is a plate in a monograph: the drawing and the
+     instruments that read it.
 
-     Four kinds of text end up within an inch of each other down there — what
-     the figure is doing now, the numbers it is reading, the choices you can
-     make, and the caption — and until this they were all one size, in the same
-     letterspaced capitals, in two shades of the same brown. A reader could not
-     tell a caption from a button, and said so.
+     Several kinds of text end up within an inch of each other down there —
+     what the figure is doing now, the numbers it is reading, the choices you
+     can make — and until this they were all one size, in the same letterspaced
+     capitals, in two shades of the same brown. A reader could not tell a
+     caption from a button, and said so.
 
      They are now four things to look at rather than one:
 
@@ -836,8 +835,10 @@
        .control        a thing you press, in a hairline box, because a thing
                        you press should look like a thing you press
 
-     and the caption sits below a rule behind its own FIG. n, so the plate ends
-     where the caption says it ends and the page picks up again after it. */
+     There is no caption under them, and no FIG. n. The caption was one more
+     block of small faint text under the three, saying what the moving drawing
+     already shows, and nothing on the page refers to a figure by its number.
+     It is kept for screen readers alone; see Plate in ui.tsx. */
 
   /* A plate is not running text, and it is not held to the measure.
 
@@ -865,8 +866,8 @@
 
   /* The plate runs the column; the drawing on it does not. It is held to a
      frame of its own — --spacing-plate wide and at most half that tall — and
-     centred on the plate, with the rule, the instruments and the caption still
-     running the full width under it.
+     centred on the plate, with the instruments still running the full width
+     under it.
 
      When the drawings ran the column too, every one of them came out eight
      hundred pixels across and the exoskeleton five hundred and fifty tall: a
@@ -885,16 +886,24 @@
   }
 
   /* The instruments: everything the drawing needs said in words and figures,
-     in a band under one rule. It is the only rule inside a plate — the rules
-     on this page are ranked, and the strongest of them has to be the one
-     between two entries, or a figure's own furniture reads as a new section. */
+     in a band under the drawing, set off from it by space alone.
+
+     A figure draws no line of its own. The band used to open on a hairline
+     the full width of the column, and a hand's width further down the rule
+     that begins the next entry ran the same width, in nearly the same ink:
+     two lines of one kind a moment apart, and a reader could not tell which
+     of them ended the record. The only lines across the column are now the
+     ones that divide the page — the section's double rule and the entry's
+     hairline — so any line a reader meets means a new part has begun. */
   .plate-foot {
     display: grid;
     gap: 0.85rem;
-    margin-top: 1.1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--color-rule-soft);
+    margin-top: 1.5rem;
   }
+  /* A plate that closes its entry stands a little further from the rule that
+     follows than its own parts stand from each other, so the break after it
+     is plainly the larger one. */
+  .copy > .plate:last-child { margin-bottom: 1.25rem; }
   /* One row of them. Centred rather than on the baseline: a boxed control has
      no baseline worth aligning a sentence to. */
   .plate-row {
@@ -903,26 +912,6 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.85rem 2rem;
-  }
-
-  /* Set off by space and by its own FIG. n rather than by a rule: a caption
-     is not a new section, and a third hairline in six centimetres of page is
-     three hairlines nobody can rank. */
-  .plate-caption {
-    max-width: var(--spacing-measure);
-    margin-top: 1.5rem;
-    font-size: var(--text-meta);
-    line-height: var(--text-meta--line-height);
-    color: var(--color-ink-faint);
-    font-style: italic;
-  }
-  /* The plate's number, upright and in full ink inside an italic caption: it
-     is a label on the drawing above, not part of the sentence. */
-  .plate-mark {
-    margin-right: 0.5rem;
-    font-style: normal;
-    color: var(--color-ink);
-    white-space: nowrap;
   }
 
   /* -- What a figure is reading ------------------------------------------

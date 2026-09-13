@@ -54,7 +54,8 @@ export default function Research() {
               see why it was made. My thesis is about explaining these models:
               what an explanation of a graph model can be asked to show, and
               what it takes for one to be worth believing rather than simply
-              believed.
+              believed. The figure below is a small graph network running in
+              your browser, not a model from my work.
             </p>
             <Explain />
           </Entry>
@@ -103,7 +104,9 @@ export default function Research() {
               instructive result was the one that failed: the recurrent model I
               added to the inherited methods lost, and kept losing — the dataset
               is small, which is not what such a model wants. A manuscript on
-              the work is in preparation.
+              the work is in preparation. The paths in the figure below are
+              drawn to show the kind of difference the study&rsquo;s nineteen
+              features measure, not recorded from it.
             </p>
             <Gaze />
           </Entry>
@@ -147,7 +150,10 @@ export default function Research() {
               This is the work that made me a researcher: a control problem
               where the plant is a person, the failure modes are not abstract,
               and the specification is written in terms of what a human body
-              can tolerate. It became my first publication.
+              can tolerate. It became my first publication. The figure below is
+              simulated rather than measured: both controllers are given the
+              machine&rsquo;s inertia, and neither is told what the wearer
+              weighs.
             </p>
             <Exoskeleton />
           </Entry>

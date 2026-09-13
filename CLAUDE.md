@@ -56,9 +56,9 @@ contrast, size and hierarchy, and all four can be had inside the character.
   cannot sweep in one movement is a line the eye loses.
 - **But the measure applies to prose, and only to prose.** A drawing is not a
   sentence. Plates run the full width of the column the page is built on — the
-  margin and the measure together — so a plate's rule, instruments and caption
-  stand on the page's outer edge and the page does not read as a narrow strip
-  down one side of a wide sheet.
+  margin and the measure together — so a plate's instruments stand on the
+  page's outer edge and the page does not read as a narrow strip down one side
+  of a wide sheet.
 - **The drawing on a plate is held to a frame of its own.** `--spacing-plate`:
   40rem across and at most half that tall, centred on the plate. When the
   drawings ran the column too, each came out a screen tall, and a figure the
@@ -122,9 +122,9 @@ Every page is one grid, and the grid means something.
 
 ## 1c. Figures are plates
 
-A figure is a plate in a monograph: a drawing, the instruments that read it, and
-a caption. Four kinds of text end up within an inch of each other down there,
-and a reader could not tell a caption from a button until they were given four
+A figure is a plate in a monograph: a drawing and the instruments that read it.
+Several kinds of text end up within an inch of each other down there, and a
+reader could not tell a caption from a button until they were given four
 different faces. Use them; do not invent a fifth.
 
 | | |
@@ -137,10 +137,20 @@ different faces. Use them; do not invent a fifth.
 The drawing and its instruments sit inside `.plate`: the drawing as a
 `.plate-drawing` — an SVG scales itself into the frame, a canvas gives itself an
 aspect ratio or a height alongside the class — and the instruments in a
-`.plate-foot` band under a single rule, and the caption below them behind its
-own `FIG. n` (`.plate-mark`) — set off by space, not by a third hairline. Every
-figure on the site is built this way; a new one that is not will look like a
-mistake, because it is.
+`.plate-foot` band under it, set off by space and not by a rule. Every figure on
+the site is built this way; a new one that is not will look like a mistake,
+because it is.
+
+**No caption on the page, and no `FIG. n`.** Amin asked for them to go: the
+caption was one more block of small faint text under the instruments, saying
+what the moving drawing already shows, and nothing on the site refers to a
+figure by its number. `<Plate>` still takes a `caption` and renders it as a
+screen-reader-only `<figcaption>`, because the drawing itself is hidden from
+assistive technology and the figure needs a text equivalent. What a caption
+must never lose — that a drawing is simulated, drawn rather than recorded, or
+not a model from Amin's own work — goes in the prose just above the figure,
+where every reader meets it. A new figure that could be taken for data gets
+that sentence in the same change.
 
 ## 2. Design system — use it, do not extend it
 

@@ -169,9 +169,17 @@ export function Section({
 }
 
 /**
- * A figure, set as a plate in a monograph: the drawing and its instruments,
- * then the caption behind its own FIG. n. Every figure on the site is one of
- * these; see .plate in globals.css for what goes inside.
+ * A figure, set as a plate in a monograph: the drawing and its instruments.
+ * Every figure on the site is one of these; see .plate in globals.css for what
+ * goes inside.
+ *
+ * The caption is for screen readers alone. On the page it was a fourth block
+ * of small faint text under the sentence, the readouts and the controls, and
+ * it said what the moving drawing already shows. The drawing is hidden from
+ * assistive technology, though, so the caption stays as the figure's text
+ * equivalent. Where a caption said what no drawing can — that it is simulated,
+ * or drawn rather than recorded — that sentence now stands in the prose above
+ * the figure, where every reader meets it.
  */
 export function Plate({
   fig,
@@ -185,9 +193,8 @@ export function Plate({
   return (
     <figure {...figure} className="plate">
       {children}
-      <figcaption className="plate-caption">
-        <span className="plate-mark">Fig. {fig}</span>
-        {caption}
+      <figcaption className="sr-only">
+        Figure {fig}. {caption}
       </figcaption>
     </figure>
   );
