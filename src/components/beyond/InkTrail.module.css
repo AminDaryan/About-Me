@@ -1,0 +1,97 @@
+/* The ink line lives in the page's right margin, which only exists from the
+   width the section rail appears at; below it there is nowhere to put a line
+   that would not cross the text. */
+.stage { position: relative; }
+.layer { display: none; }
+@media (min-width: 1380px) {
+  .layer { display: block; position: absolute; inset: 0; pointer-events: none; }
+}
+
+.svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+
+.line {
+  fill: none;
+  stroke: var(--color-ink-soft);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* A drop appears as the nib passes it, and shrinks away again if the reader
+   scrolls back above it: a transition on a state, so it reverses by itself. */
+.drop {
+  fill: var(--color-ink-soft);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.4s ease;
+}
+.drop[data-shown] { transform: none; opacity: 1; }
+
+/* A splatter lands in two beats: the pool spreads out from where the ink
+   struck, and what was thrown from it flies out a moment later and further.
+   Both scale about the splatter's centre, which is the origin of the group
+   they are drawn in. In ink rather than the line's softer ink, because a pool
+   dries darker than a stroke. */
+.blot, .spray {
+  fill: var(--color-ink);
+  transform-box: view-box;
+  transform-origin: 0 0;
+  opacity: 0;
+}
+.blot {
+  transform: scale(0.35);
+  transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.2s ease;
+}
+.spray {
+  transform: scale(0.2);
+  transition: transform 0.46s cubic-bezier(0.22, 0.61, 0.36, 1) 0.05s, opacity 0.3s ease 0.05s;
+}
+.splatter[data-shown] .blot, .splatter[data-shown] .spray { transform: none; opacity: 1; }
+
+.quill { color: var(--color-ink); opacity: 0; transition: opacity 0.3s ease; }
+.quill[data-shown] { opacity: 1; }
+
+.portrait {
+  position: absolute;
+  margin: 0;
+  opacity: 0;
+  translate: 0 0.5rem;
+  transition: opacity 0.5s ease, translate 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.portrait[data-shown] { opacity: 1; translate: none; }
+
+/* A cutting with torn edges top and bottom, on the deeper paper, so the
+   photograph reads as a print pinned to the sheet rather than a picture set
+   into the page. */
+.print {
+  padding: 5px;
+  background: var(--color-paper-deep);
+  clip-path: polygon(
+    0% 2.5%, 6% 0.6%, 13% 2%, 21% 0%, 30% 1.8%, 38% 0.4%, 47% 2.2%, 55% 0.2%, 63% 1.6%, 72% 0.3%, 80% 2%, 88% 0.5%, 95% 1.9%, 100% 0.8%,
+    99.4% 30%, 100% 62%, 99.2% 97.5%,
+    94% 99.4%, 86% 98%, 77% 100%, 69% 98.3%, 60% 99.8%, 51% 97.9%, 43% 99.6%, 34% 98.2%, 26% 100%, 17% 98.4%, 9% 99.7%, 0% 98.6%,
+    0.7% 66%, 0% 33%
+  );
+}
+
+/* Toned into the paper: grey, a little sepia, and multiplied, so the sheet's
+   grain shows through the photograph as it would through ink on paper. */
+.photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  filter: grayscale(1) sepia(0.32) contrast(1.06);
+  mix-blend-mode: multiply;
+}
+
+/* Held open for two lines, whether or not the name needs them, so every
+   portrait stands the height the line was planned around. */
+.name { min-height: 3.2em; margin: 0.45rem 0 0; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .drop, .blot, .spray, .quill, .portrait { transition: none; }
+}
