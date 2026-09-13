@@ -45,20 +45,15 @@ export function useSettle<T extends HTMLElement>(delay = 0) {
   return ref;
 }
 
+/** Retained layout wrapper; text no longer has a separate entrance animation. */
 export default function Settle({
   children,
-  delay = 0,
   className = "",
 }: {
   children: ReactNode;
+  /** Kept for existing callers; page navigation now owns the timing. */
   delay?: number;
   className?: string;
 }) {
-  const ref = useSettle<HTMLDivElement>(delay);
-
-  return (
-    <div ref={ref} className={`settle ${className}`}>
-      {children}
-    </div>
-  );
+  return <div className={className || undefined}>{children}</div>;
 }

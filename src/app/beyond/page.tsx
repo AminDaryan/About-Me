@@ -1,3 +1,4 @@
+import BookPage from "@/components/book/BookPage";
 import type { Metadata } from "next";
 import Settle from "@/components/Settle";
 import MarginalStudy from "@/components/beyond/MarginalStudy";
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function Beyond() {
   return (
-    <>
+    <BookPage page="/beyond">
       <PageHeader
         kicker="Beyond the lab"
         title={
@@ -146,6 +147,6 @@ export default function Beyond() {
           </Settle>
         </Leaf>
       </Section>
-    </>
+    </BookPage>
   );
 }

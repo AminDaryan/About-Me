@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
+import BookLink from "@/components/book/BookLink";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import usePageContent from "./usePageContent";
+import { useBookNavigationHistory } from "./book/navigation";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -27,6 +28,7 @@ const NAV = [
    moves — and with JavaScript off the name simply stays, which is the safe
    way round. */
 export default function Masthead() {
+  useBookNavigationHistory();
   const pathname = usePathname();
 
   /* Quiet while the page is showing its own name. It starts false so the name
@@ -68,7 +70,7 @@ export default function Masthead() {
                 ? pathname === "/"
                 : pathname.startsWith(item.href);
             return (
-              <Link
+              <BookLink
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
@@ -79,7 +81,7 @@ export default function Masthead() {
                 }`}
               >
                 {item.label}
-              </Link>
+              </BookLink>
             );
           })}
         </nav>
@@ -87,7 +89,7 @@ export default function Masthead() {
         {/* The mark goes quiet with the name it belongs to: half a running head,
             appearing and disappearing on its own, would read as a glitch. On a
             phone there is no room for the words, and the mark stands for them. */}
-        <Link
+        <BookLink
           href="/"
           aria-label="Amin Dariani — home"
           data-quiet={quiet || undefined}
@@ -102,7 +104,7 @@ export default function Masthead() {
           <span className="hidden text-[0.78rem] tracking-[0.24em] whitespace-nowrap uppercase transition-colors group-hover:text-accent-deep sm:inline">
             Amin Dariani
           </span>
-        </Link>
+        </BookLink>
       </div>
     </header>
   );

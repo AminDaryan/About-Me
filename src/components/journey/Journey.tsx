@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import BookLink from "@/components/book/BookLink";
 import {
   useCallback,
   useEffect,
@@ -498,9 +498,9 @@ export default function Journey() {
         <p className="mt-3">{step.text}</p>
         {step.href && (
           <p className="mt-3">
-            <Link className="link" href={step.href}>
+            <BookLink className="link" href={step.href}>
               {step.more} →
-            </Link>
+            </BookLink>
           </p>
         )}
       </div>

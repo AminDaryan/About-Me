@@ -1,6 +1,7 @@
+import BookPage from "@/components/book/BookPage";
 import type { Metadata } from "next";
 import type { ComponentType } from "react";
-import Link from "next/link";
+import BookLink from "@/components/book/BookLink";
 import Settle from "@/components/Settle";
 import Entry from "@/components/Entry";
 import {
@@ -223,9 +224,9 @@ function Modules({ items }: { items: Module[] }) {
               </span>
             )}
             {m.project && (
-              <Link className="link grades-project" href={m.project.href}>
+              <BookLink className="link grades-project" href={m.project.href}>
                 {m.project.title} →
-              </Link>
+              </BookLink>
             )}
           </li>
         ))}
@@ -236,7 +237,7 @@ function Modules({ items }: { items: Module[] }) {
 
 export default function CV() {
   return (
-    <>
+    <BookPage page="/cv">
       {/* The letterhead, and the masthead's cue to hold its own copy of the
           name back while this one is on screen. It stays because a CV is a
           document before it is a web page: the masthead and the footer are
@@ -278,9 +279,9 @@ export default function CV() {
             </p>
             <p>
               <span className="text-ink">Thesis</span> (in progress) —{" "}
-              <Link className="link" href="/research#thesis">
+              <BookLink className="link" href="/research#thesis">
                 explaining graph neural networks
-              </Link>
+              </BookLink>
               . Advisor: M. Becker, Fraunhofer IOSB / KIT IES.
             </p>
             <Modules items={MODULES} />
@@ -301,10 +302,10 @@ export default function CV() {
             <p>Overall grade 2.3.</p>
             <p>
               <span className="text-ink">Thesis</span> —{" "}
-              <Link className="link" href="/research#pendulum">
+              <BookLink className="link" href="/research#pendulum">
                 &ldquo;Under-actuated Double Inverted Pendulum Control using
                 LQR, PID and Fuzzy Control&rdquo;
-              </Link>
+              </BookLink>
               .
             </p>
             <Modules items={BSC_MODULES} />
@@ -434,9 +435,9 @@ export default function CV() {
         </Entries>
         <Settle>
           <p className="no-print mt-6">
-            <Link className="link" href="/research">
+            <BookLink className="link" href="/research">
               What these projects were about →
-            </Link>
+            </BookLink>
           </p>
         </Settle>
       </Section>
@@ -518,6 +519,6 @@ export default function CV() {
           </Settle>
         </div>
       </Section>
-    </>
+    </BookPage>
   );
 }

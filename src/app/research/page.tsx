@@ -1,3 +1,4 @@
+import BookPage from "@/components/book/BookPage";
 import type { Metadata } from "next";
 import Entry from "@/components/Entry";
 import Exoskeleton from "@/components/Exoskeleton";
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function Research() {
   return (
-    <>
+    <BookPage page="/research">
       <PageHeader kicker="Research" title="What I work on">
         <p className="drop-cap">
           My research is about explainable and trustworthy machine learning —
@@ -175,6 +176,6 @@ export default function Research() {
             does not indent. */}
         <PendulumFigure />
       </Section>
-    </>
+    </BookPage>
   );
 }

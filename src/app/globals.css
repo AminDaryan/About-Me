@@ -411,23 +411,8 @@
     }
   }
 
-  /* -- Motion: text settles in. Nothing bounces, nothing slides sideways. - */
-  .settle {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  .settle.is-in {
-    opacity: 1;
-    transform: none;
-    transition:
-      opacity 0.85s cubic-bezier(0.22, 0.61, 0.36, 1),
-      transform 0.85s cubic-bezier(0.22, 0.61, 0.36, 1);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .settle { opacity: 1; transform: none; }
-    .settle.is-in { transition: none; }
-  }
+  /* Text is complete at first paint; navigation moves the whole page together. */
+  .settle, .settle.is-in { opacity: 1; transform: none; }
 
   /* -- Arriving from a link that named a part of the page -----------------
      Fig. 1 and the navigation link into single entries, not whole pages, and

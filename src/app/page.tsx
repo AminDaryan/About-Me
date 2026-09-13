@@ -1,4 +1,5 @@
-import Link from "next/link";
+import BookPage from "@/components/book/BookPage";
+import BookLink from "@/components/book/BookLink";
 import Settle from "@/components/Settle";
 import Portrait from "@/components/Portrait";
 import Journey from "@/components/journey/Journey";
@@ -34,7 +35,7 @@ const PAGES = [
 
 export default function Home() {
   return (
-    <>
+    <BookPage page="/">
       {/* The head and the background before the first heading still have
           somewhere to be pointed at: the rail reads these names, and no heading
           is added to a page that is deliberately one piece of prose.
@@ -108,13 +109,13 @@ export default function Home() {
         <ul className="m-0 max-w-measure list-none p-0">
           {PAGES.map((page, i) => (
             <li key={page.href} className={i ? "border-t border-rule-soft" : ""}>
-              <Link className="signpost" href={page.href}>
+              <BookLink className="signpost" href={page.href}>
                 <span className="signpost-name">{page.name}</span>
                 <span className="signpost-note">{page.note}</span>
                 <span className="signpost-arrow" aria-hidden="true">
                   →
                 </span>
-              </Link>
+              </BookLink>
             </li>
           ))}
         </ul>
@@ -157,6 +158,6 @@ export default function Home() {
           </ul>
         </div>
       </Section>
-    </>
+    </BookPage>
   );
 }

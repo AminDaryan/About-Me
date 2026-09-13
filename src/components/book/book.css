@@ -1,0 +1,23 @@
+/* Only the page's ink moves. The paper, masthead and margin controls remain live. */
+:root { view-transition-name: none; }
+.book-sheet { display: flow-root; width: 100%; }
+.book-finial {
+  display: block;
+  width: 68px;
+  height: 15px;
+  margin: 2.5rem auto 1.5rem;
+  color: var(--color-accent);
+  opacity: .48;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+
+::view-transition { pointer-events: none; }
+::view-transition-group(.book-page),
+::view-transition-old(.book-page),
+::view-transition-new(.book-page) { animation: none; }
+::view-transition-old(.book-page),
+::view-transition-new(.book-page) { mix-blend-mode: normal; }
+
+@media print { .book-finial { display: none; } }
