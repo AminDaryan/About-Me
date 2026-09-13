@@ -19,17 +19,58 @@ function circle(cx: number, cy: number, r: number) {
   return `M ${f(cx - r)} ${f(cy)} a ${r} ${r} 0 1 0 ${f(2 * r)} 0 a ${r} ${r} 0 1 0 ${f(-2 * r)} 0`;
 }
 
-/** Radial ticks between two radii — a gear's teeth. */
-function teeth(cx: number, cy: number, r0: number, r1: number, n: number, phase = 0) {
-  const out: string[] = [];
+/**
+ * A spur gear's outline as one closed path: `n` teeth on pitch radius `r`,
+ * rising `depth` above it and cut the same depth below, with the tooth centred
+ * on angle `phase` (radians). Teeth taper from root to tip and the root runs
+ * as an arc between them.
+ *
+ * It replaced a ring of radial ticks, which at any size read as a sun rather
+ * than a gear — and two gears drawn that way could not be made to mesh, because
+ * a tick has no gap for another tooth to sit in.
+ */
+function gear(cx: number, cy: number, r: number, n: number, depth: number, phase = 0) {
+  const at = (rad: number, a: number) => `${f(cx + rad * Math.cos(a))} ${f(cy + rad * Math.sin(a))}`;
+  const half = Math.PI / n;
+  const tip = r + depth * 0.85;
+  const root = r - depth;
+  let d = "";
   for (let i = 0; i < n; i++) {
-    const a = phase + (i / n) * Math.PI * 2;
-    out.push(
-      `M ${f(cx + r0 * Math.cos(a))} ${f(cy + r0 * Math.sin(a))} L ${f(cx + r1 * Math.cos(a))} ${f(cy + r1 * Math.sin(a))}`,
-    );
+    const a = phase + i * 2 * half;
+    d += `${i ? " L" : "M"} ${at(root, a - half * 0.62)} L ${at(tip, a - half * 0.3)}`;
+    d += ` L ${at(tip, a + half * 0.3)} L ${at(root, a + half * 0.62)}`;
+    d += ` A ${f(root)} ${f(root)} 0 0 1 ${at(root, a + 2 * half - half * 0.62)}`;
   }
-  return out.join(" ");
+  return `${d} Z`;
 }
+
+/** A joint as [x, y, radius]. */
+type Joint = [number, number, number];
+
+/**
+ * A link between two joints drawn as a pair of rails `w` either side of the
+ * centre line, each stopping where it meets the joint's circle. One hairline
+ * for a link read as wire at the size of a pin; two read as a part.
+ */
+function rails(a: Joint, b: Joint, w: number) {
+  const [x1, y1, r1] = a;
+  const [x2, y2, r2] = b;
+  const d = Math.hypot(x2 - x1, y2 - y1);
+  const ux = (x2 - x1) / d;
+  const uy = (y2 - y1) / d;
+  const k1 = Math.sqrt(Math.max(0, r1 * r1 - w * w));
+  const k2 = Math.sqrt(Math.max(0, r2 * r2 - w * w));
+  return [1, -1]
+    .map((s) => {
+      const nx = -uy * w * s;
+      const ny = ux * w * s;
+      return `M ${f(x1 + ux * k1 + nx)} ${f(y1 + uy * k1 + ny)} L ${f(x2 - ux * k2 + nx)} ${f(y2 - uy * k2 + ny)}`;
+    })
+    .join(" ");
+}
+
+/** A driven joint: the site's mark for a motor, a double ring, as on Fig. 5. */
+const motor = ([x, y, r]: Joint) => `${circle(x, y, r)} ${circle(x, y, r * 0.38)}`;
 
 /** A line between two circles that stops at their rims instead of their centres. */
 function edge(a: [number, number, number], b: [number, number, number]) {
@@ -60,34 +101,106 @@ const E: [number, number][] = [
   [0, 1], [1, 2], [0, 3], [1, 4], [2, 4], [3, 4], [4, 5], [3, 6],
 ];
 
+/* Two spur gears in mesh for the mechanical engineering stop. They share a
+   tooth size, so the pitch radii are in the ratio of the tooth counts, 10 to 6,
+   and the centres stand exactly the two radii apart. Each gear is turned so
+   that a tooth of one points into a gap of the other along the line between
+   them. */
+const BIG = { x: 50, y: 70, r: 27, n: 10 };
+const SMALL = { r: (27 * 6) / 10, n: 6 };
+const MESH = -Math.PI / 4;
+const SMALL_AT = {
+  x: BIG.x + (BIG.r + SMALL.r) * Math.cos(MESH),
+  y: BIG.y + (BIG.r + SMALL.r) * Math.sin(MESH),
+};
+
+/* The big gear's web: a hub and a rim joined by four spokes, which is what
+   makes it a machined part rather than a disc. */
+const SPOKES = [0, 1, 2, 3]
+  .map((i) => {
+    const a = MESH + Math.PI / 4 + (i * Math.PI) / 2;
+    const c = Math.cos(a);
+    const s = Math.sin(a);
+    return `M ${f(BIG.x + 6 * c)} ${f(BIG.y + 6 * s)} L ${f(BIG.x + 15 * c)} ${f(BIG.y + 15 * s)}`;
+  })
+  .join(" ");
+
+/* The three mechanisms — the exoskeleton, the pendulum and the arm — are drawn
+   in one hand, so they read as a set: a link as a pair of rails, a driven joint
+   as a double ring, a free joint as a single one, and the ground as a line.
+   Each fills the box about as far as the gears do. Drawn as single hairlines
+   in a narrow strip, they came out in a pin as a sliver nobody could read. */
+
+/* FUME in profile: the hip and knee driven, the ankle free — as in the paper,
+   and as on Fig. 5 — with a strap across each segment where the brace is tied
+   to the leg, and the hip belt the hip motor sits on. Curved cuffs read as
+   stray arcs and a pair of ticks as a break mark; a cuff drawn as a block
+   wrapped round the brace reads as the thing it is. The knee is bent well
+   forward: nearer straight, the motors and the cuffs stacked into one dark
+   column at the size of a phone's badge. */
+const HIP: Joint = [46, 24, 7];
+const KNEE: Joint = [78, 60, 7];
+const ANKLE: Joint = [52, 96, 4];
+
+/** A braced segment: the rails from joint to joint, broken for a cuff at the
+    middle — a block 16 across the brace and 7 along it. The rails stop at the
+    cuff's edges: run through it, they crossed it into a box with an X in it. */
+function braced(a: Joint, b: Joint) {
+  const mx = (a[0] + b[0]) / 2;
+  const my = (a[1] + b[1]) / 2;
+  const d = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  const ux = (b[0] - a[0]) / d;
+  const uy = (b[1] - a[1]) / d;
+  const point = (along: number, across = 0) =>
+    [mx + ux * along - uy * across, my + uy * along + ux * across] as const;
+  const xy = (p: readonly [number, number]) => `${f(p[0])} ${f(p[1])}`;
+  const stop = (along: number): Joint => [...point(along), 0];
+  const cuff = `M ${xy(point(-3.5, -8))} L ${xy(point(3.5, -8))} L ${xy(point(3.5, 8))} L ${xy(point(-3.5, 8))} Z`;
+  return {
+    rails: `${rails(a, stop(-3.5), 3)} ${rails(stop(3.5), b, 3)}`,
+    cuff,
+  };
+}
+const THIGH = braced(HIP, KNEE);
+const SHANK = braced(KNEE, ANKLE);
+
+/* The thesis system as its supervisor describes it: a double inverted
+   pendulum on a fixed pivot, driven only at its second joint — so no cart,
+   and the motor drawn as a double ring at the joint between the links. */
+const PIVOT: Joint = [60, 92, 4.5];
+const ELBOW: Joint = [49, 56, 7];
+const TIP: Joint = [67, 20, 6];
+
+/* The arm in the project lab: a pedestal, a driven shoulder and elbow, the
+   wrist, a parallel gripper open over the cuboid it is about to take. */
+const SHOULDER: Joint = [38, 90, 6];
+const REACH: Joint = [57, 50, 5.5];
+const WRIST: Joint = [90, 52, 4];
+
 export const FIGURES = {
   gears: [
-    circle(46, 66, 25),
-    teeth(46, 66, 25, 31, 12),
-    circle(46, 66, 7),
-    `${circle(87, 37, 15)} ${teeth(87, 37, 15, 20, 8, 0.2)}`,
-    circle(87, 37, 4.5),
+    gear(BIG.x, BIG.y, BIG.r, BIG.n, 4.2, MESH + Math.PI / BIG.n),
+    `${circle(BIG.x, BIG.y, 15)} ${circle(BIG.x, BIG.y, 6)} ${SPOKES}`,
+    gear(SMALL_AT.x, SMALL_AT.y, SMALL.r, SMALL.n, 4.2, MESH + Math.PI),
+    `${circle(SMALL_AT.x, SMALL_AT.y, 5)} ${circle(SMALL_AT.x, SMALL_AT.y, 1.8)}`,
   ],
 
   exoskeleton: [
-    circle(50, 19, 5.5),
-    "M 46 24 L 52 57 M 55 23 L 61 56",
-    circle(56, 62, 5.5),
-    "M 52 67 L 49 97 M 60 67 L 57 97",
-    "M 40 40 Q 56 33 67 38 M 41 83 Q 55 78 67 81",
-    "M 49 97 L 53 102 M 57 97 L 53 102 M 40 104 H 86",
+    `M 18 24 H ${f(HIP[0] - HIP[2])} M ${f(HIP[0] + HIP[2])} 24 H 76 ${motor(HIP)}`,
+    THIGH.rails,
+    motor(KNEE),
+    SHANK.rails,
+    `${circle(...ANKLE)} M 52 100 V 106 M 32 106 H 90`,
+    `${THIGH.cuff} ${SHANK.cuff}`,
   ],
 
-  /* The thesis system as its supervisor describes it: a double inverted
-     pendulum on a fixed pivot, driven only at its second joint — so no cart,
-     and the motor drawn as a double ring at the joint between the links. */
   pendulum: [
-    "M 26 108 H 94 M 50 108 L 60 94 L 70 108",
-    circle(60, 91, 3),
-    "M 59.3 88.1 L 53.2 58.2",
-    `${circle(52, 52.5, 5.5)} ${circle(52, 52.5, 2)}`,
-    "M 54.6 47.6 L 67.2 23.6",
-    circle(69, 20, 4),
+    `M 26 108 H 94 ${[32, 44, 56, 68, 80, 92].map((x) => `M ${x} 108 l -6 7`).join(" ")}`,
+    `M 49 108 L 57.2 95.6 M 71 108 L 62.8 95.6 ${circle(...PIVOT)}`,
+    rails(PIVOT, ELBOW, 2.6),
+    motor(ELBOW),
+    rails(ELBOW, TIP, 2.6),
+    circle(...TIP),
   ],
 
   code: [
@@ -126,13 +239,12 @@ export const FIGURES = {
   ],
 
   arm: [
-    "M 20 105 H 60 M 31 105 V 96 H 49 V 105",
-    circle(40, 90, 4.5),
-    "M 42 86 L 60 54",
-    circle(62, 50, 4),
-    `M 66 51.5 L 89 59 ${circle(92, 60, 3.2)}`,
-    "M 92 63.2 V 70 M 85 70 H 99 M 85 70 V 80 M 99 70 V 80",
-    "M 83 89 H 101 V 106 H 83 Z M 83 89 L 89 84 H 107 L 101 89 M 107 84 V 101 L 101 106",
+    `M 12 106 H 108 M 26 106 V 97 H 50 V 106 ${motor(SHOULDER)}`,
+    rails(SHOULDER, REACH, 2.6),
+    motor(REACH),
+    `${rails(REACH, WRIST, 2.6)} ${circle(...WRIST)}`,
+    "M 90 56 V 64 M 75 64 H 105 M 75 64 V 76 M 105 64 V 76",
+    "M 78 88 H 96 V 106 H 78 Z M 78 88 L 84 83 H 102 L 96 88 M 102 83 V 101 L 96 106",
   ],
 
   graph: [
