@@ -518,9 +518,17 @@
      job and none of them saying anything.
 
      The deeper accent, not the accent: a roman numeral in letterspaced
-     capitals at caption size is small text, and 5.2:1 is not enough for it. */
+     capitals at caption size is small text, and 5.2:1 is not enough for it.
+
+     A heading belongs to what comes after it, so it stands nearer its content
+     than the section before it — and further from its content than one record
+     stands from the next, or it reads as a label stuck to the first record.
+     It was 1.5rem, less than the 1.75rem an entry keeps from the rule above
+     it. Half a rem more than the section space keeps it between the two at
+     every width: 36px under a heading on a phone and 48px on a desk, against
+     28px between two records and twice the section space above. */
   .section-title {
-    margin-bottom: 1.5rem;
+    margin-bottom: calc(var(--spacing-section) + 0.5rem);
     font-size: var(--text-section);
   }
   /* A lone roman numeral at caption size is not a numeral, it is a speck: at
@@ -588,6 +596,11 @@
     border-top: 0;
   }
   .entry:last-child { --entry-bottom: 0; }
+  /* The first signpost gives up its top padding for the same reason as the
+     first entry: the heading's own space is the gap, and the padding on top of
+     it stood "Read on" half as far again from its list as every other heading
+     on the site from its content. */
+  .signposts > li:first-child > .signpost { padding-top: 0; }
 
   /* -- The margin of an entry ----------------------------------------------
      Its date, and the institution's mark where there is one. Above 64rem the

@@ -117,6 +117,13 @@ Every page is one grid, and the grid means something.
   across the column means a new part has begun. No rule may be so faint that
   it cannot be seen — they were 1.13:1 and 1.27:1, which is not a delicate
   line but an invisible one.
+- **Space is ranked the same way.** Two records stand 1.75rem apart; a section
+  heading stands `--spacing-section` plus half a rem above its content (36px
+  on a phone, 48 on a desk); two sections stand twice the section space apart.
+  A heading closer to its content than one record is to the next reads as a
+  label stuck to the first record, and Amin said so. The first child of any
+  list under a heading — an entry, a signpost — gives up its own top padding,
+  so the heading's space is the whole gap and every section opens the same.
 - The page is `53.5rem` wide: the gutters plus exactly the leaf — a 10.5rem
   margin column, a 3.5rem gap and the 36rem measure. Do not widen it.
 
