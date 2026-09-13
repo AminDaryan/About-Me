@@ -5,81 +5,26 @@
   color: var(--color-ink-soft);
   -webkit-tap-highlight-color: transparent;
 }
-
 .figure svg { display: block; width: 100%; height: auto; overflow: visible; }
 .figure:focus-visible { outline: 1px solid var(--color-accent); outline-offset: 5px; }
-.detail { opacity: .58; }
+.figure[data-subject="ornament"] { width: 144px; margin: 0; }
+.detail, .writtenLine { opacity: .58; }
+.hatching { opacity: .62; stroke-width: .8; }
 .paper, .shoeFill { fill: var(--color-paper); }
-.accent, .annotation, .thought, .minuteHand, .route, .flight { stroke: var(--color-accent); }
+.accent { stroke: var(--color-accent); }
 .boardFill { fill: var(--color-paper); stroke: none; }
-.square { fill: var(--color-ink-faint); fill-opacity: .1; stroke: none; }
-.destination { stroke: var(--color-accent); opacity: .6; }
-.minuteHand, .hourHand { transform-origin: 143px 64px; }
+.square { fill: var(--color-ink-faint); fill-opacity: .12; stroke: none; }
+.destination { stroke: var(--color-accent); opacity: .55; }
+.route { stroke: var(--color-accent); opacity: .5; }
+.pendulum { transform-origin: 143px 88px; transform: rotate(-8deg); }
+.bookQuill { transform: translate(107px,100px); }
+.ornamentQuill { transform: translate(25px,72px); }
+.thought { stroke: var(--color-accent); stroke-dasharray: .16 .84; opacity: 0; }
 .bowstring { transform-origin: 50px 72px; transform: scaleX(.001); }
-.racket { transform-origin: 67px 130px; transform: rotate(15deg); }
-.shuttle { transform: translate(166px,42px) rotate(33deg); }
-.flight { opacity: .5; }
-
-/* Only explicit interest starts movement. No timers, perpetual loops or hidden
-   initial strokes: a static page and reduced-motion mode keep every drawing. */
-@media (prefers-reduced-motion: no-preference) {
-  .playing .minuteHand { animation: minute 3.8s ease-in-out both; }
-  .playing .hourHand { animation: hour 3.8s ease-in-out both; }
-  .playing .annotation { stroke-dasharray: 1; animation: underline 3.8s linear both; }
-  .playing .pen { animation: write 3.8s linear both; }
-  .playing .thought { stroke-dasharray: 1; animation: thought 3.8s ease-in-out both; }
-  .playing .bowstring { animation: tension 3.8s linear both; }
-  .playing .arrow { animation: loose 3.8s linear both; }
-  .playing .leadStep { animation: step 3.8s ease-in-out both; }
-  .playing .leadClose { animation: closeStep 3.8s ease-in-out both; }
-  .playing .followStep { animation: followStep 3.8s ease-in-out both; }
-  .playing .followClose { animation: followClose 3.8s ease-in-out both; }
-  .playing .knight { animation: knight 3.8s ease-in-out both; }
-  .playing .route { stroke-dasharray: 1; animation: route 3.8s linear both; }
-  .playing .racket { animation: swing 3.8s ease-in-out both; }
-  .playing .flight { stroke-dasharray: 1; animation: flight 3.8s linear both; }
-  .playing .shuttle { animation: shuttle 3.8s linear both; }
-}
-
-@keyframes minute { from { transform: rotate(-60deg); } to { transform: none; } }
-@keyframes hour { from { transform: rotate(-5deg); } to { transform: none; } }
-/* Pen tip and underline advance together from x=110 to x=146. */
-@keyframes underline { 0%,20% { stroke-dashoffset: 1; } 70%,100% { stroke-dashoffset: 0; } }
-@keyframes write { 0%,20% { transform: translateX(-36px); } 70%,100% { transform: none; } }
-@keyframes thought { 0% { stroke-dashoffset: 1; opacity: .35; } 75%,100% { stroke-dashoffset: 0; opacity: 1; } }
-/* The string vertex and the arrow nock both move 24 units during the draw. */
-@keyframes tension { 0%,100% { transform: scaleX(.001); } 30%,38% { transform: scaleX(1); } 44% { transform: scaleX(.001); } 47% { transform: scaleX(-.12); } 52%,90% { transform: scaleX(.001); } }
-@keyframes loose {
-  0%,100% { transform: none; opacity: 1; }
-  30%,38% { transform: translateX(-24px); opacity: 1; }
-  44% { transform: none; opacity: 1; }
-  62%,82% { transform: translateX(45px); opacity: 1; }
-  90% { transform: translateX(45px); opacity: 0; }
-  91% { transform: none; opacity: 0; }
-}
-@keyframes step { 0%,100% { transform: none; } 25%,45% { transform: translateY(-14px); } 65%,80% { transform: translateY(10px); } }
-@keyframes closeStep { 0%,15%,100% { transform: none; } 40%,50% { transform: translateY(-8px); } 75%,85% { transform: translateY(7px); } }
-@keyframes followStep { 0%,100% { transform: none; } 25%,45% { transform: translateY(14px); } 65%,80% { transform: translateY(-10px); } }
-@keyframes followClose { 0%,15%,100% { transform: none; } 40%,50% { transform: translateY(8px); } 75%,85% { transform: translateY(-7px); } }
-/* Start (50,109.5), destination (90,100.5): two files and one rank. Fade only
-   during the quiet reset, so the return never appears to be a second move. */
-@keyframes knight {
-  0%,12%,100% { transform: none; opacity: 1; }
-  27% { transform: translate(20px,-18px); opacity: 1; }
-  48%,78% { transform: translate(40px,-9px); opacity: 1; }
-  88% { transform: translate(40px,-9px); opacity: 0; }
-  89% { transform: none; opacity: 0; }
-}
-@keyframes route { 0%,12% { stroke-dashoffset: 1; } 48%,100% { stroke-dashoffset: 0; } }
-@keyframes swing { 0%,12% { transform: rotate(-8deg); } 28% { transform: rotate(23deg); } 60%,100% { transform: rotate(15deg); } }
-@keyframes flight { 0%,18% { stroke-dashoffset: 1; } 78%,100% { stroke-dashoffset: 0; } }
-/* Sampled from the flight curve at t = 0, .25, .5, .75, 1. Cork leads. */
-@keyframes shuttle {
-  0%,18% { transform: translate(75px,65px) rotate(-51deg); }
-  33% { transform: translate(97.94px,43.27px) rotate(-34deg); }
-  48% { transform: translate(121.25px,32.88px) rotate(-12deg); }
-  63% { transform: translate(144.19px,32.80px) rotate(14deg); }
-  78%,100% { transform: translate(166px,42px) rotate(33deg); }
-}
+.arrow { transform: translateX(-.024px); }
+.racketLeft { transform-origin: 35px 126px; }
+.racketRight { transform-origin: 165px 126px; }
+.shuttle { transform: translate(42px,83px) rotate(-57deg); }
+.flight { stroke: var(--color-ink-faint); opacity: .3; stroke-dasharray: 1 5; }
 @media (min-width: 64rem) { .figure { margin-left: auto; } }
-@media print { .figure { break-inside: avoid; } .playing * { animation: none !important; } }
+@media print { .figure { break-inside: avoid; } }

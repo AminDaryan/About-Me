@@ -86,6 +86,9 @@ export default function Beyond() {
             </p>
           </Settle>
         </Leaf>
+        <div className="mt-6 flex justify-end">
+          <MarginalStudy subject="ornament" />
+        </div>
       </Section>
 
       <Section num="II" title="Sport, dance and chess">
@@ -106,7 +109,6 @@ export default function Beyond() {
           </Settle>
 
           <Settle className="note">
-            Salsa and bachata — the opposite skill entirely.
             <MarginalStudy subject="dance" />
           </Settle>
           <Settle>
