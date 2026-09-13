@@ -50,7 +50,7 @@ export const STEPS: Step[] = [
     title: "Adaptive control of a lower-limb exoskeleton",
     text: "As an undergraduate research assistant in the Robotics Lab, I designed an adaptive controller for FUME, a lower-limb exoskeleton for paraplegic users, and tested it on the physical robot. It became my first paper, at ICRoM 2019.",
     art: "exoskeleton",
-    alt: "A pair of legs in an exoskeleton, braced from hip to ankle",
+    alt: "A person walking in a lower-limb exoskeleton, both legs braced from hip to ankle",
     href: "/research#exoskeleton",
     more: "The exoskeleton work",
   },

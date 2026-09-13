@@ -15,7 +15,7 @@ import {
 import { InkFigure } from "@/components/ink";
 import useMedia from "@/components/useMedia";
 import { Plate } from "@/components/ui";
-import { FIGURES } from "./figures";
+import { FIGURES, QUIET } from "./figures";
 import {
   fromStops,
   nearest,
@@ -530,6 +530,7 @@ export default function Journey() {
       <InkFigure
         key={`art-${active}`}
         paths={FIGURES[step.art]}
+        quiet={QUIET[step.art]}
         viewBox="0 0 120 120"
         width={wide ? 104 : 72}
         label={step.alt}
@@ -786,7 +787,11 @@ export default function Journey() {
                             transform={`translate(${-art / 2} ${-lift - art / 2}) scale(${art / 120})`}
                           >
                             {FIGURES[s.art].map((d, k) => (
-                              <path key={k} d={d} />
+                              <path
+                                key={k}
+                                d={d}
+                                className={k < (QUIET[s.art] ?? 0) ? "is-quiet" : undefined}
+                              />
                             ))}
                           </g>
                         </g>

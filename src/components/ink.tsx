@@ -12,12 +12,15 @@ export function InkFigure({
   viewBox,
   width,
   label,
+  quiet = 0,
   className = "",
 }: {
   paths: string[];
   viewBox: string;
   width: number;
   label: string;
+  /** How many of the first paths draw the setting, in a lighter ink. */
+  quiet?: number;
   className?: string;
 }) {
   const ref = useSettle<HTMLDivElement>(0);
@@ -35,6 +38,7 @@ export function InkFigure({
           <path
             key={d}
             d={d}
+            className={i < quiet ? "is-quiet" : undefined}
             pathLength={1}
             // 0.22s apart, not 0.09: at the tighter stagger every stroke is in
             // flight at once and the figure assembles as a cloud of fragments

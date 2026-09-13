@@ -424,6 +424,15 @@
     stroke-dashoffset: 1.02;
   }
 
+  /* A figure's setting, drawn behind its subject: the wearer under Fig. 1's
+     exoskeleton. Ink mixed down as the rule between two entries is, to just
+     past the 3:1 a mark a reader is meant to see must clear, against 12:1 for
+     the subject. Drawn at one weight, the person was what the eye found. */
+  .ink svg path.is-quiet,
+  .road-art path.is-quiet {
+    stroke: color-mix(in srgb, var(--color-ink-faint) 72%, var(--color-paper));
+  }
+
   .ink.is-in svg path {
     animation: ink-draw 1s cubic-bezier(0.33, 0.1, 0.2, 1) forwards;
   }
@@ -1581,6 +1590,10 @@
   .road-pin[data-active] { transform: scale(1.14); }
   .road-pin[data-active] .road-pin-body { fill: var(--color-accent); stroke: var(--color-accent-deep); }
   .road-pin[data-active] .road-art path { stroke: var(--color-paper); }
+  /* The same step down in paper on the accent, at 3.5:1. */
+  .road-pin[data-active] .road-art path.is-quiet {
+    stroke: color-mix(in srgb, var(--color-paper) 72%, var(--color-accent));
+  }
   .road-pin[data-active] .road-pin-body { stroke-dasharray: none; }
 
   /* The year under each pin, on the same scale as every other letterspaced

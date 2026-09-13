@@ -137,12 +137,18 @@ const SPOKES = [0, 1, 2, 3]
    nothing above them read as trousers on a stand; and a figure standing still
    gave no hint of what the machine is for. FUME is for walking.
 
+   But the machine is the subject, and the person only says what it is for.
+   Drawn at one weight with the brace on the near leg alone, the person was
+   what the eye found and the exoskeleton was a few lines down one shin. So the
+   wearer is drawn first, in a lighter ink (see QUIET below), and the machine
+   over it in full ink — on both legs, as it is built: seen from the side the
+   hips share one axis, so both thighs hang from a single driven hip, and each
+   leg has a driven knee, a free ankle, a housing along the thigh and the shin
+   as the paper's photographs show, a cuff round each, and a plate under the
+   foot. A belt at the waist carries the hip.
+
    Seen from the side, mid-stride: the near leg forward on its heel, the far
-   leg behind on its toes, the arms swinging against the legs. The brace is on
-   the near leg — the hip and knee driven and the ankle free, as in the paper
-   and on Fig. 5 — strapped to the thigh and the shin, with a plate under the
-   foot and a belt round the waist. The far leg is braced too on the real
-   machine; from this side its brace is behind it.
+   leg behind on its toes, the arms swinging against the legs.
 
    The body is outline only, one limb at a time through its joints, so the
    proportions live in the joint positions below rather than in hand-placed
@@ -165,30 +171,69 @@ function limb(points: readonly P[], half: readonly number[]) {
 }
 const poly = (ps: readonly P[]) => ps.map(([x, y]) => `${f(x)} ${f(y)}`).join(" L ");
 
-/** A strap across a limb at `t` of the way from `a` to `b`: two lines `reach`
-    either side of the centre line, a band wide. */
-function band(a: P, b: P, t: number, reach: number) {
-  const d = Math.hypot(b[0] - a[0], b[1] - a[1]);
-  const ux = (b[0] - a[0]) / d;
-  const uy = (b[1] - a[1]) / d;
-  const cx = a[0] + (b[0] - a[0]) * t;
-  const cy = a[1] + (b[1] - a[1]) * t;
-  return [-1.7, 1.7]
-    .map((o) => {
-      const x = cx + ux * o;
-      const y = cy + uy * o;
-      return `M ${f(x + uy * reach)} ${f(y - ux * reach)} L ${f(x - uy * reach)} ${f(y + ux * reach)}`;
-    })
-    .join(" ");
+/** A rectangle `w` either side of the line from `a` to `b`, closed at each end
+    `sin` clear of the joint's ring. Closed exactly on the ring, its end cut
+    across the inside of a driven joint and the two rings read as one blot. */
+function housing(a: Joint, b: Joint, w: number, sin = 1.2) {
+  const [x1, y1, r1] = a;
+  const [x2, y2, r2] = b;
+  const d = Math.hypot(x2 - x1, y2 - y1);
+  const ux = (x2 - x1) / d;
+  const uy = (y2 - y1) / d;
+  const k1 = Math.sqrt(Math.max(0, r1 * r1 - w * w)) + sin;
+  const k2 = Math.sqrt(Math.max(0, r2 * r2 - w * w)) + sin;
+  const nx = -uy * w;
+  const ny = ux * w;
+  return `M ${poly([
+    [x1 + ux * k1 + nx, y1 + uy * k1 + ny],
+    [x2 - ux * k2 + nx, y2 - uy * k2 + ny],
+    [x2 - ux * k2 - nx, y2 - uy * k2 - ny],
+    [x1 + ux * k1 - nx, y1 + uy * k1 - ny],
+  ])} Z`;
 }
 
-const NEAR: P[] = [[58, 60], [66, 82], [70, 102]];
-const FAR: P[] = [[53, 60], [47, 82], [38, 100]];
+const HIP: P = [57, 60];
+const NEAR: P[] = [HIP, [66, 83], [71, 103]];
+const FAR: P[] = [HIP, [48, 83], [37, 100]];
 const LEG_HALF = [6.5, 4.6, 3.2];
 const NEAR_LEG = limb(NEAR, LEG_HALF);
 const FAR_LEG = limb(FAR, LEG_HALF);
-const NEAR_ARM = limb([[54, 30], [45, 41], [39, 50]], [3.2, 2.7, 2.2]);
-const FAR_ARM = limb([[62, 31], [70, 41], [77, 47]], [3, 2.6, 2.1]);
+const NEAR_ARM = limb([[53, 31], [45, 42], [40, 51]], [3, 2.5, 2]);
+const FAR_ARM = limb([[63, 32], [70, 42], [76, 49]], [2.8, 2.4, 1.9]);
+
+/** A cuff round segment `i` of a leg, `t` of the way down it and `wide` along
+    it, standing 1.6 proud of the leg's outline on both sides so it wraps the
+    leg rather than lying on it. The thigh's sits low: at mid-thigh the two
+    legs still overlap under the hip, and their cuffs crossed in an X. */
+function cuff(leg: readonly P[], i: number, t: number, wide: number) {
+  const [a, b] = [leg[i], leg[i + 1]];
+  const reach = LEG_HALF[i] + (LEG_HALF[i + 1] - LEG_HALF[i]) * t + 1.6;
+  const d = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  const ux = (b[0] - a[0]) / d;
+  const uy = (b[1] - a[1]) / d;
+  const at = (along: number, across: number): P => [
+    a[0] + (b[0] - a[0]) * t + ux * along - uy * across,
+    a[1] + (b[1] - a[1]) * t + uy * along + ux * across,
+  ];
+  return `M ${poly([at(-wide, reach), at(wide, reach), at(wide, -reach), at(-wide, -reach)])} Z`;
+}
+
+/** One leg of the machine: the hip's housing down to a driven knee, the
+    shin's down to a free ankle, a cuff on each, and `plate` under the foot. */
+function brace(leg: readonly P[], plate: string) {
+  const hip: Joint = [...leg[0], 6];
+  const knee: Joint = [...leg[1], 5.2];
+  const ankle: Joint = [...leg[2], 3];
+  return [
+    housing(hip, knee, 3),
+    housing(knee, ankle, 2.5),
+    motor(knee),
+    circle(...ankle),
+    cuff(leg, 0, 0.7, 2.1),
+    cuff(leg, 1, 0.5, 1.9),
+    plate,
+  ].join(" ");
+}
 
 /** A limb's outline, closed at its end by `tip` — a foot, drawn out of the
     back contour's last point, or a hand, rounded across to the front's. */
@@ -199,9 +244,18 @@ const hand = (l: { back: P[]; front: P[] }, r: number) => {
   return outline(l, `A ${r} ${r} 0 0 0 ${f(x)} ${f(y)}`);
 };
 
-const EXO_HIP: Joint = [58, 61, 5];
-const EXO_KNEE: Joint = [66, 82, 4.6];
-const EXO_ANKLE: Joint = [70, 102, 2.8];
+/* The person, then the machine over it. Kept as two lists so QUIET can say how
+   many strokes are the person without anyone counting them. */
+const WEARER = [
+  `${circle(59, 13, 6.5)} M 50 28 Q 58 21 66 28 C 67.5 39 66.5 49 64 58 M 50 28 C 47 38 47 48 49.5 58`,
+  `${hand(NEAR_ARM, 2)} ${hand(FAR_ARM, 1.9)}`,
+  `${outline(FAR_LEG, "L 31 104 L 43 111 Q 47 111.5 45.5 107.5")} ${outline(NEAR_LEG, "L 65 109 L 83 109 Q 87 108 83 104")}`,
+];
+const EXOSKELETON = [
+  `M 49 47 H 66 Q 69 47 69 50 Q 69 53 66 53 H 49 Q 46 53 46 50 Q 46 47 49 47 Z M 57 53 V 54 ${motor([...HIP, 6])}`,
+  brace(FAR, "M 37 103 L 32.5 107.5 L 45 114.5"),
+  brace(NEAR, "M 71 106 V 112 H 87"),
+];
 
 /* The thesis system as its supervisor describes it: a double inverted
    pendulum on a fixed pivot, driven only at its second joint — so no cart,
@@ -224,15 +278,7 @@ export const FIGURES = {
     `${circle(SMALL_AT.x, SMALL_AT.y, 5)} ${circle(SMALL_AT.x, SMALL_AT.y, 1.8)}`,
   ],
 
-  exoskeleton: [
-    `${circle(58, 12, 7)} M 49 27 Q 57 20 65 27 C 67 38 66 47 63 57 M 49 27 C 46 37 46 46 48 57`,
-    `${hand(NEAR_ARM, 2.2)} ${hand(FAR_ARM, 2.1)}`,
-    outline(FAR_LEG, "L 33 104 L 45 111 Q 49 111 47 107"),
-    outline(NEAR_LEG, "L 64 108 L 82 108 Q 86 107 82 103"),
-    "M 48 50 H 65 Q 68 50 68 53.5 Q 68 57 65 57 H 48 Q 45 57 45 53.5 Q 45 50 48 50 Z",
-    `${rails(EXO_HIP, EXO_KNEE, 1.6)} ${rails(EXO_KNEE, EXO_ANKLE, 1.6)} ${motor(EXO_HIP)} ${motor(EXO_KNEE)} ${circle(...EXO_ANKLE)}`,
-    `${band(NEAR[0], NEAR[1], 0.55, 6.5)} ${band(NEAR[1], NEAR[2], 0.5, 4.8)} M 70 104.8 V 111 H 85`,
-  ],
+  exoskeleton: [...WEARER, ...EXOSKELETON],
 
   pendulum: [
     `M 26 108 H 94 ${[32, 44, 56, 68, 80, 92].map((x) => `M ${x} 108 l -6 7`).join(" ")}`,
@@ -310,3 +356,7 @@ export const FIGURES = {
 } satisfies Record<string, string[]>;
 
 export type FigureKey = keyof typeof FIGURES;
+
+/** How many of a figure's strokes, from the first, draw its setting rather
+    than its subject, in a lighter ink so the subject stands out against them. */
+export const QUIET: Partial<Record<FigureKey, number>> = { exoskeleton: WEARER.length };
