@@ -106,17 +106,18 @@ Every page is one grid, and the grid means something.
   the inner edge they left a hole a margin wide under the title, with the drop
   cap floating at the far side of it, and Amin called the head messy.
 - **The rules are ranked, and the ranking is load-bearing.** A section opens on
-  a thick-and-thin double rule the width of the column (`.section-num::before`)
-  — a different kind of line, not only a darker one, because in a view of a
-  whole page a slightly darker hairline cannot be told from the one between
-  two entries. Records are divided by a single hairline in ink mixed to 3:1
-  (`.entry`, `.signposts`). A figure draws no line across the column at all:
-  its instruments are set off from the drawing by space. It used to open them
-  on a hairline, a hand's width above the rule that begins the next entry, and
-  Amin could not tell which of the two lines ended the record. Every line
-  across the column means a new part has begun. No rule may be so faint that
-  it cannot be seen — they were 1.13:1 and 1.27:1, which is not a delicate
-  line but an invisible one.
+  a thick-and-thin double rule the width of the column (`.section-title`) — a
+  different kind of line, not only a darker one, because in a view of a whole
+  page a slightly darker hairline cannot be told from the one between two
+  entries. Its numeral stands beside the title, at the title's size, in a slot
+  that lines every title on the page up on one edge. Records are divided by a
+  single hairline in ink mixed to 3:1 (`.entry`, `.signposts`). A figure draws
+  no line across the column at all: its instruments are set off from the
+  drawing by space. It used to open them on a hairline, a hand's width above
+  the rule that begins the next entry, and Amin could not tell which of the two
+  lines ended the record. Every line across the column means a new part has
+  begun. No rule may be so faint that it cannot be seen — they were 1.13:1 and
+  1.27:1, which is not a delicate line but an invisible one.
 - **Space is ranked the same way.** Two records stand 1.75rem apart; a section
   heading stands `--spacing-section` plus half a rem above its content (36px
   on a phone, 48 on a desk); two sections stand twice the section space apart.

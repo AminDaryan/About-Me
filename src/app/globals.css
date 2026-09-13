@@ -511,14 +511,23 @@
   }
 
   /* -- A section opening ---------------------------------------------------
-     Headings stay flush with the page's left edge and the numeral sits above
-     the title. The margin column belongs to the records: only an entry hangs
-     anything in it, and it hangs the one thing that identifies it. A page that
-     indented its headings as well would have every left edge doing the same
-     job and none of them saying anything.
+     Headings stay flush with the page's left edge. The margin column belongs
+     to the records: only an entry hangs anything in it, and it hangs the one
+     thing that identifies it. A page that indented its headings as well would
+     have every left edge doing the same job and none of them saying anything.
 
-     The deeper accent, not the accent: a roman numeral in letterspaced
-     capitals at caption size is small text, and 5.2:1 is not enough for it.
+     The numeral stands beside the title, the way a book sets "IV" at the head
+     of its fourth chapter, not on a line of its own above it. Set above, at
+     caption size, it read as a stray mark over the heading and put a third
+     line into every section's opening. Beside the title it is set at the
+     title's own size, which is also the only size at which a roman numeral is
+     plainly a number: at twelve pixels "I" is a vertical stroke with two
+     serifs and "III" is three of them.
+
+     It takes a slot of its own, a little wider than "VII", so that every title
+     on a page starts on the same line whatever its numeral. A section with no
+     numeral — the home page's — draws no slot, and its title stands on the
+     edge.
 
      A heading belongs to what comes after it, so it stands nearer its content
      than the section before it — and further from its content than one record
@@ -526,46 +535,39 @@
      It was 1.5rem, less than the 1.75rem an entry keeps from the rule above
      it. Half a rem more than the section space keeps it between the two at
      every width: 36px under a heading on a phone and 48px on a desk, against
-     28px between two records and twice the section space above. */
+     28px between two records and twice the section space above.
+
+     The rule over it is a thick line over a thin one — the Oxford rule a
+     Victorian printer set at the head of a chapter — and it runs the full
+     width of the page's column. It has to be a different kind of line, not
+     only a darker one: a hairline a shade darker than the one between two
+     entries could not be told from it in a view of a whole page. It is the
+     only rule in a section's opening, and every section on every page opens on
+     it, numbered or not.
+
+     It is the heading's own border and one line of background rather than a
+     pseudo-element, because the heading's ::before is already the hairline in
+     the margin that marks a section someone has linked to, and a rule drawn
+     there vanished from exactly the section the reader had asked to see. */
   .section-title {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: baseline;
     margin-bottom: calc(var(--spacing-section) + 0.5rem);
+    padding-top: calc(3px + 1.1rem);
+    border-top: 3px solid var(--color-ink-faint);
+    background: linear-gradient(var(--color-ink-faint), var(--color-ink-faint)) 0 2px / 100% 1px
+      no-repeat;
     font-size: var(--text-section);
   }
-  /* A lone roman numeral at caption size is not a numeral, it is a speck: at
-     twelve pixels "I" is a vertical stroke with two serifs and "III" is three
-     of them. It is set at caption *text* size, under the rule that opens the
-     section.
-
-     Barely tracked. A roman numeral is a word spelt in capitals, and at the
-     0.3em it used to be set at, "IV" came apart into an I and a V standing a
-     letter's width from each other.
-
-     The rule is a thick line over a thin one — the Oxford rule a Victorian
-     printer set at the head of a chapter — and it runs the full width of the
-     page's column, from the edge the headings stand on to the edge the text
-     ends on. It has to be a different kind of line, not only a darker one.
-     It used to be a hairline starting after the numeral, a shade darker than
-     the hairline between two entries, and in a view of a whole page the two
-     could not be told apart: a reader scrolling could not see where one
-     section ended and the next began. A double rule is read as a chapter
-     break before anyone looks at what is under it. It is the only rule in a
-     section's opening — the first entry under a heading draws none of its
-     own — and a section with no numeral keeps it, so every section on every
-     page opens on the same mark. */
+  /* The deeper accent, not the accent: it is text, and 5.2:1 is not enough
+     for text. Barely tracked, because a roman numeral is a word spelt in
+     capitals, and at the 0.3em it was once set at "IV" came apart into an I
+     and a V a letter's width from each other. */
   .section-num {
-    display: block;
-    margin-bottom: 0.55rem;
-    font-size: var(--text-meta);
-    letter-spacing: 0.06em;
+    min-width: 1.9em;
+    letter-spacing: 0.02em;
     color: var(--color-accent-deep);
-  }
-  .section-num::before {
-    content: "";
-    display: block;
-    height: 6px;
-    margin-bottom: 1rem;
-    border-top: 3px solid var(--color-ink-faint);
-    border-bottom: 1px solid var(--color-ink-faint);
   }
 
   /* -- A record, and the rule between two ---------------------------------

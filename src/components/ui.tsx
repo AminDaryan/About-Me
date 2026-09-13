@@ -144,9 +144,9 @@ export function Section({
     >
       <Wrap>
         {title && (
-          /* The numeral stands on the rule that opens the section; a section
-             without one still opens on the rule, so every section on every
-             page begins with the same mark.
+          /* The numeral stands beside the title, under the rule that opens the
+             section; a section without one still opens on the rule, and draws
+             no empty slot where a numeral would be.
 
              The rail takes its entry from the data attributes, not from the
              markup inside the heading. It used to find the numeral by a class
@@ -158,8 +158,8 @@ export function Section({
             data-rail-num={num}
             className="section-title"
           >
-            <span className="section-num">{num}</span>
-            <span>{title}</span>
+            {num && <span className="section-num">{num}</span>}
+            <span className={num ? undefined : "col-span-full"}>{title}</span>
           </h2>
         )}
         {children}
