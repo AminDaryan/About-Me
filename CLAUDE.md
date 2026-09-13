@@ -64,6 +64,9 @@ contrast, size and hierarchy, and all four can be had inside the character.
   drawings ran the column too, each came out a screen tall, and a figure the
   reader has to scroll past does not pace the page — it interrupts it. Do not
   take the frame off to give one figure more room; make the drawing say less.
+  And the frame is a ceiling, not a size: a diagram of a few marks is drawn at
+  its own size inside it, as Fig. 2's graph is, rather than enlarged to fill
+  it.
 - **It is a serif, and it stays one.** A sans was proposed and considered. What
   was hard to read here was never the letterforms — it was 110 characters to the
   line, body text at 6.1:1 and eleven-pixel capitals tracked a fifth of an em. A

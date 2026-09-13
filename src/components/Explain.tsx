@@ -324,7 +324,16 @@ export default function Explain() {
         </>
       }
     >
-      <svg className="plate-drawing" viewBox={`0 0 ${FIELD.w} ${FIELD.h}`} aria-hidden="true" focusable="false">
+      {/* Held to its own size inside the frame, not enlarged to fill it: the
+          marks are drawn for about one unit to a pixel, and nine nodes set
+          half as large again read as a diagram shouted rather than drawn. */}
+      <svg
+        className="plate-drawing"
+        style={{ maxWidth: `${FIELD.w / 16}rem` }}
+        viewBox={`0 0 ${FIELD.w} ${FIELD.h}`}
+        aria-hidden="true"
+        focusable="false"
+      >
         {EDGES.map(([a, b], i) => (
           <line
             key={i}
@@ -396,74 +405,81 @@ export default function Explain() {
         ))}
       </svg>
 
+      {/* Laid out as Fig. 3's are: what the figure reads first, under the
+          rule, then the sentence with the controls beside it. The four beats
+          used to take a row of their own above the reading, and the plate was
+          four rows of instruments deep under a drawing of nine nodes. */}
       <div className="plate-foot">
-        {/* The four beats of a round, in order. Point at one to read what it
-            does; press it to watch it. */}
-        <ol className="choices" aria-label="The round this figure runs">
-          {BEATS.map((b, i) => (
-            <li key={b.key}>
-              <button
-                type="button"
-                className="choice"
-                ref={(el) => {
-                  words.current[i] = el;
-                }}
-                data-now={i === 0 ? "" : undefined}
-                aria-current={i === 0 ? "step" : undefined}
-                onPointerEnter={() => show(i)}
-                onPointerLeave={() => show(null)}
-                onFocus={() => show(i)}
-                onBlur={() => show(null)}
-                onClick={() => {
-                  clock.current = BEAT_AT[i];
-                  show(i);
-                }}
-              >
-                <span className="choice-word">{b.name}</span>
-                <span className="sr-only">. {b.detail}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
+        {/* What the network says. The number has no unit on purpose: the
+            figure is about how it is arrived at, not about what it would mean. */}
+        <div>
+          <p className="graph-out-line">
+            <span className="label text-ink-faint">model output</span>
+            <span ref={outText} className="graph-out-value">
+              0.55
+            </span>
+            <span ref={delta} className="graph-out-delta" style={{ opacity: 0 }}>
+              −0.18 without it
+            </span>
+          </p>
+          {/* Stretched, not fitted: with the default preserveAspectRatio a
+              viewBox 268 wide inside a box four pixels tall is scaled to fit
+              the *height*, so the bar drew 268 px wide and centred however wide
+              the figure was — which it had been doing, quietly, all along. */}
+          <svg
+            className="graph-out"
+            viewBox="0 0 268 4"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <rect className="graph-out-track" x="0" y="1" width={SCALE} height="2" />
+            <rect ref={fill} className="graph-out-fill" x="0" y="0" width="150" height="4" />
+            {/* Where the prediction stood with the node still in the graph. */}
+            <rect
+              ref={mark}
+              className="graph-out-mark"
+              x="0"
+              y="-1.5"
+              width="1.4"
+              height="7"
+              style={{ opacity: 0 }}
+            />
+          </svg>
+        </div>
 
-      {/* What the network says. The number has no unit on purpose: the figure
-          is about how it is arrived at, not about what it would mean. */}
-      <p className="graph-out-line">
-        <span className="label text-ink-faint">model output</span>
-        <span ref={outText} className="graph-out-value">
-          0.55
-        </span>
-        <span ref={delta} className="graph-out-delta" style={{ opacity: 0 }}>
-          −0.18 without it
-        </span>
-      </p>
-      {/* Stretched, not fitted: with the default preserveAspectRatio a viewBox
-          268 wide inside a box four pixels tall is scaled to fit the *height*,
-          so the bar drew 268 px wide and centred however wide the figure was —
-          which it had been doing, quietly, all along. */}
-      <svg
-        className="graph-out"
-        viewBox="0 0 268 4"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <rect className="graph-out-track" x="0" y="1" width={SCALE} height="2" />
-        <rect ref={fill} className="graph-out-fill" x="0" y="0" width="150" height="4" />
-        {/* Where the prediction stood with the node still in the graph. */}
-        <rect
-          ref={mark}
-          className="graph-out-mark"
-          x="0"
-          y="-1.5"
-          width="1.4"
-          height="7"
-          style={{ opacity: 0 }}
-        />
-      </svg>
-
-      <p ref={saidBox} className="figure-said graph-said">
-        <span ref={said}>{BEATS[0].detail}</span>
-      </p>
+        <div className="plate-row">
+          <p ref={saidBox} className="figure-said graph-said">
+            <span ref={said}>{BEATS[0].detail}</span>
+          </p>
+          {/* The four beats of a round, in order. Point at one to read what it
+              does; press it to watch it. */}
+          <ol className="choices" aria-label="The round this figure runs">
+            {BEATS.map((b, i) => (
+              <li key={b.key}>
+                <button
+                  type="button"
+                  className="choice"
+                  ref={(el) => {
+                    words.current[i] = el;
+                  }}
+                  data-now={i === 0 ? "" : undefined}
+                  aria-current={i === 0 ? "step" : undefined}
+                  onPointerEnter={() => show(i)}
+                  onPointerLeave={() => show(null)}
+                  onFocus={() => show(i)}
+                  onBlur={() => show(null)}
+                  onClick={() => {
+                    clock.current = BEAT_AT[i];
+                    show(i);
+                  }}
+                >
+                  <span className="choice-word">{b.name}</span>
+                  <span className="sr-only">. {b.detail}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </Plate>
   );

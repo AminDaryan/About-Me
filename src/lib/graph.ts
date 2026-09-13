@@ -23,24 +23,28 @@ export interface Node {
    the point: a flat table of the same nine readings would throw away every one
    of these edges.
 
-   Laid out wide and shallow. The field used to be 340 by 208, which is very
-   nearly a square, and a square drawing across a column of text is half a
-   screen of graph — the reader scrolls past the thing rather than taking it in
-   at once. It is now nearly three to one, which is a band. */
+   Shallow, and close. The field was once 340 by 208 — very nearly a square,
+   half a screen of graph — and was then spread to 556 by 204, with the columns
+   a hundred and fifty units apart. Shown at the width of a plate's frame that
+   was nine small rings a hundred and sixty pixels from one another: a scatter,
+   not a structure, and far more figure than nine nodes and twelve edges need.
+   The columns are now about a hundred and ten apart, and the figure is drawn
+   at its own size — one unit to about a pixel — rather than enlarged to fill
+   the frame. */
 export const NODES: Node[] = [
-  { id: 0, x: 54, y: 62 },
-  { id: 1, x: 54, y: 142 },
-  { id: 2, x: 192, y: 30 },
-  { id: 3, x: 192, y: 102 },
-  { id: 4, x: 192, y: 174 },
-  { id: 5, x: 352, y: 58 },
-  { id: 6, x: 352, y: 146 },
-  { id: 7, x: 502, y: 42 },
-  { id: 8, x: 502, y: 162 },
+  { id: 0, x: 44, y: 62 },
+  { id: 1, x: 44, y: 142 },
+  { id: 2, x: 150, y: 30 },
+  { id: 3, x: 150, y: 102 },
+  { id: 4, x: 150, y: 174 },
+  { id: 5, x: 262, y: 58 },
+  { id: 6, x: 262, y: 146 },
+  { id: 7, x: 366, y: 42 },
+  { id: 8, x: 366, y: 162 },
 ];
 
 /** The drawing's own coordinates. */
-export const FIELD = { w: 556, h: 204 };
+export const FIELD = { w: 410, h: 204 };
 
 export const EDGES: [number, number][] = [
   [0, 2], [0, 3], [1, 3], [1, 4],
