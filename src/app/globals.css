@@ -407,6 +407,15 @@
     }
   }
 
+  /* A leaf's paragraphs as one block, so a figure beside them can stand
+     against all of them rather than the first. It keeps the leaf's row gap
+     between them, which on a phone — where the leaf is not a grid — they
+     otherwise went without, and ran into one another. */
+  .leaf-text {
+    display: grid;
+    row-gap: 1.35rem;
+  }
+
   /* -- Marginal ink figures -----------------------------------------------
      Hairline drawings that draw themselves in. pathLength="1" normalises every
      path's length, so a dasharray of 1 covers any of them exactly and nothing
@@ -463,6 +472,14 @@
       justify-self: end;
       margin: 0.54rem 0 0;
       margin-top: calc((1lh - 1cap) / 2);
+    }
+    /* Beside a whole .leaf-text it stands at the middle of the text instead,
+       and the margin that set it on the first line's capitals comes off, or it
+       sits that much low. Each study's viewBox is cropped to its drawing, so
+       centring the box centres the drawing. */
+    .leaf > .figure-note:has(+ .leaf-text) {
+      align-self: center;
+      margin-top: 0;
     }
   }
 
