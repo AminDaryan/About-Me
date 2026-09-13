@@ -38,6 +38,11 @@ export type Geometry = {
   lift: number;
   /** Half the road's width, for things placed beside it. */
   verge: number;
+  /** How far along the road the start line is painted. */
+  startLine: number;
+  /** Where the car waits before it sets off: behind the start line, clear of
+      the banner over it. */
+  home: number;
   /** Distance between neighbouring stops along a run. */
   spacing: number;
   /** Road ends here, with a flag. */
@@ -122,10 +127,13 @@ export function nearest(samples: Pt[], x: number, y: number) {
 
 /* When the road changes shape under the car — a resize, or a phone opening up
    room beneath a stop — its distance along the old road means nothing on the
-   new one. Positions are carried across as "how far between which two stops". */
+   new one. Positions are carried across as "how far between which two stops",
+   and the stretch from the start line to the first stop counts as the one
+   before stop 0, so a car still waiting at the start stays waiting there. */
 
 export function toStops(g: Geometry, len: number) {
   const L = g.stops;
+  if (len < L[0].len) return (len - g.home) / (L[0].len - g.home || 1) - 1;
   let i = 0;
   while (i < L.length - 2 && len > L[i + 1].len) i++;
   return i + (len - L[i].len) / (L[i + 1].len - L[i].len);
@@ -133,6 +141,7 @@ export function toStops(g: Geometry, len: number) {
 
 export function fromStops(g: Geometry, u: number) {
   const L = g.stops;
+  if (u < 0) return g.home + (u + 1) * (L[0].len - g.home);
   const i = Math.max(0, Math.min(L.length - 2, Math.floor(u)));
   return L[i].len + (u - i) * (L[i + 1].len - L[i].len);
 }
@@ -144,7 +153,8 @@ export function serpentine(width: number, count: number): Geometry {
   const R = 86; // U-turn radius; rows are 2R apart
   const HEAD = 23;
   const LIFT = 44; // pin head centre above the road
-  const TOP = 88; // room above the first row for its pins and signposts
+  const TOP = 88; // room above the first row for its pins and the start banner
+  const LABEL = 37; // a stop's year below the road; its name sits 18px lower
 
   // Three stops to a run leaves each label about 128px; below 500px wide that
   // would crowd, so the road takes more, shorter runs instead.
@@ -205,10 +215,12 @@ export function serpentine(width: number, count: number): Geometry {
     total: s.length(),
     samples: s.samples,
     stops,
-    labels: stops.map((p) => ({ x: p.x, y: p.y + 37, anchor: "middle" })),
+    labels: stops.map((p) => ({ x: p.x, y: p.y + LABEL, anchor: "middle" })),
     head: HEAD,
     lift: LIFT,
     verge: 17,
+    startLine: 20,
+    home: 3,
     spacing,
     end: { x: end.x, y: end.y },
     heading,
@@ -223,7 +235,7 @@ export function serpentine(width: number, count: number): Geometry {
  * @param gap    height to open up beneath it, in px
  */
 export function ribbon(width: number, count: number, open: number, gap: number): Geometry {
-  const TOP = 62; // room above the first badge for the start banner
+  const TOP = 84; // room above the first badge for the car, the line and the banner
   const STEP = 96;
   const CX = 44;
   const AMP = 13;
@@ -232,9 +244,10 @@ export function ribbon(width: number, count: number, open: number, gap: number):
   const yOf = (i: number) => TOP + i * STEP + (open >= 0 && i > open ? gap : 0);
   const xAt = (y: number) => CX + AMP * Math.sin((y - TOP) / 52);
 
-  // The road runs on above the first stop far enough for the start banner to
-  // hang across it without crowding the badge below.
-  const yStart = TOP - 52;
+  // The road runs on above the first stop far enough for the car to wait
+  // behind the start line, and for the banner to hang across the road over
+  // the line without crowding the badge below.
+  const yStart = TOP - 74;
   const yEnd = yOf(count - 1) + 74;
   const s = sampler();
   let d = "";
@@ -264,6 +277,8 @@ export function ribbon(width: number, count: number, open: number, gap: number):
     head: HEAD,
     lift: 0,
     verge: 14,
+    startLine: 30,
+    home: 10,
     spacing: STEP,
     end: { x: end.x, y: end.y },
     heading: stops.map(() => 1),

@@ -1582,19 +1582,11 @@
   .road-name[data-active] { fill: var(--color-ink); }
   .road-when[data-active] { fill: var(--color-accent-deep); }
 
-  /* Road signs at the borders, lettered in paper on ink like the real thing. */
-  .road-sign path { stroke: var(--color-ink-soft); stroke-width: 1.4; }
-  .road-sign rect { fill: var(--color-ink); }
-  .road-sign .road-sign-inset { fill: none; stroke: var(--color-paper); stroke-opacity: 0.55; stroke-width: 0.8; }
-  .road-sign text,
-  .road-banner text,
-  .road-country {
+  .road-banner text {
     font-size: 0.56rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
   }
-  .road-sign text { fill: var(--color-paper); }
-  .road-country { fill: var(--color-accent-deep); }
 
   .road-flag path { fill: none; stroke: var(--color-ink-soft); stroke-width: 1.2; stroke-linejoin: round; }
   .road-flag path + path { fill: var(--color-accent); stroke: var(--color-accent); }

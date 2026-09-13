@@ -6,10 +6,6 @@ import type { SceneryKey } from "./scenery";
    is added. */
 
 export type Step = {
-  /** A road sign with this name goes up at the first stop that has it. Only
-      set where a sign is wanted; the stops before Germany deliberately name no
-      country. */
-  country?: string;
   /** Short date under the pin. */
   when: string;
   /** One or two words under the stop. */
@@ -72,8 +68,8 @@ export const STEPS: Step[] = [
   },
   {
     // Both front-end jobs, DelGate and then JHELY, as one stretch of road; the
-    // CV has them separately. Both were remote, so no road sign for where the
-    // employers were.
+    // CV has them separately. Both were remote, so the place is "Remote" and
+    // not where the employers were.
     when: "2019–23",
     name: "Front-end",
     chapter: "build",
@@ -86,7 +82,6 @@ export const STEPS: Step[] = [
     more: "Both posts on the CV",
   },
   {
-    country: "Germany",
     when: "2023",
     name: "M.Sc.",
     chapter: "build",
@@ -99,7 +94,6 @@ export const STEPS: Step[] = [
     more: "Modules and grades",
   },
   {
-    country: "Germany",
     when: "2024",
     name: "SAP",
     chapter: "build",
@@ -112,7 +106,6 @@ export const STEPS: Step[] = [
     more: "The post on the CV",
   },
   {
-    country: "Germany",
     when: "2024",
     name: "DFKI",
     chapter: "learn",
@@ -125,7 +118,6 @@ export const STEPS: Step[] = [
     more: "The gaze study",
   },
   {
-    country: "Germany",
     when: "2024/25",
     name: "Franka arm",
     chapter: "learn",
@@ -138,7 +130,6 @@ export const STEPS: Step[] = [
     more: "The project lab",
   },
   {
-    country: "Germany",
     when: "2026",
     name: "Fraunhofer",
     chapter: "learn",
@@ -164,5 +155,6 @@ export const STEPS: Step[] = [
   },
 ];
 
-/** The latest stop that has actually happened — shown before any interaction. */
+/** The latest stop that has actually happened: the road is paved as far as
+    here, and a drive of the whole route comes back to park here. */
 export const NOW = STEPS.findIndex((s) => s.name === "Fraunhofer");

@@ -30,13 +30,14 @@ import { NOW, STEPS } from "./steps";
 
 /* Fig. 1 — the route so far, as a road.
 
-   A two-lane road winds through every stop from 2014 to now, with a road sign
-   where it reaches Germany. Each stop is a pin. A small car drives to
-   whichever stop you point at — turning round when it has to go back — and the
-   centre line lights up behind it; past today the road is not yet paved. On a
-   wide screen you can take hold of the car and drive it yourself, and if the
-   figure is left alone for long enough the car sets off from the start banner
-   and drives the whole route on its own.
+   A two-lane road winds through every stop from 2014 to now. Each stop is a
+   pin. The route is read from its beginning: a small car waits behind the
+   start line, under the banner, with the first stop open. It drives to
+   whichever stop you point at — turning round when it has to go back — and
+   the centre line lights up behind it; past today the road is not yet paved.
+   On a wide screen you can take hold of the car and drive it yourself, and if
+   the figure is left alone for long enough the car drives the whole route on
+   its own, from the start line.
 
    Inside each U-turn stands a scene for the chapter the road has just left,
    and the car works it: the gear train turns as the car sweeps past, and the
@@ -108,13 +109,16 @@ export default function Journey() {
   const wide = useMedia(WIDE, true);
   const canHover = useMedia(HOVER, true);
 
-  const [active, setActive] = useState(NOW);
+  const [active, setActive] = useState(0);
   const [width, setWidth] = useState(552);
   const [gap, setGap] = useState(230);
   const [drawn, setDrawn] = useState(false);
   const [inView, setInView] = useState(false);
   const [engaged, setEngaged] = useState(false);
   const [driving, setDriving] = useState(false);
+  /** Bumped when a drive of the route sets off from the start line, which
+      moves the car without changing the stop that is open. */
+  const [leg, setLeg] = useState(0);
 
   const boxRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -321,7 +325,7 @@ export default function Journey() {
         m.drive.to = carry(m.drive.to);
       }
     }
-    if (m.len === null) m.len = geo.stops[active].len;
+    if (m.len === null) m.len = geo.home;
     if (!dragging.current && drivenFor.current !== active) driveTo(geo.stops[active].len);
     drivenFor.current = active;
     render();
@@ -336,18 +340,28 @@ export default function Journey() {
   useEffect(() => {
     if (!driving || !inView) return;
     const id = window.setTimeout(() => {
-      // At the end of the route it comes back to today and parks there, which
-      // is where the figure rests: left standing at a stop that has not
-      // happened yet, it would light the road past today.
-      if (activeRef.current >= STEPS.length - 1) {
+      const g = geoRef.current;
+      const m = motion.current;
+      const at = activeRef.current;
+      if (m.len !== null && m.len < g.stops[at].len - 1) {
+        // Still at the start line, having come back to it: set off.
+        driveTo(g.stops[at].len);
+        setLeg((n) => n + 1);
+      } else if (at >= STEPS.length - 1) {
+        // At the end of the route it comes back to today and parks there:
+        // left standing at a stop that has not happened yet, it would light
+        // the road past today.
         setActive(NOW);
         setDriving(false);
       } else setActive((a) => Math.min(a + 1, STEPS.length - 1));
     }, STOP_MS);
     return () => window.clearTimeout(id);
-  }, [driving, inView, active]);
+  }, [driving, inView, active, leg, driveTo]);
 
-  /* Left alone, the car goes back to the start and drives the route itself.
+  /* Left alone, the car drives the route itself, from the start line — going
+     back there first if it has been driven somewhere else. It never starts
+     from the first stop: the route begins under the banner, and a drive that
+     began a stop in would skip the one stretch of road the banner is for.
      It waits for quiet first, and anything at all — the pointer crossing the
      figure, a stop chosen, an arrow key — cancels the wait and then starts it
      over, so a drive never begins under someone who is using the figure and
@@ -360,18 +374,32 @@ export default function Journey() {
     const id = window.setTimeout(
       () => {
         droveOnce.current = true;
+        const g = geoRef.current;
+        const m = motion.current;
+        // The first stop opens as the car heads for the start, so the layout
+        // effect must not send it to that stop instead.
+        drivenFor.current = 0;
         setActive(0);
+        if (m.len !== null && m.len > g.home + 1) driveTo(g.home);
+        else driveTo(g.stops[0].len);
         setDriving(true);
       },
       droveOnce.current ? IDLE_AGAIN : IDLE_FIRST,
     );
     return () => window.clearTimeout(id);
-  }, [wide, inView, engaged, driving, active]);
+  }, [wide, inView, engaged, driving, active, driveTo]);
 
   /** Anything the visitor does themselves takes the wheel back. */
   function choose(i: number) {
     setDriving(false);
     setActive(i);
+    // Choosing the stop that is already open changes nothing the layout effect
+    // watches, and the car may not be there yet — it waits at the start line
+    // with the first stop open — so send it.
+    const to = geoRef.current.stops[i].len;
+    if (i === activeRef.current && !dragging.current && motion.current.drive?.to !== to) {
+      driveTo(to);
+    }
   }
 
   function onKey(e: KeyboardEvent<HTMLButtonElement>, i: number) {
@@ -439,8 +467,8 @@ export default function Journey() {
   const { head, lift, verge } = geo;
   const art = head * 1.36;
   const pin = useMemo(() => pinPath(road.head, road.lift), [road.head, road.lift]);
-  const start = pointAt(geo.samples, 0);
-  const car = carAt(geo, geo.stops[NOW].len, 0);
+  const line = pointAt(geo.samples, geo.startLine);
+  const car = carAt(geo, geo.home, 0);
 
   /* The banner the route sets off under, hung over the start line. On the
      serpentine it stands clear of the verge on two poles, the way a banner
@@ -449,8 +477,8 @@ export default function Journey() {
      badge. `foot` is how far the poles run below the cloth they carry. */
   const banner =
     serp ?
-      { x: start.x + 16, y: start.y - verge - 21, w: 50, h: 16, sag: 3, foot: 21 }
-    : { x: start.x, y: start.y + 5, w: 46, h: 13, sag: 2, foot: 19 };
+      { x: line.x, y: line.y - verge - 21, w: 50, h: 16, sag: 3, foot: 21 }
+    : { x: line.x, y: line.y - 7, w: 46, h: 13, sag: 2, foot: 19 };
 
   // The round cap past the road's last point, which the unpaved overlay's
   // square end does not reach.
@@ -571,7 +599,7 @@ export default function Journey() {
                   fill="none"
                   stroke="#fff"
                   strokeWidth={60}
-                  strokeDasharray={`${nowLen.toFixed(1)} ${Math.ceil(geo.total + 40)}`}
+                  strokeDasharray={`${geo.home.toFixed(1)} ${Math.ceil(geo.total + 40)}`}
                 />
               </mask>
             </defs>
@@ -597,7 +625,7 @@ export default function Journey() {
               {/* the start line, and the banner the route sets off under */}
               <g
                 className="road-start"
-                transform={`translate(${start.x} ${start.y}) rotate(${(start.a * 180) / Math.PI}) translate(${serp ? 16 : 12} 0)`}
+                transform={`translate(${line.x} ${line.y}) rotate(${(line.a * 180) / Math.PI})`}
               >
                 <path d={`M 0 ${-verge + 3} V ${verge - 3}`} />
                 <path d={`M 4 ${-verge + 3} V ${verge - 3}`} strokeDashoffset={4} />
@@ -666,49 +694,6 @@ export default function Journey() {
                         ))}
                       </g>
                     ))}
-                  </g>
-                );
-              })}
-
-              {/* road signs where the country changes */}
-              {STEPS.map((s, i) => {
-                if (!s.country || STEPS[i - 1]?.country === s.country) return null;
-                const p = geo.stops[i];
-                if (!serp) {
-                  return (
-                    <text
-                      key={`sign-${i}`}
-                      className="road-country"
-                      x={geo.labels[i].x}
-                      y={p.y - 25}
-                    >
-                      {s.country}
-                    </text>
-                  );
-                }
-                // Halfway from the last stop, and low, where the pins beside it
-                // narrow to their points.
-                const sx = p.x - (geo.heading[i] * geo.spacing) / 2;
-                const w = s.country.length * 7.2 + 14;
-                return (
-                  <g
-                    key={`sign-${i}`}
-                    className="road-sign"
-                    transform={`translate(${sx} ${p.y - verge - 2})`}
-                  >
-                    <path d={`M ${-w / 2 + 6} 0 V -6 M ${w / 2 - 6} 0 V -6`} />
-                    <rect x={-w / 2} y={-23} width={w} height={17} rx={2.6} />
-                    <rect
-                      className="road-sign-inset"
-                      x={-w / 2 + 2}
-                      y={-21}
-                      width={w - 4}
-                      height={13}
-                      rx={1.6}
-                    />
-                    <text x={0} y={-11.4} textAnchor="middle">
-                      {s.country}
-                    </text>
                   </g>
                 );
               })}
