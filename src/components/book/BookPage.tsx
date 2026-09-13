@@ -27,9 +27,6 @@ export default function BookPage({ page, children }: { page: BookRoute; children
     >
       <div className="book-sheet" data-book-page={page}>
         {children}
-        <svg className="book-finial" aria-hidden="true" viewBox="0 0 84 18" fill="none">
-          <path d="M5 11C22 11 25 5 41 8S60 12 79 7M33 10Q42 14 52 9" />
-        </svg>
       </div>
     </ViewTransition>
   );
