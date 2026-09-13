@@ -1,48 +1,45 @@
 import styles from "./MarginalStudy.module.css";
 import { QuillWriting } from "./Quill";
-import { outboundPath, inboundPath } from "./geometry";
 
-export type Subject = "history" | "philosophy" | "psychology" | "archery" | "dance" | "chess" | "badminton" | "ornament";
+export type Subject = "reading" | "psychology" | "archery" | "chess" | "ornament";
 
 export const descriptions: Record<Subject, string> = {
-  history: "History: clothbound volumes and the quiet swing of a mantel-clock pendulum",
-  philosophy: "Philosophy and language: a feather quill follows a curved line in an open book",
+  reading: "Reading: a feather quill follows a curved line in an open book, beside an inkwell",
   psychology: "Psychology: an engraved profile with unfolding lines of thought",
   archery: "Archery: the bow draws and relaxes, with its arrow resting against the string",
-  dance: "Dance: two pairs of shoes exchange a forward and backward step",
   chess: "Chess: a knight considers two positions, moving two files and one rank, then returning",
-  badminton: "Badminton: two rackets exchange a shuttlecock",
   ornament: "A feather quill traces an ink flourish",
 };
 
-function History() {
+function Reading() {
   return (
     <>
-      <path className={styles.detail} d="M18 123H181" />
-      <g className={styles.paper}>
-        <path d="M28 104H110V119H28Q22 112 28 104ZM32 86H100V101H32Q27 93 32 86ZM24 68H102V83H24Q19 75 24 68Z" />
-        <path className={styles.detail} d="M33 109H105M33 114H105M37 91H95M37 96H95M29 73H97M29 78H97" />
-        <path d="M23 68H105M27 86H103M23 104H113" />
+      {/* The book and the quill writing in it are drawn smaller and set down,
+          so an inkwell can stand beside the book on the same table line within
+          the same frame. The group is scaled rather than the paths, so the
+          quill's motion and its reveal mask stay in the coordinates
+          geometry.ts gives them. */}
+      <g transform="translate(0 16) scale(.84)">
+        <path className={styles.paper} d="M21 52Q55 42 94 60Q130 43 168 52V116Q129 106 94 123Q57 108 21 116Z" />
+        <path d="M94 60V123M16 57V122Q55 115 94 129Q135 114 173 122V57" />
+        <path className={styles.detail} d="M31 64Q58 58 82 69M31 74Q58 68 82 79M31 84Q58 78 82 89M31 94Q51 90 69 97M107 70Q133 60 157 65M107 80Q133 71 157 75M107 90Q126 84 143 86" />
+        <QuillWriting />
       </g>
-      <path className={styles.paper} d="M113 114V60C113 19 173 19 173 60V114M109 115H177V120H109Z" />
-      <circle cx="143" cy="64" r="23" />
-      <circle className={styles.detail} cx="143" cy="64" r="19" />
-      <path d="M143 46V49M161 64H158M143 82V79M125 64H128" />
-      <path  d="M143 64L134 60" />
-      <path className={styles.accent} d="M143 64V49" />
-      <circle cx="143" cy="64" r="2" className={styles.paper} />
-      <g data-motion="pendulum" className={styles.pendulum}><path d="M143 88V107" /><circle cx="143" cy="107" r="4" className={styles.paper} /></g>
+      <Inkwell />
     </>
   );
 }
 
-function Philosophy() {
+/** A squat glass inkwell on the table line, with ink standing in its neck. */
+function Inkwell() {
   return (
     <>
-      <path className={styles.paper} d="M21 52Q55 42 94 60Q130 43 168 52V116Q129 106 94 123Q57 108 21 116Z" />
-      <path d="M94 60V123M16 57V122Q55 115 94 129Q135 114 173 122V57" />
-      <path className={styles.detail} d="M31 64Q58 58 82 69M31 74Q58 68 82 79M31 84Q58 78 82 89M31 94Q51 90 69 97M107 70Q133 60 157 65M107 80Q133 71 157 75M107 90Q126 84 143 86" />
-      <QuillWriting />
+      <path className={styles.detail} d="M150 124.5H192" />
+      <path className={styles.paper} d="M160 124Q154 111 162 104H182Q190 111 184 124Z" />
+      <path className={styles.paper} d="M166 104V99.5H178V104" />
+      <path d="M163.5 99.5H180.5" />
+      <ellipse cx="172" cy="99.5" rx="4.6" ry="1.3" fill="currentColor" stroke="none" />
+      <path className={styles.hatching} d="M163 110Q161 116 163.5 121M166 108Q165 115 167 121" />
     </>
   );
 }
@@ -77,28 +74,6 @@ function Archery() {
   );
 }
 
-/** A shaped sole and its inset heel read as a shoe even at marginal scale. */
-function Shoe() {
-  return (
-    <>
-      <path className={styles.shoeFill} d="M-7 15C-8 9-5 4-6-2C-10-10-8-21-1-23C8-25 12-17 10-9C9-2 5 3 5 9L6 16Q0 20-7 15Z" />
-      <path className={styles.detail} d="M-6 9Q0 12 5 9M-5 14Q0 16 4 14" />
-    </>
-  );
-}
-
-function Dance() {
-  return (
-    <>
-      <g transform="translate(52 75) rotate(-8)"><g data-motion="lead-step"><Shoe /></g></g>
-      <g transform="translate(79 87) rotate(8)"><g data-motion="lead-close"><Shoe /></g></g>
-      <g className={styles.accent} transform="translate(126 57) rotate(172)"><g data-motion="follow-step"><Shoe /></g></g>
-      <g className={styles.accent} transform="translate(153 69) rotate(188)"><g data-motion="follow-close"><Shoe /></g></g>
-      <path className={styles.detail} d="M29 86V58M25 62L29 58L33 62M25 82L29 86L33 82M177 58V86M173 82L177 86L181 82M173 62L177 58L181 62" />
-    </>
-  );
-}
-
 function Chess() {
   return (
     <>
@@ -120,38 +95,6 @@ function Chess() {
   );
 }
 
-function Badminton() {
-  return (
-    <>
-      <path className={styles.flight} d={outboundPath} />
-      <path className={styles.flight} d={inboundPath} />
-      <g data-motion="racket-left" className={styles.racketLeft}>
-        <Racket />
-      </g>
-      <g data-motion="racket-right" className={styles.racketRight}>
-        <g transform="translate(200 0) scale(-1 1)"><Racket /></g>
-      </g>
-      <g data-motion="shuttle" className={styles.shuttle}>
-        <g transform="scale(.65)">
-          <path className={styles.paper} d="M-4-3L-25-12L-25 12L-4 3ZM-25-12L-4 0L-25 12M-4-3Q4-4 4 0Q4 4-4 3Z" />
-          <path className={styles.detail} d="M-25-5L-4 0M-25 5L-4 0" />
-        </g>
-      </g>
-    </>
-  );
-}
-
-function Racket() {
-  return (
-    <>
-      <ellipse className={styles.paper} cx="35" cy="82" rx="15" ry="21" />
-      <ellipse className={styles.detail} cx="35" cy="82" rx="12" ry="18" />
-      <path className={styles.detail} d="M29 67V97M35 64V100M41 67V97M24 74H46M23 82H47M24 90H46" />
-      <path d="M32 103V129H38V103M32 115H38M32 120H38M32 125H38" />
-    </>
-  );
-}
-
 function Ornament() { return <QuillWriting ornament />; }
 
-export const drawings = { history: History, philosophy: Philosophy, psychology: Psychology, archery: Archery, dance: Dance, chess: Chess, badminton: Badminton, ornament: Ornament };
+export const drawings = { reading: Reading, psychology: Psychology, archery: Archery, chess: Chess, ornament: Ornament };

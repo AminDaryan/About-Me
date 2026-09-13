@@ -12,21 +12,16 @@
 .figure[data-subject="ornament"] { width: 144px; margin: 0; }
 .detail, .writtenLine { opacity: .58; }
 .hatching { opacity: .62; stroke-width: .8; }
-.paper, .shoeFill { fill: var(--color-paper); }
+.paper { fill: var(--color-paper); }
 .accent { stroke: var(--color-accent); }
 .boardFill { fill: var(--color-paper); stroke: none; }
 .square { fill: var(--color-ink-faint); fill-opacity: .12; stroke: none; }
 .destination { stroke: var(--color-accent); opacity: .55; }
 .route { stroke: var(--color-accent); opacity: .5; }
-.pendulum { transform-origin: 143px 88px; transform: rotate(-8deg); }
 .bookQuill { transform: translate(107px,100px); }
 .ornamentQuill { transform: translate(25px,72px); }
 .thought { stroke: var(--color-accent); stroke-dasharray: .16 .84; opacity: 0; }
 .bowstring { transform-origin: 50px 72px; transform: scaleX(.001); }
 .arrow { transform: translateX(-.024px); }
-.racketLeft { transform-origin: 35px 126px; }
-.racketRight { transform-origin: 165px 126px; }
-.shuttle { transform: translate(42px,83px) rotate(-57deg); }
-.flight { stroke: var(--color-ink-faint); opacity: .3; stroke-dasharray: 1 5; }
 @media (min-width: 64rem) { .figure { margin-left: auto; } }
 @media print { .figure { break-inside: avoid; } }

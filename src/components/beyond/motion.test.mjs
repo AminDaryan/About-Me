@@ -37,7 +37,7 @@ test("every animated property returns to its exact starting value", () => {
 });
 
 test("each quill tip shares the reveal mask's arc-length position", () => {
-  for (const [subject, curve] of [["philosophy", writingCurve], ["ornament", ornamentCurve]]) {
+  for (const [subject, curve] of [["reading", writingCurve], ["ornament", ornamentCurve]]) {
     for (let i = 0; i <= 40; i++) {
       const phase = .1 + .48 * i / 40;
       const distance = smooth(i / 40);
@@ -62,12 +62,6 @@ test("the bowstring vertex stays attached to the arrow nock throughout", () => {
 test("the knight lands two files and one rank away, then returns", () => {
   assert.deepEqual(coords(studies.chess.tracks.knight(.5).transform), [40, -9]);
   assert.deepEqual(coords(studies.chess.tracks.knight(.96).transform), [0, 0]);
-});
-
-test("the shuttle meets both rackets and returns in the same orientation", () => {
-  assert.deepEqual(coords(studies.badminton.tracks.shuttle(0).transform).slice(0, 2), [42, 83]);
-  assert.deepEqual(coords(studies.badminton.tracks.shuttle(.5).transform).slice(0, 2), [158, 83]);
-  assert.deepEqual(studies.badminton.tracks.shuttle(0), studies.badminton.tracks.shuttle(1));
 });
 
 test("finishing, renewed hover, visibility and reduced motion preserve the controller contract", () => {

@@ -29,7 +29,7 @@ const PAGES = [
   {
     href: "/beyond",
     name: "Beyond",
-    note: "History, linguistics, philosophy and psychology; archery, the sabre, horse riding, dance and chess.",
+    note: "History, linguistics, philosophy and psychology; chess, dance, archery, the sabre, horse riding and badminton.",
   },
 ];
 

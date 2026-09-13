@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/beyond" },
   title: "Beyond",
   description:
-    "Away from the lab — philosophy, history, linguistics and psychology; the bow, the sabre, the horse, the chessboard and the dance floor.",
+    "Away from the lab — philosophy, history, linguistics and psychology; the chessboard, the dance floor, the bow, the sabre and the horse.",
 };
 
 export default function Beyond() {
@@ -24,12 +24,12 @@ export default function Beyond() {
           </>
         }
       >
-        <p className="drop-cap">
-          My interests have never stayed in separate rooms. The things I read
-          for pleasure keep turning up in my research, and the things I do with
-          my hands keep teaching me something I could not get from a paper. This
-          page is the part of me that does not fit on a CV, which is precisely
-          why it is here.
+        {/* No drop cap: the initial stands three lines deep, and this is a
+            two-line paragraph, so the letter hung out beneath it. */}
+        <p>
+          My interests have never stayed in separate rooms. This page is the
+          part of me that does not fit on a CV, which is precisely why it is
+          here.
         </p>
       </PageHeader>
 
@@ -43,7 +43,7 @@ export default function Beyond() {
               note's rule on a phone was drawn for a line of italic text, and
               beside a drawing it was a stray line. */}
           <Settle className="figure-note">
-            <MarginalStudy subject="history" />
+            <MarginalStudy subject="reading" />
           </Settle>
           <Settle>
             <p className="max-w-measure">
@@ -55,26 +55,14 @@ export default function Beyond() {
             </p>
           </Settle>
 
-          <Settle className="figure-note">
-            <MarginalStudy subject="philosophy" />
-          </Settle>
           <Settle>
-            <div className="copy max-w-measure">
-              <p>
-                Linguistics I read for the same reason: language is another long
-                record of those patterns, and of how the human mind has changed.
-                Philosophy I read for a different one — to understand what it all
-                means, to think more logically, and to have my own intuitions,
-                and my own logic, challenged.
-              </p>
-              <p>
-                It is not a coincidence that I ended up working on explainable
-                AI. An explanation is a translation problem before it is a
-                technical one. You can have a method that is perfectly faithful
-                to the model and still says nothing to the person who has to
-                decide whether to trust it.
-              </p>
-            </div>
+            <p className="max-w-measure">
+              Linguistics I read for the same reason: language is another long
+              record of those patterns, and of how the human mind has changed.
+              Philosophy I read for a different one — to understand what it all
+              means, to think more logically, and to have my own intuitions, and
+              my own logic, challenged.
+            </p>
           </Settle>
 
           <Settle className="figure-note">
@@ -89,41 +77,10 @@ export default function Beyond() {
             </p>
           </Settle>
         </Leaf>
-        <div className="mt-6 flex justify-end">
-          <MarginalStudy subject="ornament" />
-        </div>
       </Section>
 
-      <Section num="II" title="Sport, dance and chess">
+      <Section num="II" title="Chess, sport and dance">
         <Leaf>
-          <Settle className="figure-note">
-            <MarginalStudy subject="archery" />
-          </Settle>
-          <Settle>
-            <p className="max-w-measure">
-              Archery, the sabre and horse riding reward the same discipline,
-              which is why I suspect I was drawn to all three. Each is a long,
-              quiet preparation followed by a commitment you cannot take back —
-              and each punishes the same fault, which is tensing at the moment
-              you most need to be still. I have learned more about control
-              engineering from a bad release than I would admit in a seminar.
-            </p>
-          </Settle>
-
-          <Settle className="figure-note">
-            <MarginalStudy subject="dance" />
-          </Settle>
-          <Settle>
-            <p className="max-w-measure">
-              Dancing is the exact inverse and I think that is why I need it.
-              Nothing is decided in advance, there is no plan to execute, and the
-              whole thing runs on a signal being read and answered in real time
-              by someone who cannot see your intentions, only your hands. It is
-              the most demanding closed loop I take part in, and the only one
-              where the correct response to an error is to keep moving.
-            </p>
-          </Settle>
-
           <Settle className="figure-note">
             <MarginalStudy subject="chess" />
           </Settle>
@@ -136,9 +93,28 @@ export default function Beyond() {
             </p>
           </Settle>
 
-          <Settle className="figure-note">
-            <MarginalStudy subject="badminton" />
+          <Settle>
+            <p className="max-w-measure">
+              Dancing is the exact inverse and I think that is why I need it.
+              Nothing is decided in advance, there is no plan to execute, and the
+              whole thing runs on a signal being read and answered in real time
+              by someone who cannot see your intentions, only your hands.
+            </p>
           </Settle>
+
+          <Settle className="figure-note">
+            <MarginalStudy subject="archery" />
+          </Settle>
+          <Settle>
+            <p className="max-w-measure">
+              Archery, the sabre and horse riding reward the same discipline,
+              which is why I suspect I was drawn to all three. Each is a long,
+              quiet preparation followed by a commitment you cannot take back —
+              and each punishes the same fault, which is tensing at the moment
+              you most need to be still.
+            </p>
+          </Settle>
+
           <Settle>
             <p className="max-w-measure">
               Badminton is the one I actually play every week, for no better

@@ -36,7 +36,3 @@ export const writingReturn = cubic({ x: 157, y: 95 }, { x: 174, y: 61 }, { x: 87
 export const ornamentPath = "M25 72C70 48 113 96 172 70";
 export const ornamentCurve = byLength(cubic({ x: 25, y: 72 }, { x: 70, y: 48 }, { x: 113, y: 96 }, { x: 172, y: 70 }));
 export const ornamentReturn = cubic({ x: 172, y: 70 }, { x: 165, y: 36 }, { x: 33, y: 37 }, { x: 25, y: 72 });
-export const outboundPath = "M42 83Q100 -5 158 83";
-export const inboundPath = "M158 83Q100 26 42 83";
-export const outboundCurve = quadratic({ x: 42, y: 83 }, { x: 100, y: -5 }, { x: 158, y: 83 });
-export const inboundCurve = quadratic({ x: 158, y: 83 }, { x: 100, y: 26 }, { x: 42, y: 83 });
