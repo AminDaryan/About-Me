@@ -1,7 +1,9 @@
+/* No margin above: it held the drawing clear of the gloss that used to sit over
+   it, and with the gloss gone it only pushed the drawing below the top of the
+   paragraph it stands beside. */
 .figure {
   width: 164px;
   max-width: 100%;
-  margin-top: .9rem;
   color: var(--color-ink-soft);
   -webkit-tap-highlight-color: transparent;
 }

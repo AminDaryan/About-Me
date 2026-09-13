@@ -35,8 +35,14 @@ export default function Beyond() {
 
       <Section num="I" title="Reading">
         <Leaf>
-          <Settle className="note">
-            History, for the patterns that keep repeating.
+          {/* The drawings stand in the margin without a gloss. Each line
+              beside them restated the paragraph it hung next to, and beside a
+              drawing that already names its subject it only crowded the
+              margin. Each study carries its own description for a screen
+              reader. A drawing alone is a .figure-note, not a .note: the
+              note's rule on a phone was drawn for a line of italic text, and
+              beside a drawing it was a stray line. */}
+          <Settle className="figure-note">
             <MarginalStudy subject="history" />
           </Settle>
           <Settle>
@@ -49,9 +55,7 @@ export default function Beyond() {
             </p>
           </Settle>
 
-          <Settle className="note">
-            Philosophy and linguistics — one for the meaning, one for the
-            patterns.
+          <Settle className="figure-note">
             <MarginalStudy subject="philosophy" />
           </Settle>
           <Settle>
@@ -73,8 +77,7 @@ export default function Beyond() {
             </div>
           </Settle>
 
-          <Settle className="note">
-            Psychology — to understand myself as much as anyone else.
+          <Settle className="figure-note">
             <MarginalStudy subject="psychology" />
           </Settle>
           <Settle>
@@ -93,8 +96,7 @@ export default function Beyond() {
 
       <Section num="II" title="Sport, dance and chess">
         <Leaf>
-          <Settle className="note">
-            The bow, the sabre, the horse.
+          <Settle className="figure-note">
             <MarginalStudy subject="archery" />
           </Settle>
           <Settle>
@@ -108,7 +110,7 @@ export default function Beyond() {
             </p>
           </Settle>
 
-          <Settle className="note">
+          <Settle className="figure-note">
             <MarginalStudy subject="dance" />
           </Settle>
           <Settle>
@@ -122,8 +124,7 @@ export default function Beyond() {
             </p>
           </Settle>
 
-          <Settle className="note">
-            Chess — where I lose most often, and most instructively.
+          <Settle className="figure-note">
             <MarginalStudy subject="chess" />
           </Settle>
           <Settle>
@@ -135,8 +136,7 @@ export default function Beyond() {
             </p>
           </Settle>
 
-          <Settle className="note">
-            And the ordinary weekly ones.
+          <Settle className="figure-note">
             <MarginalStudy subject="badminton" />
           </Settle>
           <Settle>
