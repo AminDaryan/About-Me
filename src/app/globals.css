@@ -996,32 +996,62 @@
   }
 
   /* -- Fig. 3: the gaze study ----------------------------------------------
-     The room is drawn in rule weight and stays out of the way; the accent is
-     on the eye alone, which is the one thing in the figure that is alive. */
-  .gaze svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-width: 30rem;
-    margin-inline: auto;
-  }
-  .gaze-rule {
-    stroke: var(--color-rule);
-    stroke-width: 1.1;
-    fill: none;
-  }
-  .gaze-prop {
+     An eye and the field it looks over. The grid is drawn at rule weight and
+     stays out of the way, the eye in ink like any drawing on the site, and the
+     accent is on one thing only: the point the eye is resting on, which is the
+     one thing in the figure that is alive. */
+  .gaze-frame {
     fill: none;
     stroke: var(--color-rule);
-    stroke-width: 1.1;
+    stroke-width: 1.2;
+  }
+  /* A dot at each crossing rather than a line along every edge: a field ruled
+     all over fights the path for the reader's eye, and the path is the
+     subject. */
+  .gaze-crossing { fill: var(--color-ink-faint); }
+  /* A square the eye has rested in: ink laid into the paper by an opacity the
+     figure writes every frame. No transition on it, for the reason given under
+     Fig. 2 — it would drag the square behind the eye it is recording. */
+  .gaze-square { fill: var(--color-ink-faint); }
+
+  .gaze-lid,
+  .gaze-lash,
+  .gaze-crease {
+    fill: none;
+    stroke-linecap: round;
     stroke-linejoin: round;
   }
+  .gaze-lid { stroke: var(--color-ink); stroke-width: 1.7; }
+  .gaze-lash { stroke: var(--color-ink); stroke-width: 1.2; }
+  .gaze-crease { stroke: var(--color-ink-faint); stroke-width: 1.1; }
+  .gaze-iris {
+    fill: var(--color-paper);
+    stroke: var(--color-ink-soft);
+    stroke-width: 1.3;
+  }
+  .gaze-iris-line {
+    stroke: var(--color-ink-faint);
+    stroke-width: 0.8;
+  }
+  .gaze-pupil { fill: var(--color-ink); }
+  .gaze-glint { fill: var(--color-paper); }
+  /* Dashed, because the line of sight is not a thing in the drawing but a
+     relation between two of them. */
+  .gaze-sight {
+    stroke: var(--color-ink-faint);
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
+    stroke-linecap: round;
+  }
+  /* The shape of the path is the whole information in this figure — where the
+     eye went and how far it travelled to get there — so it is drawn to be
+     followed rather than sensed. */
   .gaze-trail {
     fill: none;
     stroke: var(--color-ink-soft);
-    stroke-width: 0.9;
+    stroke-width: 1.3;
     stroke-linejoin: round;
-    opacity: 0.5;
+    opacity: 0.62;
   }
   .gaze-fix {
     fill: none;
@@ -1029,12 +1059,12 @@
     stroke-width: 1.2;
     transition: opacity 0.12s linear;
   }
-  /* A fixation the lids closed on, marked by a second ring rather than a
-     colour: the accent belongs to the eye. */
+  /* A fixation the lids closed on, marked by a broken ring rather than a
+     colour: the accent belongs to the point the eye is on. */
   .gaze-blink {
     stroke-dasharray: 2.5 2.5;
   }
-  .gaze-eye {
+  .gaze-point {
     fill: var(--color-accent);
     stroke: none;
   }
