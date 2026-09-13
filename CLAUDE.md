@@ -56,8 +56,14 @@ contrast, size and hierarchy, and all four can be had inside the character.
   cannot sweep in one movement is a line the eye loses.
 - **But the measure applies to prose, and only to prose.** A drawing is not a
   sentence. Plates run the full width of the column the page is built on — the
-  margin and the measure together — so a figure gets the room it needs and the
-  page does not read as a narrow strip down one side of a wide sheet.
+  margin and the measure together — so a plate's rule, instruments and caption
+  stand on the page's outer edge and the page does not read as a narrow strip
+  down one side of a wide sheet.
+- **The drawing on a plate is held to a frame of its own.** `--spacing-plate`:
+  40rem across and at most half that tall, centred on the plate. When the
+  drawings ran the column too, each came out a screen tall, and a figure the
+  reader has to scroll past does not pace the page — it interrupts it. Do not
+  take the frame off to give one figure more room; make the drawing say less.
 - **It is a serif, and it stays one.** A sans was proposed and considered. What
   was hard to read here was never the letterforms — it was 110 characters to the
   line, body text at 6.1:1 and eleven-pixel capitals tracked a fifth of an em. A
@@ -109,7 +115,9 @@ different faces. Use them; do not invent a fifth.
 | `.choice` | one of a set — underlined when it is the one in force |
 | `.control` | a thing you press, in a hairline box, because a thing you press should look like one |
 
-The drawing and its instruments sit inside `.plate`, the instruments in a
+The drawing and its instruments sit inside `.plate`: the drawing as a
+`.plate-drawing` — an SVG scales itself into the frame, a canvas gives itself an
+aspect ratio or a height alongside the class — and the instruments in a
 `.plate-foot` band under a single rule, and the caption below them behind its
 own `FIG. n` (`.plate-mark`) — set off by space, not by a third hairline. Every
 figure on the site is built this way; a new one that is not will look like a

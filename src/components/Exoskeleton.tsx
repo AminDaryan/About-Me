@@ -195,57 +195,55 @@ export default function Exoskeleton() {
         </>
       }
     >
-      <div className="exo">
-        <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
-          {/* the floor */}
-          <line className="exo-rule" x1="14" y1={GROUND} x2="212" y2={GROUND} />
+      <svg className="plate-drawing exo" viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
+        {/* the floor */}
+        <line className="exo-rule" x1="14" y1={GROUND} x2="212" y2={GROUND} />
 
-          <path ref={ghost} className="exo-ghost" d={FIRST.ghost.d} />
-          <path ref={stance} className="exo-limb exo-stance" d={FIRST.stance.d} />
-          <path ref={torso} className="exo-limb" d={FIRST.torso} />
-          <path ref={swing} className="exo-limb exo-swing" d={FIRST.swing.d} />
+        <path ref={ghost} className="exo-ghost" d={FIRST.ghost.d} />
+        <path ref={stance} className="exo-limb exo-stance" d={FIRST.stance.d} />
+        <path ref={torso} className="exo-limb" d={FIRST.torso} />
+        <path ref={swing} className="exo-limb exo-swing" d={FIRST.swing.d} />
 
-          {/* Hips and knees are motors; ankles are springs, and are drawn
-              hollow so the difference is on the page rather than in a key. */}
-          {[0, 1, 2].map((i) => (
-            <circle
-              key={i}
-              ref={(el) => {
-                joints.current[i] = el;
-              }}
-              className="exo-motor"
-              r="4.6"
-              cx={FIRST.marks[i].x}
-              cy={FIRST.marks[i].y}
-            />
-          ))}
-          {[3, 4].map((i) => (
-            <circle
-              key={i}
-              ref={(el) => {
-                joints.current[i] = el;
-              }}
-              className="exo-passive"
-              r="3.6"
-              cx={FIRST.marks[i].x}
-              cy={FIRST.marks[i].y}
-            />
-          ))}
-
-          {/* the error trace, with the only words in the drawing */}
-          <text className="exo-label" x={TRACE_X} y={TRACE_Y - 9}>
-            tracking error
-          </text>
-          <line
-            className="exo-rule"
-            x1={TRACE_X}
-            y1={TRACE_Y + TRACE_H}
-            x2={TRACE_X + TRACE_W}
-            y2={TRACE_Y + TRACE_H}
+        {/* Hips and knees are motors; ankles are springs, and are drawn
+            hollow so the difference is on the page rather than in a key. */}
+        {[0, 1, 2].map((i) => (
+          <circle
+            key={i}
+            ref={(el) => {
+              joints.current[i] = el;
+            }}
+            className="exo-motor"
+            r="4.6"
+            cx={FIRST.marks[i].x}
+            cy={FIRST.marks[i].y}
           />
-          <polyline ref={traceLine} className="exo-trace" points="" />
-        </svg>
-      </div>
+        ))}
+        {[3, 4].map((i) => (
+          <circle
+            key={i}
+            ref={(el) => {
+              joints.current[i] = el;
+            }}
+            className="exo-passive"
+            r="3.6"
+            cx={FIRST.marks[i].x}
+            cy={FIRST.marks[i].y}
+          />
+        ))}
+
+        {/* the error trace, with the only words in the drawing */}
+        <text className="exo-label" x={TRACE_X} y={TRACE_Y - 9}>
+          tracking error
+        </text>
+        <line
+          className="exo-rule"
+          x1={TRACE_X}
+          y1={TRACE_Y + TRACE_H}
+          x2={TRACE_X + TRACE_W}
+          y2={TRACE_Y + TRACE_H}
+        />
+        <polyline ref={traceLine} className="exo-trace" points="" />
+      </svg>
 
       <div className="plate-foot">
         <div className="plate-row">

@@ -698,11 +698,12 @@ export default function ArmScene() {
 
   return (
     <div>
-      {/* Four to three, because the run is about as tall as it is wide and a
-          band across the column left two thirds of the canvas empty. Capped in
-          absolute terms so a wide column does not turn the figure into a
-          full-page plate. */}
-      <div className="aspect-[4/3] max-h-[26rem] w-full">
+      {/* Four to three on a phone, because the run is about as tall as it is
+          wide and a band across a narrow column left two thirds of the canvas
+          empty. Two to one from there up, inside the frame every drawing is
+          held to — the shape the canvas already had on a desk, so the lens
+          fits the run exactly as it did, only smaller. */}
+      <div className="plate-drawing aspect-[4/3] sm:aspect-[2/1]">
         <Canvas
           dpr={[1, 2]}
           gl={{ antialias: true, alpha: true }}

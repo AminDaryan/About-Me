@@ -15,12 +15,12 @@ import { Plate } from "@/components/ui";
 
 const ArmScene = dynamic(() => import("./ArmScene"), {
   ssr: false,
-  loading: () => <div className="aspect-[4/3] max-h-[26rem] w-full" />,
+  loading: () => <div className="plate-drawing aspect-[4/3] sm:aspect-[2/1]" />,
 });
 
 const PendulumScene = dynamic(() => import("./PendulumScene"), {
   ssr: false,
-  loading: () => <div className="h-[19rem] w-full sm:h-[22rem]" />,
+  loading: () => <div className="plate-drawing h-[19rem] sm:h-[20rem]" />,
 });
 
 export function ArmFigure() {

@@ -56,8 +56,13 @@ const GROUP_TILT = -0.2;
 
 /** World units shown across the canvas. Narrower on small screens, or the
     pendulum ends up a third of the height of the space it is given. The camera
-    and the pointer mapping both read this, so they cannot disagree. */
-const spanFor = (width: number) => (width < 640 ? 2.4 : 3.6);
+    and the pointer mapping both read this, so they cannot disagree.
+
+    The step is at 560px of canvas, not 640. The canvas is never more than
+    20rem tall now, and a canvas a little under 640 wide at that height, on the
+    narrow span, showed too little height to hold the motor's arrow under the
+    cart. */
+const spanFor = (width: number) => (width < 560 ? 2.4 : 3.6);
 
 /** How far the target may be dragged, as a fraction of the visible span. */
 const xLimitFor = (width: number) => spanFor(width) * 0.34;
@@ -578,7 +583,7 @@ export default function PendulumScene() {
     <div>
       <div
         ref={wrapRef}
-        className="relative h-[19rem] w-full touch-none select-none sm:h-[22rem]"
+        className="plate-drawing relative h-[19rem] touch-none select-none sm:h-[20rem]"
         onPointerDown={(e) => {
           const grip = pick(e.clientX, e.clientY, e.pointerType !== "mouse");
           if (!grip) return;

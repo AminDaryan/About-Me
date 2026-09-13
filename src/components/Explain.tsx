@@ -324,79 +324,77 @@ export default function Explain() {
         </>
       }
     >
-      <div className="graph-fig">
-        <svg viewBox={`0 0 ${FIELD.w} ${FIELD.h}`} aria-hidden="true" focusable="false">
-          {EDGES.map(([a, b], i) => (
-            <line
-              key={i}
-              ref={(el) => {
-                edge.current[i] = el;
-              }}
-              className="graph-edge"
-              x1={NODES[a].x}
-              y1={NODES[a].y}
-              x2={NODES[b].x}
-              y2={NODES[b].y}
-            />
-          ))}
+      <svg className="plate-drawing" viewBox={`0 0 ${FIELD.w} ${FIELD.h}`} aria-hidden="true" focusable="false">
+        {EDGES.map(([a, b], i) => (
+          <line
+            key={i}
+            ref={(el) => {
+              edge.current[i] = el;
+            }}
+            className="graph-edge"
+            x1={NODES[a].x}
+            y1={NODES[a].y}
+            x2={NODES[b].x}
+            y2={NODES[b].y}
+          />
+        ))}
 
-          {/* Where a node is while it is out of the graph. */}
-          <circle ref={gap} className="graph-gap" cx="0" cy="0" r="15.5" style={{ opacity: 0 }} />
+        {/* Where a node is while it is out of the graph. */}
+        <circle ref={gap} className="graph-gap" cx="0" cy="0" r="15.5" style={{ opacity: 0 }} />
 
-          {NODES.map(({ id, x, y }) => (
-            <g
-              key={id}
-              ref={(el) => {
-                node.current[id] = el;
-              }}
-            >
-              <circle
-                ref={(el) => {
-                  halo.current[id] = el;
-                }}
-                className="graph-halo"
-                cx={x}
-                cy={y}
-                r="16"
-                style={{ opacity: 0 }}
-              />
-              <circle
-                ref={(el) => {
-                  rim.current[id] = el;
-                }}
-                className="graph-rim"
-                cx={x}
-                cy={y}
-                r="10.4"
-              />
-              <circle
-                ref={(el) => {
-                  core.current[id] = el;
-                }}
-                className="graph-core"
-                cx={x}
-                cy={y}
-                r="5.5"
-              />
-            </g>
-          ))}
-
-          {/* Drawn last, so a message crossing a node passes in front of it. */}
-          {MESSAGES.map((_, i) => (
+        {NODES.map(({ id, x, y }) => (
+          <g
+            key={id}
+            ref={(el) => {
+              node.current[id] = el;
+            }}
+          >
             <circle
-              key={i}
               ref={(el) => {
-                message.current[i] = el;
+                halo.current[id] = el;
               }}
-              className="graph-msg"
-              cx="0"
-              cy="0"
-              r="3"
+              className="graph-halo"
+              cx={x}
+              cy={y}
+              r="16"
               style={{ opacity: 0 }}
             />
-          ))}
-        </svg>
-      </div>
+            <circle
+              ref={(el) => {
+                rim.current[id] = el;
+              }}
+              className="graph-rim"
+              cx={x}
+              cy={y}
+              r="10.4"
+            />
+            <circle
+              ref={(el) => {
+                core.current[id] = el;
+              }}
+              className="graph-core"
+              cx={x}
+              cy={y}
+              r="5.5"
+            />
+          </g>
+        ))}
+
+        {/* Drawn last, so a message crossing a node passes in front of it. */}
+        {MESSAGES.map((_, i) => (
+          <circle
+            key={i}
+            ref={(el) => {
+              message.current[i] = el;
+            }}
+            className="graph-msg"
+            cx="0"
+            cy="0"
+            r="3"
+            style={{ opacity: 0 }}
+          />
+        ))}
+      </svg>
 
       <div className="plate-foot">
         {/* The four beats of a round, in order. Point at one to read what it

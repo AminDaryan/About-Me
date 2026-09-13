@@ -120,6 +120,9 @@
 
   --spacing-measure: 36rem;
   --spacing-margin-col: 10.5rem;
+  /* The frame a plate's drawing is held inside: this wide, and at most half as
+     tall. See .plate-drawing for why the drawing has a frame of its own. */
+  --spacing-plate: 40rem;
 
   /* Half the space between two sections, given to each side of one — so the
      gap between any two parts of any page, the page head included, is the same
@@ -739,8 +742,7 @@
      and here they run the full width of the column the page is built on: the
      margin and the measure together, so a plate's left edge is the same edge
      the section headings and the entry rules use. Two edges on a page, each
-     meaning one thing — prose here, everything else there — and the drawings
-     get the forty per cent more room they were short of. */
+     meaning one thing — prose here, everything else there. */
   .plate { margin: clamp(1.9rem, 3.6vw, 2.6rem) 0 0; }
 
   /* Only a plate inside an entry has to break out: an entry's text is indented
@@ -753,6 +755,27 @@
       width: calc(100% + var(--spacing-margin-col) + 3.5rem);
       margin-left: calc(-1 * (var(--spacing-margin-col) + 3.5rem));
     }
+  }
+
+  /* The plate runs the column; the drawing on it does not. It is held to a
+     frame of its own — --spacing-plate wide and at most half that tall — and
+     centred on the plate, with the rule, the instruments and the caption still
+     running the full width under it.
+
+     When the drawings ran the column too, every one of them came out eight
+     hundred pixels across and the exoskeleton five hundred and fifty tall: a
+     screen of figure for every screen of text, which does not pace a page so
+     much as interrupt it. A wide drawing now fills the frame's width and a tall
+     one its height, so the figures sit at one size without any of them being
+     cropped to it. A canvas has no shape of its own to scale by, so it gives
+     itself one — an aspect ratio or a height — alongside this class. */
+  .plate-drawing {
+    display: block;
+    width: 100%;
+    max-width: var(--spacing-plate);
+    height: auto;
+    max-height: calc(var(--spacing-plate) / 2);
+    margin-inline: auto;
   }
 
   /* The instruments: everything the drawing needs said in words and figures,
@@ -1057,12 +1080,6 @@
      The graph in ink, the explanation in the accent: only the handful of nodes
      the explanation names is marked, because an explanation that points at
      everything has not explained anything. */
-  .graph-fig svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    margin-inline: auto;
-  }
   /* Only the colour is eased. Every opacity and every radius in this figure is
      written on the frame it belongs to, and a transition over a value rewritten
      sixty times a second does not smooth it — it drags it a third of a second
@@ -1140,13 +1157,7 @@
      Hairlines at the same weight as the rules, so the drawing belongs to the
      page rather than sitting on it. The only accent is the leg being
      controlled — the one thing in the figure that the figure is about. */
-  .exo svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    margin-inline: auto;
-    overflow: visible;
-  }
+  .exo { overflow: visible; }
   .exo-rule {
     stroke: var(--color-rule);
     stroke-width: 1;
