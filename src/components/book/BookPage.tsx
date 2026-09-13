@@ -10,11 +10,9 @@ import "./book.css";
 /** One page is one browser snapshot. The live DOM and its canvas state stay React-owned. */
 export default function BookPage({ page, children }: { page: BookRoute; children: ReactNode }) {
   const arrival = useRef<BookTurn | null>(null);
-  const departure = useRef<BookTurn | null>(null);
 
   useLayoutEffect(() => {
     arrival.current = arriveAtBookPage(page);
-    return () => { departure.current = leaveBookPage(page); };
   }, [page]);
 
   return (
@@ -23,7 +21,7 @@ export default function BookPage({ page, children }: { page: BookRoute; children
       exit="book-page"
       default="none"
       onEnter={instance => animateBookSnapshot(instance.name, "new", arrival.current)}
-      onExit={instance => animateBookSnapshot(instance.name, "old", departure.current)}
+      onExit={instance => animateBookSnapshot(instance.name, "old", leaveBookPage(page))}
     >
       <div className="book-sheet" data-book-page={page}>
         {children}

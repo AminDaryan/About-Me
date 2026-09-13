@@ -2,7 +2,12 @@
 :root { view-transition-name: none; }
 .book-sheet { display: flow-root; width: 100%; }
 
+/* Capture the stationary running head above the moving page snapshots. */
+body > header { view-transition-name: book-masthead; }
 ::view-transition { pointer-events: none; }
+::view-transition-group(book-masthead) { z-index: 2; animation: none; }
+::view-transition-old(book-masthead) { display: none; }
+::view-transition-new(book-masthead) { animation: none; mix-blend-mode: normal; }
 ::view-transition-group(.book-page),
 ::view-transition-old(.book-page),
 ::view-transition-new(.book-page) { animation: none; }

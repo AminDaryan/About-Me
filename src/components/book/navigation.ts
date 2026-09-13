@@ -20,6 +20,8 @@ export function canAnimateBook() {
 }
 
 export function prepareBookTurn(href: string) {
+  // A new destination supersedes the current slide rather than waiting behind it.
+  activeAnimations.forEach(animation => animation.finish());
   const from = visiblePage ?? window.location.pathname;
   const destination = new URL(href, window.location.href);
   const direction = getBookDirection(new URL(from, window.location.origin).href, destination.href);
