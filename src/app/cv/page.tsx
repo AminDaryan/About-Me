@@ -37,14 +37,12 @@ const REFERENCES = [
       "The fact that he carried out this project from the initial idea through implementation and toward an IEEE publication demonstrates his independence, persistence, and strong potential as a researcher.",
     name: "Snehal Walunj",
     role: "Scientific Researcher, German Research Center for Artificial Intelligence (DFKI)",
-    context: "supervised my master's project research",
   },
   {
     quote:
       "He is now a key member of the FUM Robotics Research Lab and has been an active participant in various teams and has definitely been an asset to our laboratory.",
     name: "Prof. Ali Reza Akbarzadeh",
     role: "Director of the FUM Robotics Research Lab, Ferdowsi University of Mashhad",
-    context: "one of my B.Sc. project supervisors",
   },
 ];
 
@@ -419,6 +417,14 @@ export default function CV() {
               compared classifiers for recognising industrial activities from
               gaze.
             </p>
+            {/* Each project links to its own entry on /research, not to the
+                top of the page: one link under both sent the reader to the
+                page's head and left them to find the project for themselves. */}
+            <p className="no-print">
+              <BookLink className="link" href="/research#gaze">
+                The gaze study in full →
+              </BookLink>
+            </p>
           </Entry>
           <Entry
             title="Vision-guided Pick-and-Place with a Franka Emika Panda"
@@ -431,15 +437,13 @@ export default function CV() {
               and transfers it to a target pose. Trained the object detector on a
               dataset I recorded and annotated.
             </p>
+            <p className="no-print">
+              <BookLink className="link" href="/research#pick-and-place">
+                The project lab in full →
+              </BookLink>
+            </p>
           </Entry>
         </Entries>
-        <Settle>
-          <p className="no-print mt-6">
-            <BookLink className="link" href="/research">
-              What these projects were about →
-            </BookLink>
-          </p>
-        </Settle>
       </Section>
 
       <Section num="V" title="Technical skills">
@@ -504,8 +508,7 @@ export default function CV() {
                   <p className="italic">&ldquo;{r.quote}&rdquo;</p>
                 </blockquote>
                 <figcaption className="mt-3 text-meta text-ink-soft">
-                  <span className="text-ink">{r.name}</span> — {r.role};{" "}
-                  {r.context}
+                  <span className="text-ink">{r.name}</span> — {r.role}
                 </figcaption>
               </figure>
             </Settle>
