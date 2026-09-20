@@ -23,11 +23,11 @@ export default function Research() {
     <BookPage page="/research">
       <PageHeader kicker="Research" title="What I work on">
         <p className="drop-cap">
-          My research is about explainable and trustworthy machine learning —
-          whether an explanation of a model&rsquo;s decision can be checked
-          rather than simply believed. Before that, my work was in perception
-          and control on real hardware: an exoskeleton, a robot arm, a
-          mixed-reality headset. The two are closer than they look. In both, a
+          My work is on robots and AI — computer vision, eye tracking and
+          control of real machines: an exoskeleton, a robot arm, a
+          mixed-reality headset. What I am working on now is explanation —
+          whether an account of what a model has learned can be checked rather
+          than simply believed. The two are closer than they look: in both, a
           system&rsquo;s decision is only as useful as your ability to verify
           it.
         </p>
@@ -117,7 +117,7 @@ export default function Research() {
             where="Project lab · Institute of Control Systems, RPTU Kaiserslautern"
           >
             <p>
-              A four-person project and a full perception-to-manipulation loop
+              A two-person project and a full perception-to-manipulation loop
               on real hardware: find an object placed anywhere on the bench,
               recover its pose, and have a seven-axis arm pick it up and set it
               down elsewhere without touching the obstacles it already knows
@@ -166,13 +166,13 @@ export default function Research() {
             <p>
               The classical hard case in control: two links balanced upright
               with a motor at only the second joint — more degrees of freedom
-              than actuators, an unstable equilibrium, and no way to cheat. I built
-              and compared three controllers on it — linear-quadratic, classical
-              PID and fuzzy — which is the most efficient way I know to learn
-              what each family of controller actually buys you. The figure below
-              runs a close relative live in your browser: a double inverted
-              pendulum on a cart, the full nonlinear model held upright by an
-              LQR controller, which you can take hold of and push.
+              than actuators, and an unstable equilibrium. I built and compared
+              three controllers on it — linear-quadratic, classical PID and
+              fuzzy — which is the most efficient way I know to learn what each
+              family of controller actually buys you. The figure below runs a
+              close relative live in your browser: a double inverted pendulum on
+              a cart, the full nonlinear model held upright by an LQR
+              controller, which you can take hold of and push.
             </p>
           </Entry>
         </Entries>

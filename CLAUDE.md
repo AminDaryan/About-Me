@@ -89,6 +89,14 @@ Every page is one grid, and the grid means something.
   there is one — in the margin, and sets the record itself at the measure beside
   it. A `.note` inside a `<Leaf>` hangs there too. Nothing else goes in it: if
   every left edge does the same job, none of them says anything.
+- **What hangs there ranges left, with the headings.** The dates, the crests,
+  the wordmarks, the skills' marks and a `.note` gloss were ranged right, hard
+  against the measure, and the page had a ragged outer edge: a date, a crest
+  and a lockup each began somewhere different, and none of them began where the
+  section title above them did. Amin asked for them squared up. The signposts'
+  names had already been moved for the same reason. The one thing still ranged
+  right is `/beyond`'s marginal drawing (`.figure-note`), which is a picture
+  set against the line it illustrates rather than a label on the page's edge.
 - **So a page has exactly two left edges.** Headings, entry rules and plates
   stand on the outer one; running text stands on the inner one, with whatever
   identifies it in the margin between. A plate inside an entry steps back over
@@ -101,6 +109,13 @@ Every page is one grid, and the grid means something.
   list of records (the signposts, the skills) is laid on the same two columns.
   A block held at the measure on the outer edge stops a margin's width short of
   everything around it, and "Read on" did exactly that.
+- **Unless there is nothing to hang in the margin.** A `<Leaf>` with an empty
+  margin column is not a grid, it is an indent: Get in touch and the CV's
+  references stood alone in the middle of the sheet under a flush heading, and
+  Amin asked for both to be squared up. A block that identifies itself — a
+  record with a date, a gloss with its drawing — keeps the two columns; a
+  closing paragraph or a quotation with nothing beside it stands on the outer
+  edge, at the measure.
 - **The page head is the exception.** It is a title block, not a section: the
   lines under its title stand on the title's own edge, at the measure. Set on
   the inner edge they left a hole a margin wide under the title, with the drop
@@ -175,9 +190,12 @@ once and used by name.
   list rather than copying the three lines — a copy of a size is a size that
   drifts. The comment above the scale explains what went wrong when pages
   sized their own paragraphs; do not repeat it.
-- **Figures.** Old-style in running text, lining among capitals. The body sets
-  old-style figures; the caps rule turns them to lining, because "MAR 2026"
-  with old-style digits reads as a word with its end dropped. Roman numerals
+- **Figures.** Lining, everywhere. Running text was set with old-style figures
+  until Amin said the numbers were hard to read — "Overall grade 2.3." — and on
+  this site legibility outranks the book convention. The caps rule still asks
+  for lining figures in as many words, because that one selector is where every
+  piece of caps on the site is set, and "MAR 2026" in old-style digits read as
+  a word with its end dropped. Roman numerals
   — `.section-num`, `.rail-num` — are words spelt in capitals and are tracked
   barely at all; at 0.3em "IV" came apart into "I V".
 - **Components.** A page is built from `PageHeader`, `Section`, `Entries` and

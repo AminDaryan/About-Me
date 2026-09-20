@@ -193,11 +193,12 @@ export default function InkTrail({ children }: { children: ReactNode }) {
               them it slid out of sight behind every photograph the line
               passed. Its feather is drawn in strokes and takes them from its
               surroundings; in an SVG that set none it came out as slivers on a
-              paper-coloured body, and could not be seen at all. It is drawn a
-              third larger than beside the book, which is two inches wide. */}
+              paper-coloured body, and could not be seen at all. At 1.35 it
+              stood 95px tall against a 118px print and drew the eye off the
+              line it was supposed to be drawing. */}
           <svg className={styles.svg} aria-hidden="true" focusable="false">
             <g ref={quill} className={styles.quill}>
-              <g transform="scale(1.35)" fill="none" stroke="currentColor" strokeWidth={1.15} strokeLinecap="round" strokeLinejoin="round">
+              <g transform="scale(1)" fill="none" stroke="currentColor" strokeWidth={1.15} strokeLinecap="round" strokeLinejoin="round">
                 <Quill />
               </g>
             </g>

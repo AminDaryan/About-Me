@@ -2,8 +2,7 @@
 
 import BookLink from "@/components/book/BookLink";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import usePageContent from "./usePageContent";
+import Mark from "./Mark";
 import { useBookNavigationHistory } from "./book/navigation";
 
 const NAV = [
@@ -14,48 +13,17 @@ const NAV = [
 ];
 
 /* Sticky, and laid out like the head of a printed page: where you can go on
-   the left, whose pages these are on the right.
+   the left, and the mark on the right.
 
-   The name is a running head, not a logotype. Its job is to answer "whose site
-   is this?", and it does that everywhere except where the page already sets the
-   same name large in its own heading — the CV's letterhead — where it waits
-   until that has scrolled under it. One rule, and the name is on screen exactly
-   once: never twice in a screen, never missing from a page. The home page's
-   greeting says only "Amin", so the masthead carries the surname there from the
-   first line.
-
-   The fade is opacity alone and the box keeps its width, so the row never
-   moves — and with JavaScript off the name simply stays, which is the safe
-   way round. */
+   The name used to stand beside that mark as a running head, appearing and
+   going quiet so that it was on screen exactly once — never beside the CV's
+   own letterhead, never missing from a page. Amin asked for it to go, and the
+   machinery that watched for the page's own name went with it: with no name
+   here there is nothing left to collide with one down the page. The mark is
+   the way home, and it says the name to a screen reader. */
 export default function Masthead() {
   useBookNavigationHistory();
   const pathname = usePathname();
-
-  /* Quiet while the page is showing its own name. It starts false so the name
-     is there before hydration and stays there without JavaScript. */
-  const [quiet, setQuiet] = useState(false);
-  const observer = useRef<IntersectionObserver>(null);
-
-  usePageContent(() => {
-    observer.current?.disconnect();
-    const own = document.querySelector<HTMLElement>("main [data-page-name]");
-    if (!own) {
-      setQuiet(false);
-      return;
-    }
-    /* The heading counts as gone once it has passed under the masthead rather
-       than when its last pixel leaves the window, so the two names are never
-       both legible at once. The 80px is the masthead's own clearance, the same
-       one `html { scroll-padding-top }` uses; a rootMargin may only be given
-       in pixels or percent, so it cannot simply say 5rem. */
-    observer.current = new IntersectionObserver(
-      ([entry]) => setQuiet(entry.isIntersecting),
-      { rootMargin: "-80px 0px 0px 0px" },
-    );
-    observer.current.observe(own);
-  });
-
-  useEffect(() => () => observer.current?.disconnect(), []);
 
   return (
     <header className="no-print sticky top-0 z-50 border-b border-rule bg-paper">
@@ -70,11 +38,24 @@ export default function Masthead() {
                 ? pathname === "/"
                 : pathname.startsWith(item.href);
             return (
+              /* Set in the page's own letters, at the page's own size: these
+                 are the names of pages, and a name is a name. They were
+                 letterspaced capitals at a size of their own — 0.74rem on a
+                 phone, 0.82rem on a desk, neither of them in the scale — which
+                 made the one row a reader meets on every page the one row set
+                 in a face that appears nowhere in the text under it. Nothing
+                 was gained by it: caps at twelve pixels are the hardest thing
+                 on the site to read, and the row is navigation, which has to
+                 be read at a glance and by someone who is not looking for it.
+
+                 The body size rather than the secondary one, because this is
+                 the way through the site and the margin rail, a step below it
+                 at --text-meta, is the way through a page. */
               <BookLink
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`border-b pb-0.5 text-[0.74rem] tracking-[0.06em] whitespace-nowrap uppercase transition-colors sm:text-[0.82rem] sm:tracking-[0.11em] ${
+                className={`border-b pb-0.5 text-body whitespace-nowrap transition-colors ${
                   active
                     ? "border-accent text-accent-deep"
                     : "border-transparent text-ink-soft hover:border-rule hover:text-ink"
@@ -86,24 +67,23 @@ export default function Masthead() {
           })}
         </nav>
 
-        {/* The mark goes quiet with the name it belongs to: half a running head,
-            appearing and disappearing on its own, would read as a glitch. On a
-            phone there is no room for the words, and the mark stands for them. */}
+        {/* The mark alone. It is the way home from anywhere, and its label is
+            the only place the name is set in this row.
+
+            It is drawn in ink rather than the accent the diamond used: the
+            accent marks the one live thing in a view, and a mark that is on
+            every page of the site is not that. It takes the accent on hover,
+            which is the one moment it is the live thing. */}
+        {/* The padding is the touch target, not the drawing: 28px of mark on a
+            phone is well under the 44px a thumb needs, and the negative margin
+            gives the space back to the row so the mark still sits on the
+            gutter. */}
         <BookLink
           href="/"
           aria-label="Amin Dariani — home"
-          data-quiet={quiet || undefined}
-          /* Out of the tab order and out of the accessibility tree while it is
-             invisible: a link nobody can see is not one to land focus on, and
-             the name it carries is on the page underneath in any case. */
-          tabIndex={quiet ? -1 : undefined}
-          aria-hidden={quiet || undefined}
-          className="running-head group flex shrink-0 items-center gap-2.5"
+          className="group -m-2 flex shrink-0 items-center p-2 text-ink-soft transition-colors hover:text-accent-deep"
         >
-          <span className="block size-[7px] rotate-45 bg-accent transition-transform duration-500 group-hover:rotate-[135deg]" />
-          <span className="hidden text-[0.78rem] tracking-[0.24em] whitespace-nowrap uppercase transition-colors group-hover:text-accent-deep sm:inline">
-            Amin Dariani
-          </span>
+          <Mark className="size-7 sm:size-[34px]" />
         </BookLink>
       </div>
     </header>

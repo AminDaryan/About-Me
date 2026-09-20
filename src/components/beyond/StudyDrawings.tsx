@@ -15,34 +15,42 @@ export const descriptions: Record<Subject, string> = {
 function Reading() {
   return (
     <>
-      {/* The book and the quill writing in it are drawn smaller and set down,
-          so an inkwell can stand beside the book on the same table line within
-          the same frame. The group is scaled rather than the paths, so the
-          quill's motion and its reveal mask stay in the coordinates
-          geometry.ts gives them. */}
-      <g transform="translate(0 16) scale(.84)">
-        <path className={styles.paper} d="M21 52Q55 42 94 60Q130 43 168 52V116Q129 106 94 123Q57 108 21 116Z" />
-        <path d="M94 60V123M16 57V122Q55 115 94 129Q135 114 173 122V57" />
-        <path className={styles.detail} d="M31 64Q58 58 82 69M31 74Q58 68 82 79M31 84Q58 78 82 89M31 94Q51 90 69 97M107 70Q133 60 157 65M107 80Q133 71 157 75M107 90Q126 84 143 86" />
-        <QuillWriting />
-      </g>
+      {/* One ground line, drawn first and running past both feet, as every
+          other study on the site has: the book's spine rests on it and the
+          inkwell stands on it. The table line used to exist under the well
+          alone, so the book hovered beside it and the two read as two drawings
+          that happened to overlap. */}
+      <path className={styles.detail} d="M28 126H192" />
+      {/* The boards: one closed silhouette, six units proud of the pages, with
+          the tone of their near face lying between the two. They were an open
+          U before — a foot and two verticals that began in mid-air, and the
+          right one ran down into the inkwell's mouth, where a line that enters
+          an object and stops reads as a rod standing in the pot. */}
+      <path className={styles.paper} d="M32 53Q66 41 104 62Q142 41 176 53V115Q142 107 104 126Q66 107 32 115Z" />
+      <path className={styles.detail} fill="currentColor" stroke="none" d="M32 115Q66 107 104 126Q142 107 176 115L170 110Q140 102 104 121Q68 102 38 110Z" />
+      <path className={styles.paper} d="M38 59Q68 47 104 67Q140 47 170 59V110Q140 102 104 121Q68 102 38 110Z" />
+      <path d="M104 67V121" />
+      {/* Three rules on the left page and two on the right, so that the third
+          line of the right page is left to the one being written. */}
+      <path className={styles.detail} d="M46 77Q72 68 96 83M46 87Q72 78 96 93M46 97Q72 88 96 103M107 80Q133 70 157 75M107 90Q133 80 157 85" />
+      <QuillWriting />
       <Inkwell />
     </>
   );
 }
 
-/** A squat glass inkwell on the table line, with ink standing in its neck. It
-    stands in front of the book's corner: beside it, the drawing was too wide
-    to be set three lines deep inside the margin. */
+/** A squat glass inkwell standing on the table line, with ink in its neck. It
+    stands clear of the boards rather than in front of them: overlapped, an edge
+    of the book ended somewhere on its silhouette, and the edge that ended at
+    its rim was read as a rod standing in the pot. */
 function Inkwell() {
   return (
     <>
-      <path className={styles.detail} d="M125 124.5H167" />
-      <path className={styles.paper} d="M135 124Q129 111 137 104H157Q165 111 159 124Z" />
-      <path className={styles.paper} d="M141 104V99.5H153V104" />
-      <path d="M138.5 99.5H155.5" />
-      <ellipse cx="147" cy="99.5" rx="4.6" ry="1.3" fill="currentColor" stroke="none" />
-      <path className={styles.hatching} d="M138 110Q136 116 138.5 121M141 108Q140 115 142 121" />
+      <path className={styles.paper} d="M176 126Q170 113 178 106H196Q204 113 198 126Z" />
+      <path className={styles.paper} d="M181 106V101.5H193V106" />
+      <path d="M178.5 101.5H195.5" />
+      <ellipse cx="187" cy="101.5" rx="4.4" ry="1.25" fill="currentColor" stroke="none" />
+      <path className={styles.hatching} d="M179 114Q177.5 119 179.5 124M182 112Q181 118 183 124" />
     </>
   );
 }
@@ -110,7 +118,7 @@ export const drawings = { reading: Reading, psychology: Psychology, archery: Arc
     bowstring drawn back, a quill lifted. The ornament is not set beside a
     paragraph and keeps the frame it was drawn in. */
 export const frames: Record<Subject, string> = {
-  reading: "13.44 54.79 153.56 69.71",
+  reading: "27.4 48.6 173.9 78",
   psychology: "49.89 19.79 93.11 109.21",
   archery: "49.98 24 138.02 102",
   chess: board.frame,

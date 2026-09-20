@@ -13,6 +13,42 @@ let visiblePage: string | null = null;
 let pendingTurn: BookTurn | null = null;
 const activeAnimations = new Set<Animation>();
 
+/** The handle of markTurning's fallback timer. */
+let unstick = 0;
+
+/**
+ * Marks the document while a page is turning, for the chrome that describes
+ * the page rather than framing it.
+ *
+ * A view transition paints the two sheets as snapshots in the top layer and
+ * stops painting the live ones. Anything not captured — the margin rail — goes
+ * on being painted underneath, and a page's snapshot is mostly transparent, so
+ * the rail showed straight through the old page's text while it slid away,
+ * already listing the sections of the page that had not arrived yet. The rail
+ * steps out for the turn and comes back with the page it belongs to.
+ *
+ * It goes the moment a turn is decided on, which is a few frames before the
+ * first snapshot is animated: the new markup — and so the new rail — is in the
+ * document before then, and a rail that faded out from there would spend its
+ * fade listing the wrong page's sections.
+ */
+function markTurning(on: boolean) {
+  document.documentElement.toggleAttribute("data-book-turning", on);
+  clearTimeout(unstick);
+  /* A turn that is prepared and never runs — a click the router declines, a
+     route that renders without animating — must not leave the rail hidden. */
+  if (on) {
+    unstick = window.setTimeout(() => {
+      if (!activeAnimations.size) markTurning(false);
+    }, 1200);
+  }
+}
+
+function forget(animation: Animation) {
+  if (!activeAnimations.delete(animation)) return;
+  if (!activeAnimations.size) markTurning(false);
+}
+
 export function canAnimateBook() {
   return typeof document.startViewTransition === "function"
     && CSS.supports("view-transition-class: book-page")
@@ -20,14 +56,21 @@ export function canAnimateBook() {
 }
 
 export function prepareBookTurn(href: string) {
-  // A new destination supersedes the current slide rather than waiting behind it.
-  activeAnimations.forEach(animation => animation.finish());
+  /* A new destination supersedes the current slide rather than waiting behind
+     it. The superseded animations come off the books before they are finished,
+     or their `finished` promises — which settle on a microtask, after this
+     function has returned and marked the new turn — would take the new turn's
+     mark down with them. */
+  const superseded = [...activeAnimations];
+  activeAnimations.clear();
+  superseded.forEach(animation => animation.finish());
   const from = visiblePage ?? window.location.pathname;
   const destination = new URL(href, window.location.href);
   const direction = getBookDirection(new URL(from, window.location.origin).href, destination.href);
   pendingTurn = direction && canAnimateBook()
     ? { from, to: destination.pathname.replace(/\/+$/, "") || "/", direction }
     : null;
+  if (pendingTurn) markTurning(true);
 }
 
 export function arriveAtBookPage(page: BookRoute) {
@@ -78,11 +121,11 @@ export function animateBookSnapshot(
   );
   activeAnimations.add(animation);
   void animation.finished.then(
-    () => activeAnimations.delete(animation),
-    () => activeAnimations.delete(animation),
+    () => forget(animation),
+    () => forget(animation),
   );
   return () => {
-    activeAnimations.delete(animation);
+    forget(animation);
     animation.cancel();
   };
 }

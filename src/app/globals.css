@@ -171,7 +171,7 @@
     font-family: var(--font-serif);
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
-    font-feature-settings: "kern" 1, "liga" 1, "onum" 1;
+    font-feature-settings: "kern" 1, "liga" 1, "lnum" 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -347,12 +347,14 @@
      copying the lines. They were copied, seven times, and the copies had
      already begun to differ in the one line that mattered.
 
-     That line is the figures. The body is set with old-style figures, which
-     rise and fall around the x-height the way lower-case letters do and sit
-     well in a sentence. Among capitals they do not: "MAR 2026" read as a word
-     with its last four letters dropped half a line, and a margin full of
-     dates looked set by someone who had run out of the right sort. Capitals
-     take lining figures. */
+     That line is the figures, and the whole site now takes the lining sort.
+     The body was set with old-style figures, which rise and fall around the
+     x-height the way lower-case letters do and sit well in a sentence — but
+     Amin reads them as hard work, and a grade a reader has to look at twice is
+     a grade set wrong. Among capitals they were never right in the first
+     place: "MAR 2026" read as a word with its last four letters dropped half a
+     line. The rule stays here, explicit, because that is where every piece of
+     caps on the site comes to be set. */
   .label,
   .entry-when,
   .control,
@@ -403,7 +405,6 @@
       margin: 0.45rem 0 0;
       padding-left: 0;
       border-left: 0;
-      text-align: right;
     }
   }
 
@@ -678,7 +679,7 @@
     .entry-aside {
       display: block;
       margin: 0;
-      text-align: right;
+      text-align: left;
     }
     /* Except under a mark, which hangs from the top of the entry with its date
        below it: a baseline taken from a column that opens with a picture
@@ -694,11 +695,11 @@
     .entry-mark {
       width: auto;
       max-width: 3.4rem;
-      margin: 0 0 0.75rem auto;
+      margin: 0 auto 0.75rem 0;
     }
     .uni-mark {
-      -webkit-mask-position: right top;
-      mask-position: right top;
+      -webkit-mask-position: left top;
+      mask-position: left top;
     }
   }
 
@@ -732,8 +733,8 @@
   .uni-mark-dfki { --mark: url("/logos/dfki.png"); }
 
   /* A crest wants height; a wordmark wants width, so the lockups are set
-     shorter and wider than the crests and ranged the same way as everything
-     else in the margin. */
+     shorter and wider than the crests. Both stand on the margin's left edge,
+     with the date under them and the section's own title above. */
   .entry-marked[data-wide] .entry-mark { width: 6.5rem; }
   .entry-marked[data-wide] .uni-mark {
     height: 1.5rem;
@@ -745,10 +746,6 @@
   }
   @media (min-width: 64rem) {
     .entry-marked[data-wide] .entry-mark { width: auto; max-width: 6.5rem; }
-    .entry-marked[data-wide] .uni-mark {
-      -webkit-mask-position: right center;
-      mask-position: right center;
-    }
   }
 
   /* -- Technical skills: a mark, a heading and a short list, one per row ----
@@ -790,7 +787,7 @@
     }
     .skill-mark {
       grid-area: 1 / 1 / 3 / 2;
-      justify-self: end;
+      justify-self: start;
       width: 1.35rem;
       padding-top: 0.05rem;
     }
@@ -1363,29 +1360,18 @@
     stroke-linejoin: round;
   }
 
-  /* -- The masthead's running head -----------------------------------------
-     The name is a running head, not a logotype: it is there to say whose site
-     this is on a page that does not otherwise say so. So it steps aside while
-     the page is showing its own name — the home page and the CV both open with
-     it set large — and takes over once that has scrolled away. Opacity only,
-     and the box keeps its size either way, so nothing in the row moves. */
-  .running-head {
-    transition: opacity 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-  }
-  .running-head[data-quiet] {
-    opacity: 0;
-    pointer-events: none;
-  }
-
   /* -- The margin rail -----------------------------------------------------
      A book's running head, set in the outer margin: the sections of this page,
      with the one being read marked in the accent. It appears only from 1360px
      up, where there is margin enough to hold it clear of the measure — below
      that it would either crowd the text or overlap it, and the masthead is a
      short page away in any case. */
+  /* Out of the way while a page turns: see markTurning() in book/navigation.ts
+     for what the reader saw when it stayed. */
   .rail {
     display: none;
     position: fixed;
+    transition: opacity 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
     top: 50%;
     /* Out at the page's own edge rather than hugging the text: the margin is
        where a running head belongs, and close to the measure it reads as part
@@ -1400,6 +1386,14 @@
      is never nearer the column than about 2.5rem. */
   @media (min-width: 1380px) {
     .rail { display: block; }
+  }
+  /* Gone at once and back on a fade: fading it out would show the wrong
+     page's sections for the length of the fade, which is the thing being
+     fixed. */
+  [data-book-turning] .rail {
+    visibility: hidden;
+    opacity: 0;
+    transition: none;
   }
   /* The numerals are a column of their own, as wide as the widest of them and
      ranged right, the way a book's contents sets them: "I" and "VII" end on
@@ -1421,14 +1415,27 @@
     display: grid;
     grid-template-columns: subgrid;
   }
+  /* In the letters the page is set in, and a name is a name: upright, sentence
+     case, the tracking the face was drawn with. The entries here are the page's
+     own headings word for word, and a heading that reads "Current work" in the
+     column should read "Current work" in the margin — set in caps it became a
+     label for the section rather than a copy of its title, and no amount of
+     tracking makes twenty-nine letterspaced capitals easy to take in at a
+     glance, which is the one thing a contents list has to be.
+
+     The size is --text-meta, the role the scale keeps for secondary lines. It
+     was 0.82rem, which is a size belonging to nothing: between the label and
+     the meta, in the scale's gap, and the only number of its kind in the
+     stylesheet. A list in the margin is quieter than the column by its colour
+     and its place on the sheet; it does not also need a size of its own. */
   .rail a {
     align-items: baseline;
     margin-left: -1px;
     padding: 0.4rem 0 0.4rem 0.85rem;
     border-left: 1px solid transparent;
     color: var(--color-ink-faint);
-    font-size: 0.82rem;
-    line-height: 1.4;
+    font-size: var(--text-meta);
+    line-height: 1.45;
     transition: color 0.25s ease, border-color 0.25s ease;
   }
   .rail a:hover { color: var(--color-ink-soft); }
@@ -1436,15 +1443,18 @@
     color: var(--color-accent-deep);
     border-left-color: var(--color-accent);
   }
-  /* Tracked as lightly as the section's own numeral, for the same reason.
-     It takes the link's colour, so the current one is in the deeper accent
-     along with its name. */
+  /* Tracked as lightly as the section's own numeral, for the same reason: a
+     roman numeral is a word spelt in capitals, and letterspaced at all "VII"
+     comes apart into three letters standing separately. It is the size of the
+     name beside it, the way the numeral in a section heading is the size of
+     its title; it used to be set a shade smaller, which put two sizes in a
+     line two words long. It takes the link's colour, so the current one is in
+     the deeper accent along with its name. */
   .rail-num {
     grid-column: 1;
     padding-right: 0.6rem;
     text-align: right;
-    font-size: var(--text-label);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.02em;
   }
   .rail-text { grid-column: 2; }
 
@@ -1770,23 +1780,75 @@
   .road-hit:focus-visible { outline-offset: -2px; }
 
   /* The panel's text fades in on every change; its drawing redraws itself
-     through the .ink rules above. */
-  .journey-panel-text {
+     through the .ink rules above. The fade hangs off the attribute rather than
+     the element, because on a wide screen all ten stories are in the document
+     at once: a rule arriving with an attribute starts its animation the way a
+     fresh element does, so the fade still runs at every stop without the block
+     being thrown away and built again. */
+  .journey-panel-text[data-on] {
     animation: journey-in 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
   }
+  /* A fade and nothing else. It used to rise 6px into place, and with the
+     stories now landing in one position at every stop that rise was the only
+     thing left moving under the pointer — which is what Amin was reading as
+     the panel being unsettled. A change of stop is a change of text, not a
+     change of place. */
   @keyframes journey-in {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: none; }
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
+  /* Every stop's story laid in the one cell, all but the open one hidden, and
+     the four rows shared between them — so the title, the sentence and the way
+     on each stand at one height however long the open story happens to be.
+     Running the pointer along the road used to rearrange the panel under it:
+     the date line wraps to two lines for the three Kaiserslautern stops, which
+     dropped the title 20px; a title runs to one line or two; and the sentences
+     run from four lines to eight, which moved the link over a band 170px deep.
+
+     The rows are shared with subgrid rather than held open with min-heights,
+     because a height written down here goes stale the next time a sentence is
+     edited, and because the faces are the visitor's own — where a line breaks
+     is not something this stylesheet can know. Where subgrid is unsupported the
+     declaration drops and each story sizes its own rows, which is the behaviour
+     this replaces and not a broken one.
+
+     Wide screens only. On a phone the panel stands under its own stop and its
+     measured height is the gap the road leaves for it, so ten stacked stories
+     would prise the road apart; there the component renders the open stop alone
+     and this rule has nothing to hold. */
+  .journey-panel-texts {
+    display: grid;
+    /* Floored at zero, so a long word wraps instead of widening the column the
+       road has to share. */
+    grid-template-columns: minmax(0, 1fr);
+    /* Date line, title, sentence, the way on. The sentence's row takes up the
+       slack, so a short story leaves its space above the link rather than
+       lifting the link off the foot of the cell. */
+    grid-template-rows: auto auto 1fr auto;
+  }
+  .journey-panel-texts > .journey-panel-text {
+    display: grid;
+    grid-row: 1 / -1;
+    grid-column: 1;
+    grid-template-rows: subgrid;
+    /* Hidden rather than undisplayed: a story has to keep its place in the
+       layout for the rows to be sized to it. Hiding it this way also takes it
+       out of the tab order and out of the accessibility tree, and the markup
+       marks it inert as well, so the nine spare links cannot be reached by any
+       route. */
+    visibility: hidden;
+  }
+  .journey-panel-texts > .journey-panel-text[data-on] { visibility: visible; }
+
   @media (prefers-reduced-motion: reduce) {
-    .journey-panel-text { animation: none; }
+    .journey-panel-text[data-on] { animation: none; }
     .road-draw { stroke-dashoffset: 0; }
     .road.is-drawn .road-draw { animation: none; }
     .road-late { opacity: 1; transition: none; }
     .road-pin { transition: none; }
     .rail a { transition: none; }
-    .running-head { transition: none; }
+    .rail { transition: none; }
     .choice-word { transition: none; }
     .graph-edge, .graph-halo { transition: none; }
     .figure-said, .figure-said-now { transition: none; }

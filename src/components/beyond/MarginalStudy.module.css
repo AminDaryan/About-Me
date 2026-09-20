@@ -33,8 +33,17 @@
 .figure svg .thought { stroke-width: 1.85; }
 .figure:focus-visible { outline: 1px solid var(--color-accent); outline-offset: 5px; }
 .figure[data-subject="ornament"] svg { width: 144px; height: auto; }
-.detail, .writtenLine { opacity: .58; }
-.hatching { opacity: .62; stroke-width: .8; }
+/* Ink-soft on paper is 6.96:1 at full strength; these two bands were set by
+   eye at .58 and .62, which measure 2.68:1 and 2.90:1 — under the 3:1 floor
+   CLAUDE.md §1a puts on any mark a reader is meant to see. At .70 they are
+   3.45:1, which is the least that clears it with anything in hand. */
+.detail { opacity: .7; }
+/* The line being written is the figure's subject, not one of the page's printed
+   rules. Set in the same band as the rules, 6px from two of them and drawn with
+   the same curve, it could not be told from them, so the drawing showed a nib
+   resting somewhere on a ruled page rather than a line being written. */
+.writtenLine { opacity: 1; }
+.hatching { opacity: .7; stroke-width: .8; }
 .paper { fill: var(--color-paper); }
 .accent { stroke: var(--color-accent); }
 .boardEdge { fill: currentColor; fill-opacity: .45; }

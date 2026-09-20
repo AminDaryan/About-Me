@@ -78,7 +78,7 @@ export default function Beyond() {
               </Settle>
 
               <Settle>
-                <p className="max-w-measure" data-ink-anchor="jung">
+                <p className="max-w-measure" data-ink-anchor="jung dostoevsky">
                   Psychology comes from the same curiosity, turned inward as well as
                   outward. I read it to understand myself and other people better,
                   and, ultimately, to understand the human brain well enough to

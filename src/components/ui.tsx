@@ -38,7 +38,6 @@ export function PageHeader({
   kicker,
   title,
   display = false,
-  pageName = false,
   aside,
   id,
   rail,
@@ -49,9 +48,6 @@ export function PageHeader({
   title: ReactNode;
   /** Set at display size — the front page's greeting, which is not a title. */
   display?: boolean;
-  /** The title is Amin's name, so the masthead holds its own copy back while
-      this one is on screen. */
-  pageName?: boolean;
   /** Set beside the heading where there is room for it: the portrait. */
   aside?: ReactNode;
   id?: string;
@@ -64,7 +60,6 @@ export function PageHeader({
     <div>
       {kicker && <p className="label">{kicker}</p>}
       <h1
-        data-page-name={pageName || undefined}
         className={`${kicker ? "mt-2 " : ""}${
           display ? "text-display tracking-[-0.028em]" : "text-title"
         }`}

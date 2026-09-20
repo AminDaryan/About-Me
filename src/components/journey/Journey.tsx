@@ -26,7 +26,7 @@ import {
   type Geometry,
 } from "./road";
 import { CONE, GROUND, SCENERY, bannerPath, pinPath } from "./scenery";
-import { NOW, STEPS } from "./steps";
+import { NOW, STEPS, type Step } from "./steps";
 
 /* Fig. 1 — the route so far, as a road.
 
@@ -518,6 +518,40 @@ export default function Journey() {
     return [-1, 1].map((side) => ({ x: c.x, y: c.y + side * (verge + 9) + (side < 0 ? 0 : 12) }));
   })();
 
+  /* One stop's story: when and where, the title, the sentence, and the way on.
+
+     On a wide screen all ten are rendered into the one cell and every one but
+     the open stop is hidden and inert — see .journey-panel-texts, which is what
+     holds the title, the sentence and the link still while the pointer runs
+     along the road. On a phone only the open stop is rendered, and the key,
+     changing with the stop, is what restarts its fade.
+
+     The link reads the same at every stop, which is why it can sit in the same
+     place in every panel; the stop's own title, which is what says where the
+     link goes, is carried in the accessible name for a reader who meets the
+     link out of its context. */
+  const story = (s: Step, i: number) => (
+    <div
+      key={s.title}
+      className="journey-panel-text"
+      data-on={i === active || undefined}
+      inert={i !== active}
+    >
+      <p className="label">
+        {s.when} · {s.place}
+      </p>
+      <h3 className="mt-1 text-subhead">{s.title}</h3>
+      <p className="mt-3">{s.text}</p>
+      {s.href && (
+        <p className="mt-3">
+          <BookLink className="link" href={s.href}>
+            Read more<span className="sr-only">: {s.title}</span> →
+          </BookLink>
+        </p>
+      )}
+    </div>
+  );
+
   const panel = (
     <div
       ref={panelRef}
@@ -535,19 +569,8 @@ export default function Journey() {
         width={wide ? 104 : 72}
         label={step.alt}
       />
-      <div key={`text-${active}`} className="journey-panel-text mt-4">
-        <p className="label text-ink-faint">
-          {step.when} · {step.place}
-        </p>
-        <h3 className="mt-1 text-subhead">{step.title}</h3>
-        <p className="mt-3">{step.text}</p>
-        {step.href && (
-          <p className="mt-3">
-            <BookLink className="link" href={step.href}>
-              {step.more} →
-            </BookLink>
-          </p>
-        )}
+      <div className={wide ? "journey-panel-texts mt-4" : "mt-4"}>
+        {wide ? STEPS.map(story) : story(step, active)}
       </div>
     </div>
   );

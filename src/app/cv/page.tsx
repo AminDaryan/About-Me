@@ -17,7 +17,6 @@ import {
   Entries,
   ExternalLink,
   Labelled,
-  Leaf,
   PageHeader,
   Section,
 } from "@/components/ui";
@@ -247,7 +246,7 @@ export default function CV() {
           document before it is a web page: the masthead and the footer are
           both `no-print`, so without these two lines the printed CV would
           carry no name and no address at all. */}
-      <PageHeader kicker="Curriculum Vitae" title="Amin Dariani" pageName>
+      <PageHeader kicker="Curriculum Vitae" title="Amin Dariani">
         <p>
           Kaiserslautern, Germany
           {PROFILES.map((p) => (
@@ -263,8 +262,8 @@ export default function CV() {
           <p>
             Explainable and trustworthy machine learning — making what a model
             has learned inspectable, and checkable rather than simply believed.
-            Background in computer vision, robot perception and model-based
-            control.
+            Background in computer vision and eye tracking, robot perception
+            and model-based control.
           </p>
         </Labelled>
       </PageHeader>
@@ -508,30 +507,31 @@ export default function CV() {
         </Entries>
       </Section>
 
-      {/* On the inner edge with the rest of the CV's running text, so the
-          quotations end where the records above them end. */}
+      {/* On the section's own edge, with the heading and the rule above it.
+          Set on the inner edge the two quotations stood alone in the middle of
+          the sheet with an empty margin beside them, because a reference has
+          nothing to hang there — no date and no mark — and Amin asked for them
+          squared up. The measure still holds each one. */}
       <Section num="VII" title="References">
-        <Leaf>
-          {REFERENCES.map((r) => (
-            <Settle key={r.name} className="max-w-measure">
-              <figure className="m-0 mb-10 border-l border-rule pl-6 lg:mb-6">
-                <blockquote className="m-0">
-                  <p className="italic">&ldquo;{r.quote}&rdquo;</p>
-                </blockquote>
-                <figcaption className="mt-3 text-meta text-ink-soft">
-                  <span className="text-ink">{r.name}</span> — {r.role}
-                </figcaption>
-              </figure>
-            </Settle>
-          ))}
-          <Settle className="max-w-measure">
-            <p>
-              Further references, from my master&rsquo;s project advisor at RPTU
-              and my thesis supervisor at Fraunhofer IOSB, are available on
-              request.
-            </p>
+        {REFERENCES.map((r) => (
+          <Settle key={r.name} className="max-w-measure">
+            <figure className="m-0 mb-10 border-l border-rule pl-6 lg:mb-6">
+              <blockquote className="m-0">
+                <p className="italic">&ldquo;{r.quote}&rdquo;</p>
+              </blockquote>
+              <figcaption className="mt-3 text-meta text-ink-soft">
+                <span className="text-ink">{r.name}</span> — {r.role}
+              </figcaption>
+            </figure>
           </Settle>
-        </Leaf>
+        ))}
+        <Settle className="max-w-measure">
+          <p>
+            Further references, from my master&rsquo;s project advisor at RPTU
+            and my thesis supervisor at Fraunhofer IOSB, are available on
+            request.
+          </p>
+        </Settle>
       </Section>
     </BookPage>
   );

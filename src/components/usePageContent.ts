@@ -6,9 +6,9 @@ import { useEffect, useRef } from "react";
  * Runs `read` against whatever page is currently under the masthead, and again
  * whenever that changes.
  *
- * The two pieces of chrome that describe a page — the section rail and the
- * masthead's running head — are rendered outside `<main>`, so they have to look
- * the page up in the DOM. The route change is the wrong moment to do it: the
+ * The section rail — the one piece of chrome that describes the page rather
+ * than framing it — is rendered outside `<main>`, so it has to look the page up
+ * in the DOM. The route change is the wrong moment to do it: the
  * router hands out the new path while React is still rendering the new page, so
  * a read taken then returns the *old* page's markup. That is how the rail came
  * to list the CV's seven sections on the research page for a second after every

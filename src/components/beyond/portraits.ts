@@ -7,7 +7,7 @@
    four-by-five frame keeps it; `tilt` is the few degrees each print is laid
    askew, the way cuttings pinned beside a manuscript never sit square. */
 
-export type PortraitId = "wittgenstein" | "camus" | "jung" | "fischer";
+export type PortraitId = "wittgenstein" | "camus" | "jung" | "dostoevsky" | "fischer";
 
 export type Portrait = {
   id: PortraitId;
@@ -52,6 +52,16 @@ export const PORTRAITS: Portrait[] = [
     focus: "46% 34%",
     tilt: -1.2,
     alt: "Carl Gustav Jung with his pipe, around 1935",
+  },
+  {
+    id: "dostoevsky",
+    name: "Fyodor Dostoevsky",
+    src: "/beyond/dostoevsky-1880.jpg",
+    width: 500,
+    height: 666,
+    focus: "50% 26%",
+    tilt: 1.7,
+    alt: "Fyodor Dostoevsky, photographed by Constantin Shapiro in 1880",
   },
   {
     id: "fischer",

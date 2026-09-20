@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s — Amin Dariani",
   },
   description:
-    "Amin Dariani — M.Sc. student in Automation and Control at RPTU Kaiserslautern, working on explainable AI for graph neural networks, with a background in computer vision, robot perception and model-based control.",
+    "Amin Dariani — M.Sc. student in Automation and Control at RPTU Kaiserslautern, working on explainable AI for graph neural networks, with a background in computer vision and eye tracking, robot perception and model-based control.",
   authors: [{ name: "Amin Dariani" }],
   openGraph: {
     type: "profile",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     siteName: "Amin Dariani",
     title: "Amin Dariani — Explainable and Trustworthy Machine Learning",
     description:
-      "Explainable and trustworthy machine learning, with a background in computer vision, robot perception and model-based control. Kaiserslautern, Germany.",
+      "Explainable and trustworthy machine learning, with a background in computer vision and eye tracking, robot perception and model-based control. Kaiserslautern, Germany.",
   },
   icons: { icon: "/favicon.svg" },
 };
@@ -65,6 +65,7 @@ const PERSON_LD = {
     "Graph neural networks",
     "Machine learning",
     "Computer vision",
+    "Eye tracking",
     "Robotics",
     "Control engineering",
   ],
