@@ -1,26 +1,30 @@
 import type { BookRoute } from "../book/route-order";
+import { PenNote } from "./PenNotes";
+import { GearStudy, PolyhedronStudy, SpiralStudy } from "./StudyDrawings";
 import styles from "./ManuscriptMargins.module.css";
 
-type StudyKind = "optics" | "pulley" | "wing";
-type StudyPosition = "opening" | "middle" | "closing";
+type StudyKind = "optics" | "pulley" | "wing" | "polyhedron" | "gear" | "spiral";
+type StudyPosition = "opening" | "middle" | "later" | "closing";
 
 const PAGE_STUDIES: Record<BookRoute, readonly { kind: StudyKind; position: StudyPosition }[]> = {
   "/": [
-    { kind: "optics", position: "opening" },
+    { kind: "polyhedron", position: "opening" },
+    { kind: "gear", position: "middle" },
     { kind: "wing", position: "closing" },
   ],
   "/research": [
     { kind: "optics", position: "opening" },
-    { kind: "pulley", position: "middle" },
-    { kind: "wing", position: "closing" },
+    { kind: "spiral", position: "middle" },
+    { kind: "gear", position: "later" },
+    { kind: "polyhedron", position: "closing" },
   ],
   "/cv": [
     { kind: "pulley", position: "opening" },
-    { kind: "optics", position: "middle" },
-    { kind: "wing", position: "closing" },
+    { kind: "polyhedron", position: "middle" },
+    { kind: "spiral", position: "closing" },
   ],
-  // Beyond already has its own marginal ink trail and drawings.
-  "/beyond": [],
+  // A single opening note sits above Beyond's existing marginal ink trail.
+  "/beyond": [{ kind: "wing", position: "opening" }],
 };
 
 function OpticsStudy() {
@@ -83,18 +87,25 @@ function WingStudy() {
   );
 }
 
-const STUDIES = { optics: OpticsStudy, pulley: PulleyStudy, wing: WingStudy };
+const STUDIES = {
+  optics: { Drawing: OpticsStudy, note: 1 },
+  pulley: { Drawing: PulleyStudy, note: 5 },
+  wing: { Drawing: WingStudy, note: 9 },
+  polyhedron: { Drawing: PolyhedronStudy, note: 12 },
+  gear: { Drawing: GearStudy, note: 16 },
+  spiral: { Drawing: SpiralStudy, note: 20 },
+};
 
 /** Original pen studies are ornament; they never stand in for research figures. */
 export function ManuscriptStudy({ kind, className = "" }: { kind: StudyKind; className?: string }) {
-  const Drawing = STUDIES[kind];
+  const { Drawing, note } = STUDIES[kind];
 
   return (
     <svg
       className={`${styles.study} ${className}`}
-      viewBox="0 0 170 170"
-      width="170"
-      height="170"
+      viewBox="0 0 210 270"
+      width="210"
+      height="270"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.2"
@@ -103,7 +114,28 @@ export function ManuscriptStudy({ kind, className = "" }: { kind: StudyKind; cla
       aria-hidden="true"
       focusable="false"
     >
-      <Drawing />
+      <g transform={`translate(${note % 2 ? 36 : 20} 9) rotate(${note % 2 ? 2 : -3})`}>
+        <PenNote variant={note} lines={note % 2 ? 2 : 3} className={styles.notes} />
+      </g>
+      <g transform="translate(20 41)">
+        <Drawing />
+      </g>
+      <g transform={`translate(27 231) rotate(${note % 2 ? -2 : 1})`}>
+        <PenNote variant={note + 3} lines={note % 2 ? 3 : 2} className={styles.notes} />
+      </g>
+      {/* Sideways jottings and a connecting stroke make this one small study
+          on a working sheet, rather than a diagram with a typeset caption. */}
+      {note % 2 === 0 ? (
+        <g transform="translate(8 189) rotate(-88) scale(.58)">
+          <PenNote variant={note + 7} lines={2} className={styles.notes} />
+        </g>
+      ) : (
+        <path d="M177 32c13 3 19 12 18 28m-3-5 3 6 3-6" className={styles.annotation} />
+      )}
+      <path
+        d={note % 2 ? "M44 218c26-2 41-1 61 0m-18 4 6-5 6 4" : "M32 219c32-2 69 2 96-1m6 0 13-1"}
+        className={styles.annotation}
+      />
     </svg>
   );
 }

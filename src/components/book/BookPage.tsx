@@ -29,7 +29,7 @@ export default function BookPage({ page, children }: { page: BookRoute; children
         {children}
         {page !== "/beyond" && (
           <div className="manuscript-tail" aria-hidden="true">
-            <ManuscriptStudy kind={page === "/research" ? "optics" : "wing"} />
+            <ManuscriptStudy kind={page === "/research" ? "spiral" : page === "/cv" ? "polyhedron" : "wing"} />
           </div>
         )}
       </div>

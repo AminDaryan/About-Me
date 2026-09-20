@@ -15,6 +15,8 @@
 
 .construction { opacity: 0.46; stroke-width: 0.8; }
 .inkPoint { fill: currentColor; stroke: none; }
+.notes { opacity: 0.78; }
+.annotation { opacity: 0.6; stroke-width: 0.75; }
 
 /* The reading column ends 25rem from the centre. Keep a full 3rem of clear
    paper beside it, including at the smallest width that admits a study. */
@@ -29,19 +31,22 @@
   .placement {
     position: absolute;
     left: calc(50% + 28rem);
-    width: clamp(4.5rem, calc(50vw - 30rem), 10.5rem);
+    width: clamp(4.5rem, calc(50vw - 30rem), 12rem);
   }
 
   .placement[data-position="opening"] { top: 7rem; transform: rotate(-5deg); }
   .placement[data-position="middle"] { top: 43%; transform: rotate(4deg); }
+  .placement[data-position="later"] { top: 62%; transform: rotate(-3deg); }
   .placement[data-position="closing"] { top: 78%; transform: rotate(-7deg); }
   .margins[data-page="/"] .placement[data-position="opening"] { top: 28rem; }
+  .margins[data-page="/research"] .placement[data-position="middle"] { top: 34%; }
+  .margins[data-page="/beyond"] .placement[data-position="opening"] { top: 5rem; }
 }
 
 /* Only this wider gap can hold a sketch between the fixed contents rail and
    the text. At ordinary desktop widths all drawings stay in the right margin. */
-@media (min-width: 1800px) {
-  .placement[data-position="middle"] { left: calc(50% - 38rem); }
+@media (min-width: 1920px) {
+  .placement[data-position="middle"] { left: calc(50% - 40.5rem); }
 }
 
 @media print {

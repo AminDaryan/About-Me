@@ -5,7 +5,7 @@
 /* A small closing study gives narrow sheets the same character without
    floating a drawing over a paragraph where no outer margin exists. */
 .manuscript-tail {
-  width: 5.5rem;
+  width: 8rem;
   margin: 0 auto 2.5rem;
   pointer-events: none;
   transform: rotate(-8deg);
