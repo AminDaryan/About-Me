@@ -1,80 +1,56 @@
-/**
- * The site's mark: one head, split down a full-height seam, drawn by two
- * hands. The left is the head of Leonardo's Vitruvian Man — the mass of curls
- * falling past the jaw, the heavy brow, the deep-set eye, the moustache. The
- * right is a machined shell struck through the same points: the contour cut
- * straight rather than drawn, a level brow, a panel edge across the forehead
- * and a lens where the eye should be.
- *
- * On the left the hair is the silhouette and the face begins at the temple.
- * Drawn with the skull outlined underneath it as well, the head came out with
- * two contours down that side and the hair read as a hood laid over it.
- *
- * A frontal head rather than a profile: the split is the whole idea and only a
- * face-on head has a centre to split.
- *
- * Strokes only, in one ink. The mark takes `currentColor`, so the masthead
- * decides its weight and a hover costs nothing but a colour.
- */
+/* The parted curls, long nose and narrow eye follow the supplied Vitruvian
+   head. Broad, open curls keep its silhouette legible at masthead size; the
+   other half shares its proportions with a softly rounded robot shell. */
 export default function Mark({ className = "" }: { className?: string }) {
   return (
     <svg
-      viewBox="3.5 4.5 39 39"
+      viewBox="-1 1 58 58"
       width="39"
       height="39"
       className={className}
       aria-hidden="true"
+      focusable="false"
       fill="none"
       stroke="currentColor"
+      strokeWidth="1.8"
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      {/* Four scallops from crown to jaw. Fewer and it is a hood; more and at
-          masthead size the edge fills in and reads as a plain bulge. */}
+      {/* The curls turn back into the hair rather than forming a smooth cap. */}
       <path
-        d="M23.6 6.3C17.4 5.1 11.6 6.5 9 10.5c-1.6 2.4-2 5-1.4 7.2-1.6 2.2-2 5-1 7.4-1 2.4-.6 5.2 1 7-.2 2.4 1.4 4.4 3.6 4.8 1.6.3 3-.4 3.8-1.6"
-        strokeWidth="1.6"
+        d="M33 5.5C28 3 22 4 19 7c-5-1-9 2-9 7-4 2-5 6-3 10-4 3-4 7-1 10-3 4-2 8 1 10-1 5 2 8 6 8 2 5 7 6 11 3"
+        strokeWidth="2.2"
       />
-      <path d="M9.4 13.6c1.6 1.2 2.2 3.4 1.4 5.2" strokeWidth="1.3" />
-      <path d="M8.2 21.2c1.6 1.2 2.2 3.4 1.4 5.2" strokeWidth="1.3" />
-      <path d="M8.6 29c1.4 1 2 2.8 1.4 4.4" strokeWidth="1.3" />
-      <path d="M11.5 17.2c.2-4.6 3.8-8.4 9.8-9.4" strokeWidth="1.35" />
+      <path d="M32.5 11.5c-2-4-7-4-9-1-1 2 0 4 2 4M22 7.5c-5 0-8 4-6 7" />
+      <path d="M13 15c-3 1-3 5 0 6 3 1 4-2 3-4" />
+      <path d="M10 25c-3 2-2 5 1 6 3 1 4-2 3-4" />
+      <path d="M9 36c-2 2-1 5 2 5 3 0 4-3 3-5" />
+      <path d="M12 46c-1 3 2 5 4 3M19 46c-2 5 0 8 3 7" />
 
       <path
-        d="M11.3 17c-.6 3-.7 4.8-.6 6.6.3 4.4 1.3 8.8 3.7 12.4 2.4 3.6 6 5.6 9.6 5.6"
-        strokeWidth="1.9"
+        d="M33 15c-4 0-8 1-12 0-3 3-3 7-3 11l-1 6 2 8c2 7 7 13 14 15"
+        strokeWidth="2.1"
       />
-      <path
-        d="M24 6.2l7 .8 4.4 4 1.8 6v6.5l-1.6 6.5-3 5.6-4.2 4.2H24"
-        strokeWidth="1.9"
-      />
-      <path d="M24 6.6v34.8" strokeWidth="1.3" />
+      <path d="M21 25.5c3-1.5 6-1.5 9 0" strokeWidth="2.2" />
+      <path d="M21.5 30c2-2 5-2 7.5-.5-2 2-5 2-7.5.5Z" strokeWidth="1.4" />
+      <path d="M25.5 29.5v1" strokeWidth="2.3" />
+      <path d="M30 31c0 3-1 5-3 7l3 1" strokeWidth="1.5" />
+      <path d="M26 44c2-2 4-2 7-1M28 47h5" strokeWidth="1.5" />
 
-      <path d="M13 17.4c2.4-1.4 5.6-1.2 7.8.6" strokeWidth="1.5" />
+      {/* The shell mirrors the width of the face, excluding its curls, so
+          both halves meet at the same eye line and chin. */}
       <path
-        d="M14.2 22c1.4-2.2 4.8-2.2 6.2 0-1.4 2.2-4.8 2.2-6.2 0z"
-        strokeWidth="1.35"
+        d="M33 5.5c9 0 15.5 5.5 15.5 15v16C48.5 46 42 53 33 55"
+        strokeWidth="2.3"
       />
-      <circle cx="17.3" cy="22" r="1.5" fill="currentColor" stroke="none" />
-      {/* Moustache and mouth in one stroke. Drawn as two, the pair sat a unit
-          and a half apart and merged into a single thick bar at the size this
-          is used. No nose on either half: the seam runs where the bridge would
-          be and the eye reads it as one. */}
-      <path d="M23.8 33.4c-1.9.1-3.3.6-4.4 1.4" strokeWidth="1.45" />
-
-      {/* A panel edge cut across the forehead, and nothing following the curve
-          of the skull. Every seam that ran with the contour combed itself into
-          hair — which, with a head of real hair on the other side, made the
-          thing a head parted down the middle rather than built in two
-          materials. */}
-      <path d="M25.2 12.4l8.6 1.4" strokeWidth="1.35" />
-      {/* The cheek panel stands out on the edge of the plate. Set in under the
-          lens it hung off it and read as a tear. */}
-      <path d="M34.6 26.2l-1.1 4.4" strokeWidth="1.3" />
-      <circle cx="30.8" cy="21.5" r="4.4" strokeWidth="1.45" />
-      <circle cx="30.8" cy="21.5" r="1.9" fill="currentColor" stroke="none" />
-      <path d="M26.8 16.9l7.8 1" strokeWidth="1.35" />
-      <path d="M24 33.7l5.4.5" strokeWidth="1.35" />
+      <path d="M48.5 25h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-1" strokeWidth="2" />
+      <path d="M33 5.5V55" strokeWidth="1.7" />
+      <path d="M37 12.5h2.5c2 0 3.5 1 4.3 2.8" strokeWidth="1.6" />
+      {/* A smiling lens and open smile stay friendly even at favicon size. */}
+      <circle cx="40.8" cy="29.5" r="4.7" strokeWidth="1.8" />
+      <path d="M38.8 30c.7-2 3.3-2 4 0" strokeWidth="1.6" />
+      <path d="M40.5 37.8h2.6" strokeWidth="1.6" />
+      <path d="M33 43c2.1 2.8 5.1 2.8 7.2-.2" strokeWidth="1.9" />
     </svg>
   );
 }

@@ -27,10 +27,10 @@ export default function Masthead() {
 
   return (
     <header className="no-print sticky top-0 z-50 border-b border-rule bg-paper">
-      <div className="flex items-center justify-between gap-x-5 px-5 py-4 sm:px-gutter">
+      <div className="flex items-center justify-between gap-x-3 px-5 py-4 min-[360px]:gap-x-5 sm:px-gutter">
         <nav
           aria-label="Primary"
-          className="flex items-baseline gap-x-3.5 sm:gap-x-6"
+          className="flex items-baseline gap-x-2.5 min-[360px]:gap-x-3.5 sm:gap-x-6"
         >
           {NAV.map((item) => {
             const active =

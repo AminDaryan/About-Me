@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "generate:favicon": "node scripts/generate-favicon.mjs",
+    "predev": "npm run generate:favicon",
     "dev": "next dev",
+    "prebuild": "npm run generate:favicon",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

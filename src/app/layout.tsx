@@ -32,7 +32,9 @@ export const metadata: Metadata = {
     description:
       "Explainable and trustworthy machine learning, with a background in computer vision and eye tracking, robot perception and model-based control. Kaiserslautern, Germany.",
   },
-  icons: { icon: "/favicon.svg" },
+  icons: {
+    icon: { url: "/favicon.svg?v=3", type: "image/svg+xml", sizes: "any" },
+  },
 };
 
 const PERSON_LD = {
