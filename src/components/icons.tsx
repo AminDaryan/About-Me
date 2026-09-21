@@ -107,7 +107,7 @@ export function GlobeIcon({ className = "" }: IconProps) {
 }
 
 /** ResearchGate's "RG", drawn at the same hairline weight in the same frame as
-    LinkedIn's "in", so the two sit side by side as a pair. */
+    LinkedIn's "in", so the profiles sit side by side as one row. */
 export function ResearchGateIcon({ className = "" }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden="true" focusable="false">
@@ -116,6 +116,37 @@ export function ResearchGateIcon({ className = "" }: IconProps) {
       <path d="M5.6 17.5 V6.5 H8.3 C9.9 6.5 10.8 7.5 10.8 8.95 C10.8 10.4 9.9 11.4 8.3 11.4 H5.6 M8.4 11.4 L11 17.5" {...STROKE} />
       {/* G: the open ring and its bar */}
       <path d="M18.9 8.3 C18.3 7.1 17.3 6.4 16 6.4 C13.8 6.4 12.6 8.8 12.6 12 C12.6 15.2 13.8 17.6 16 17.6 C17.9 17.6 19 16.3 19.1 14.3 V12.9 H16.4" {...STROKE} />
+    </svg>
+  );
+}
+
+/** ORCID's "iD", in the frame the other profiles share rather than its own
+    green disc: the letters are what a reader knows it by. */
+export function OrcidIcon({ className = "" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" focusable="false">
+      <rect x="1.5" y="1.5" width="21" height="21" rx="3.5" {...STROKE} />
+      {/* "iD": the i's stem and dot, then the D's stem and bowl */}
+      <path d="M7 10.25 V17.5" {...STROKE} />
+      <circle cx="7" cy="6.9" r="0.95" fill="currentColor" />
+      <path d="M10.6 17.5 V6.5 H13.1 C16.3 6.5 18.1 8.8 18.1 12 C18.1 15.2 16.3 17.5 13.1 17.5 Z" {...STROKE} />
+    </svg>
+  );
+}
+
+/** GitHub's cat, drawn in outline at the same weight: the filled silhouette
+    would be the one solid shape in a row of hairlines. Its neck runs down to
+    the frame, as it runs to the edge of GitHub's own disc. */
+export function GitHubIcon({ className = "" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" focusable="false">
+      <rect x="1.5" y="1.5" width="21" height="21" rx="3.5" {...STROKE} />
+      {/* The head and its two ears, then the tail curling up beside the neck */}
+      <path
+        d="M9.19 22.5 V19.11 C6.03 18.52 4.28 16.42 4.28 13.26 C4.28 11.85 4.75 10.68 5.57 9.75 C5.33 8.81 5.33 7.41 5.92 6.12 C7.2 6.12 8.37 6.71 9.43 7.52 C10.25 7.29 11.12 7.17 12 7.17 C12.88 7.17 13.75 7.29 14.57 7.52 C15.63 6.71 16.8 6.12 18.08 6.12 C18.67 7.41 18.67 8.81 18.43 9.75 C19.25 10.68 19.72 11.85 19.72 13.26 C19.72 16.42 17.97 18.52 14.81 19.11 V22.5"
+        {...STROKE}
+      />
+      <path d="M9.19 20.75 C6.85 21.33 6.03 19.46 4.75 18.99" {...STROKE} />
     </svg>
   );
 }

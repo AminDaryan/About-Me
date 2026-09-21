@@ -1,5 +1,11 @@
-import type { ComponentProps, ReactNode } from "react";
-import { LinkedInIcon, MailIcon, ResearchGateIcon } from "./icons";
+import type { ComponentProps, ComponentType, ReactNode } from "react";
+import {
+  GitHubIcon,
+  LinkedInIcon,
+  MailIcon,
+  OrcidIcon,
+  ResearchGateIcon,
+} from "./icons";
 
 /* Shared presentational pieces. None of them holds state or runs an effect, so
    each renders on the server or inside a client figure alike. (Entry lives in
@@ -39,6 +45,7 @@ export function PageHeader({
   kicker,
   title,
   display = false,
+  titleHidden = false,
   aside,
   id,
   rail,
@@ -49,6 +56,11 @@ export function PageHeader({
   title: ReactNode;
   /** Set at display size — the front page's greeting, which is not a title. */
   display?: boolean;
+  /** Keeps the kicker and the title off the screen, for a page whose head
+      opens on the lines under it: /cv. They stay as the page's h1 for a
+      screen reader, and come back in print, where nothing else on the sheet
+      would say whose it is — the masthead and the footer do not print. */
+  titleHidden?: boolean;
   /** Set beside the heading where there is room for it: the portrait. */
   aside?: ReactNode;
   id?: string;
@@ -57,8 +69,8 @@ export function PageHeader({
   rail?: string;
   children?: ReactNode;
 }) {
-  const text = (
-    <div>
+  const heading = (
+    <>
       {kicker && <p className="label">{kicker}</p>}
       <h1
         className={`${kicker ? "mt-2 " : ""}${
@@ -67,6 +79,16 @@ export function PageHeader({
       >
         {title}
       </h1>
+    </>
+  );
+
+  const text = (
+    <div>
+      {titleHidden ? (
+        <div className="sr-only print:not-sr-only">{heading}</div>
+      ) : (
+        heading
+      )}
       {/* The lines under the title stand on the title's own edge and run the
           width of the page. They were moved in to the inner edge once, so that
           they would end where the rules below end, and that left a hole a
@@ -74,7 +96,9 @@ export function PageHeader({
           side of it; then they were held at the measure, and stopped a margin
           short of every rule below them. Beside the portrait they are bounded
           by the column they share with it. */}
-      {children && <div className="mt-8">{children}</div>}
+      {children && (
+        <div className={titleHidden ? "print:mt-8" : "mt-8"}>{children}</div>
+      )}
     </div>
   );
 
@@ -279,22 +303,63 @@ export function Labelled({
   );
 }
 
+/* Amin's profiles, in the order the footer sets them. They stood as a line of
+   addresses in the CV's head as well until 2026-09-22, when he asked for that
+   head to go and for GitHub and ORCID to join the others here; this is now the
+   one place on the page they are set. Each tooltip is one short word: a
+   tooltip is laid out even while it is invisible, and "ORCID" with its iD
+   after it ran 200px past a phone's edge and let the whole page scroll
+   sideways. The iD is in the link's accessible name. */
+const PROFILES: {
+  href: string;
+  label: string;
+  tip: string;
+  Icon: ComponentType<{ className?: string }>;
+}[] = [
+  {
+    href: "https://www.linkedin.com/in/amin-dariani/",
+    label: "LinkedIn profile",
+    tip: "LinkedIn",
+    Icon: LinkedInIcon,
+  },
+  {
+    href: "https://www.researchgate.net/profile/Amin-Amir-Baglouee-Dariani",
+    label: "ResearchGate profile",
+    tip: "ResearchGate",
+    Icon: ResearchGateIcon,
+  },
+  {
+    href: "https://orcid.org/0009-0003-6226-2030",
+    label: "ORCID record 0009-0003-6226-2030",
+    tip: "ORCID",
+    Icon: OrcidIcon,
+  },
+  {
+    href: "https://github.com/AminDaryan",
+    label: "GitHub profile",
+    tip: "GitHub",
+    Icon: GitHubIcon,
+  },
+];
+
 /**
- * The foot of every page is the way to reach Amin: two words and two icons,
- * set as quietly as the line they replaced.
+ * The foot of every page is the way to reach Amin: two words and a row of
+ * icons, set as quietly as the line they replaced.
  *
  * It was a line of caps under a hairline — the town, and the month of the last
  * update — and Get in touch was a full section at the end of the home page
  * alone, so a reader who came in on /cv or /research and read to the end found
  * a date and no address. Amin asked for the invitation in the footer's place,
  * on every page, as unassuming as the footer was; then for its sentence to go
- * and the icons to stand beside the words. The town is in the CV's head, and a
- * month stamped on the foot of a page is one more fact to keep true by hand.
+ * and the icons to stand beside the words. A month stamped on the foot of a
+ * page is one more fact to keep true by hand.
  *
  * The icons stand on the left with the words rather than across the row from
  * them: in the right-hand corner they sat under the back-to-top button, which
- * is fixed there, and it covered their tooltips. The heading carries the id Fig.
- * 1's last stop links to, so the arrival hairline marks it like any other h2.
+ * is fixed there, and it covered their tooltips. They wrap as a row of their
+ * own: on a phone the address is set beside the envelope, and with it five
+ * icons are wider than the screen. The heading carries the id Fig. 1's last
+ * stop links to, so the arrival hairline marks it like any other h2.
  */
 export function Footer() {
   return (
@@ -305,7 +370,7 @@ export function Footer() {
         </h2>
         {/* The address is the university one, never a personal mailbox: it is
             published on a page this crawlable, and it will be harvested. */}
-        <ul className="m-0 flex list-none items-center gap-x-3 p-0">
+        <ul className="m-0 flex list-none flex-wrap items-center gap-x-3 p-0">
           <li>
             <a
               className="contact-icon"
@@ -319,28 +384,19 @@ export function Footer() {
               </span>
             </a>
           </li>
-          <li>
-            <ExternalLink
-              className="contact-icon"
-              href="https://www.linkedin.com/in/amin-dariani/"
-              rel="me"
-              label="LinkedIn profile"
-              tip="LinkedIn"
-            >
-              <LinkedInIcon className="h-[1.75rem] w-[1.75rem]" />
-            </ExternalLink>
-          </li>
-          <li>
-            <ExternalLink
-              className="contact-icon"
-              href="https://www.researchgate.net/profile/Amin-Amir-Baglouee-Dariani"
-              rel="me"
-              label="ResearchGate profile"
-              tip="ResearchGate"
-            >
-              <ResearchGateIcon className="h-[1.75rem] w-[1.75rem]" />
-            </ExternalLink>
-          </li>
+          {PROFILES.map(({ href, label, tip, Icon }) => (
+            <li key={href}>
+              <ExternalLink
+                className="contact-icon"
+                href={href}
+                rel="me"
+                label={label}
+                tip={tip}
+              >
+                <Icon className="h-[1.75rem] w-[1.75rem]" />
+              </ExternalLink>
+            </li>
+          ))}
         </ul>
       </Wrap>
     </footer>

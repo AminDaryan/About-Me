@@ -31,8 +31,9 @@ import {
 export const metadata: Metadata = {
   alternates: { canonical: "/cv" },
   /* The full name leads the title here, the page a search for it should
-     land on: the name set large on the page is the one Amin goes by, and the
-     title template would add only that. */
+     land on: the title template would add only the name Amin goes by. Since
+     the page's own head no longer sets either name, the title, the
+     description and the structured data are where a search finds it. */
   title: { absolute: "Amin Amir Baglouee Dariani — Curriculum Vitae" },
   description:
     "Curriculum vitae of Amin Dariani (Amin Amir Baglouee Dariani) — M.Sc. Automation and Control, RPTU Kaiserslautern, with a thesis on explainable AI for graph neural networks. Research at Fraunhofer IOSB, DFKI and Ferdowsi University of Mashhad.",
@@ -188,13 +189,6 @@ const SKILLS: {
   },
 ];
 
-const PROFILES = [
-  { label: "linkedin.com/in/amin-dariani", href: "https://www.linkedin.com/in/amin-dariani/" },
-  { label: "github.com/AminDaryan", href: "https://github.com/AminDaryan" },
-  { label: "ORCID 0009-0003-6226-2030", href: "https://orcid.org/0009-0003-6226-2030" },
-  { label: "ResearchGate", href: "https://www.researchgate.net/profile/Amin-Amir-Baglouee-Dariani" },
-];
-
 /**
  * An institution's mark, linking to its own site. It opens in a new tab: this
  * page is a reference document, and losing your place in a CV to go and look at
@@ -247,31 +241,15 @@ function Modules({ items }: { items: Module[] }) {
 export default function CV() {
   return (
     <BookPage page="/cv">
-      {/* The letterhead, and the masthead's cue to hold its own copy of the
-          name back while this one is on screen. It stays because a CV is a
-          document before it is a web page: the masthead and the footer are
-          both `no-print`, so without these two lines the printed CV would
-          carry no name and no address at all. */}
-      <PageHeader kicker="Curriculum Vitae" title="Amin Dariani">
-        <p>
-          Kaiserslautern, Germany
-          {PROFILES.map((p) => (
-            <span key={p.href}>
-              {" · "}
-              <ExternalLink href={p.href} rel="me" className="link whitespace-nowrap">
-                {p.label}
-              </ExternalLink>
-            </span>
-          ))}
-        </p>
-        {/* The name in full, as Amin gives it, under the one he goes by: a
-            committee member who searches for the full name should find this
-            page, and a reader who meets both should know they are one
-            person. His paper's byline abbreviates it as "A. Amir-B.D.". */}
-        <Labelled label="Full name" className="mt-5">
-          <p>Amin Amir Baglouee Dariani</p>
-        </Labelled>
-        <Labelled label="Research focus" className="mt-5">
+      {/* The page opens on the research focus. Amin asked on 2026-09-22 for
+          everything above it to go — the letterhead's name, the town, the
+          profile links and the full name — and for GitHub and ORCID to join
+          the other profiles in the footer. The name and the page's kind stay
+          as its h1, off the screen, because a screen reader still needs to
+          hear what page this is, and in print, because the masthead and the
+          footer do not print and the sheet would otherwise be nobody's. */}
+      <PageHeader kicker="Curriculum Vitae" title="Amin Dariani" titleHidden>
+        <Labelled label="Research focus">
           <p>
             Explainable and trustworthy machine learning — making what a model
             has learned inspectable, and checkable rather than simply believed.

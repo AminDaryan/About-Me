@@ -48,20 +48,18 @@ export default function Home() {
           longer sets the name at all — its mark carries it as an accessible
           name — so on this page the surname is in the title bar and nowhere
           else, which is on purpose: this line is for the reader. */}
-      <ManuscriptRegion kind="polyhedron">
-        <PageHeader
-          id="top"
-          rail="Introduction"
-          display
-          title={<>Hi, I&rsquo;m Amin.</>}
-          aside={<Portrait />}
-        >
-          <p className="text-lede italic">
-            I work on robots and AI — computer vision, eye tracking and control
-            of real machines — and on explaining what a model has learned.
-          </p>
-        </PageHeader>
-      </ManuscriptRegion>
+      <PageHeader
+        id="top"
+        rail="Introduction"
+        display
+        title={<>Hi, I&rsquo;m Amin.</>}
+        aside={<Portrait />}
+      >
+        <p className="text-lede italic">
+          I work on robots and AI — computer vision, eye tracking and control
+          of real machines — and on explaining what a model has learned.
+        </p>
+      </PageHeader>
 
       <Section id="background" rail="Background">
         <div className="leaf-text">
@@ -98,21 +96,27 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section title="Read on">
-        <ul className="signposts m-0 list-none p-0">
-          {PAGES.map((page) => (
-            <li key={page.href}>
-              <BookLink className="signpost" href={page.href}>
-                <span className="signpost-name">{page.name}</span>
-                <span className="signpost-note">{page.note}</span>
-                <span className="signpost-arrow" aria-hidden="true">
-                  →
-                </span>
-              </BookLink>
-            </li>
-          ))}
-        </ul>
-      </Section>
+      {/* The page's one study hangs beside the signposts, where Amin asked for
+          it on 2026-09-22, and no longer beside the portrait: the paper to the
+          portrait's right is left empty, and the last screenful, three lines
+          of signposts, gets the change of texture instead. */}
+      <ManuscriptRegion kind="polyhedron">
+        <Section title="Read on">
+          <ul className="signposts m-0 list-none p-0">
+            {PAGES.map((page) => (
+              <li key={page.href}>
+                <BookLink className="signpost" href={page.href}>
+                  <span className="signpost-name">{page.name}</span>
+                  <span className="signpost-note">{page.note}</span>
+                  <span className="signpost-arrow" aria-hidden="true">
+                    →
+                  </span>
+                </BookLink>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      </ManuscriptRegion>
     </BookPage>
   );
 }
