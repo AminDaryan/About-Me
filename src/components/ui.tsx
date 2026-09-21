@@ -356,48 +356,57 @@ const PROFILES: {
  *
  * The icons stand on the left with the words rather than across the row from
  * them: in the right-hand corner they sat under the back-to-top button, which
- * is fixed there, and it covered their tooltips. They wrap as a row of their
- * own: on a phone the address is set beside the envelope, and with it five
- * icons are wider than the screen. The heading carries the id Fig. 1's last
- * stop links to, so the arrival hairline marks it like any other h2.
+ * is fixed there, and it covered their tooltips. The heading carries the id
+ * Fig. 1's last stop links to, so the arrival hairline marks it like any other
+ * h2.
+ *
+ * On a phone the address is set beside the envelope, and with it five icons
+ * are wider than the screen. Left to wrap one at a time, they broke wherever
+ * the width fell — GitHub alone on a second row at 378px, two icons at 360 —
+ * so the profiles are one group that never splits. Below `sm` on a touch
+ * screen the heading, the address and the profiles stand as three rows at
+ * every width — with room for the heading beside the other two, it floated
+ * halfway between them — and the profiles are drawn out to the envelope's
+ * left edge: an icon sits 8px inside its 44px target, and the envelope,
+ * widened by its address, does not.
  */
 export function Footer() {
   return (
     <footer className="no-print mt-[clamp(3rem,8vw,5.5rem)] border-t border-rule">
       <Wrap className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-[1.3rem] pb-[2rem]">
-        <h2 id="contact" className="label">
+        <h2 id="contact" className="label max-sm:[@media(hover:none)]:basis-full">
           Get in touch
         </h2>
         {/* The address is the university one, never a personal mailbox: it is
             published on a page this crawlable, and it will be harvested. */}
-        <ul className="m-0 flex list-none flex-wrap items-center gap-x-3 p-0">
-          <li>
-            <a
-              className="contact-icon"
-              href="mailto:rax06jud@rptu.de"
-              aria-label="Email: rax06jud@rptu.de"
-              data-tip="rax06jud@rptu.de"
-            >
-              <MailIcon className="h-[1.6rem] w-auto" />
-              <span className="contact-address" aria-hidden="true">
-                rax06jud@rptu.de
-              </span>
-            </a>
-          </li>
-          {PROFILES.map(({ href, label, tip, Icon }) => (
-            <li key={href}>
-              <ExternalLink
-                className="contact-icon"
-                href={href}
-                rel="me"
-                label={label}
-                tip={tip}
-              >
-                <Icon className="h-[1.75rem] w-[1.75rem]" />
-              </ExternalLink>
-            </li>
-          ))}
-        </ul>
+        <div className="flex flex-wrap items-center gap-x-3 max-sm:[@media(hover:none)]:grid max-sm:[@media(hover:none)]:justify-items-start">
+          <a
+            className="contact-icon"
+            href="mailto:rax06jud@rptu.de"
+            aria-label="Email: rax06jud@rptu.de"
+            data-tip="rax06jud@rptu.de"
+          >
+            <MailIcon className="h-[1.6rem] w-auto" />
+            <span className="contact-address" aria-hidden="true">
+              rax06jud@rptu.de
+            </span>
+          </a>
+          <ul className="m-0 flex list-none items-center gap-x-3 p-0 max-sm:[@media(hover:none)]:-ml-2">
+            {PROFILES.map(({ href, label, tip, Icon }) => (
+              <li key={href}>
+                <ExternalLink
+                  className="contact-icon"
+                  href={href}
+                  rel="me"
+                  label={label}
+                  tip={tip}
+                >
+                  <Icon className="h-[1.75rem] w-[1.75rem]" />
+                </ExternalLink>
+              </li>
+            ))}
+          </ul>
+        </div>
       </Wrap>
     </footer>
   );
