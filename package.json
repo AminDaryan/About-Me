@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "generate:favicon": "node scripts/generate-favicon.mjs",
+    "generate:og-image": "node --experimental-websocket scripts/generate-og-image.mjs",
     "predev": "npm run generate:favicon",
     "dev": "next dev",
     "prebuild": "npm run generate:favicon",

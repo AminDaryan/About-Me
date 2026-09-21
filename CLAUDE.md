@@ -345,6 +345,12 @@ npx eslint src      # must be clean
 yarn build          # must succeed before committing
 ```
 
+If you change the home page's opening line or the portrait, run
+`yarn generate:og-image` and commit the two files it writes
+(`src/app/opengraph-image.jpg` and its `.alt.txt`). That card is what LinkedIn
+and every other site show for a shared link, and it quotes the line; the build
+cannot remake it, because the machine that builds the site has no Chrome.
+
 There is no Prettier config and no formatter in the dependencies: the
 formatting is hand-set and matches itself. Do not run a formatter over the
 repo — it would rewrite every file and bury the change you actually made.

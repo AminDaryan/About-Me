@@ -32,8 +32,17 @@ export const metadata: Metadata = {
     description:
       "Explainable and trustworthy machine learning, with a background in computer vision and eye tracking, robot perception and model-based control. Kaiserslautern, Germany.",
   },
+  /* The masthead's mark, three ways: the SVG for browsers that take one, the
+     .ico for Safari and for anything that asks for /favicon.ico on its own,
+     and a 180px PNG for an iPhone's home screen. The .ico is listed at 32x32
+     so that a browser offered both picks the SVG. The ?v= is bumped whenever
+     the mark changes, or a browser keeps the icon it cached. */
   icons: {
-    icon: { url: "/favicon.svg?v=3", type: "image/svg+xml", sizes: "any" },
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.svg?v=4", type: "image/svg+xml" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
 };
 
