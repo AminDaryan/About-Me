@@ -1,5 +1,5 @@
 import type { ComponentProps, ReactNode } from "react";
-import { LinkedInIcon, MailIcon } from "./icons";
+import { LinkedInIcon, MailIcon, ResearchGateIcon } from "./icons";
 
 /* Shared presentational pieces. None of them holds state or runs an effect, so
    each renders on the server or inside a client figure alike. (Entry lives in
@@ -328,6 +328,17 @@ export function Footer() {
               tip="LinkedIn"
             >
               <LinkedInIcon className="h-[1.75rem] w-[1.75rem]" />
+            </ExternalLink>
+          </li>
+          <li>
+            <ExternalLink
+              className="contact-icon"
+              href="https://www.researchgate.net/profile/Amin-Amir-Baglouee-Dariani"
+              rel="me"
+              label="ResearchGate profile"
+              tip="ResearchGate"
+            >
+              <ResearchGateIcon className="h-[1.75rem] w-[1.75rem]" />
             </ExternalLink>
           </li>
         </ul>

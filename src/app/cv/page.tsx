@@ -30,9 +30,12 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/cv" },
-  title: "Curriculum Vitae",
+  /* The full name leads the title here, the page a search for it should
+     land on: the name set large on the page is the one Amin goes by, and the
+     title template would add only that. */
+  title: { absolute: "Amin Amir Baglouee Dariani — Curriculum Vitae" },
   description:
-    "Curriculum vitae of Amin Dariani — M.Sc. Automation and Control, RPTU Kaiserslautern, with a thesis on explainable AI for graph neural networks. Research at Fraunhofer IOSB, DFKI and Ferdowsi University of Mashhad.",
+    "Curriculum vitae of Amin Dariani (Amin Amir Baglouee Dariani) — M.Sc. Automation and Control, RPTU Kaiserslautern, with a thesis on explainable AI for graph neural networks. Research at Fraunhofer IOSB, DFKI and Ferdowsi University of Mashhad.",
 };
 
 /* Quoted verbatim from the letters of recommendation, attributed as the authors
@@ -189,6 +192,7 @@ const PROFILES = [
   { label: "linkedin.com/in/amin-dariani", href: "https://www.linkedin.com/in/amin-dariani/" },
   { label: "github.com/AminDaryan", href: "https://github.com/AminDaryan" },
   { label: "ORCID 0009-0003-6226-2030", href: "https://orcid.org/0009-0003-6226-2030" },
+  { label: "ResearchGate", href: "https://www.researchgate.net/profile/Amin-Amir-Baglouee-Dariani" },
 ];
 
 /**
@@ -260,6 +264,13 @@ export default function CV() {
             </span>
           ))}
         </p>
+        {/* The name in full, as Amin gives it, under the one he goes by: a
+            committee member who searches for the full name should find this
+            page, and a reader who meets both should know they are one
+            person. His paper's byline abbreviates it as "A. Amir-B.D.". */}
+        <Labelled label="Full name" className="mt-5">
+          <p>Amin Amir Baglouee Dariani</p>
+        </Labelled>
         <Labelled label="Research focus" className="mt-5">
           <p>
             Explainable and trustworthy machine learning — making what a model

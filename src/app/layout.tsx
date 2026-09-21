@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s — Amin Dariani",
   },
   description:
-    "Amin Dariani — M.Sc. student in Automation and Control at RPTU Kaiserslautern, working on explainable AI for graph neural networks, with a background in computer vision and eye tracking, robot perception and model-based control.",
+    "Amin Dariani (Amin Amir Baglouee Dariani) — M.Sc. student in Automation and Control at RPTU Kaiserslautern, working on explainable AI for graph neural networks, with a background in computer vision and eye tracking, robot perception and model-based control.",
   authors: [{ name: "Amin Dariani" }],
   openGraph: {
     type: "profile",
@@ -80,13 +80,16 @@ const PERSON_LD = {
     "Robotics",
     "Control engineering",
   ],
-  /* Professional identities only, each one listed on the PhD CV. ORCID and
-     GitHub were checked against the name before going in; LinkedIn refuses
-     automated requests, so its handle is taken from the CV as written. */
+  /* Professional identities only. ORCID and GitHub were checked against the
+     name before going in; LinkedIn refuses automated requests, so its handle
+     is taken from the CV as written; ResearchGate was given by Amin, and its
+     address carries his full name, which is what ties a search for it to this
+     site. */
   sameAs: [
     "https://www.linkedin.com/in/amin-dariani/",
     "https://github.com/AminDaryan",
     "https://orcid.org/0009-0003-6226-2030",
+    "https://www.researchgate.net/profile/Amin-Amir-Baglouee-Dariani",
   ],
 };
 

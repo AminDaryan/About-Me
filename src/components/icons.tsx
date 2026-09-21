@@ -106,6 +106,20 @@ export function GlobeIcon({ className = "" }: IconProps) {
   );
 }
 
+/** ResearchGate's "RG", drawn at the same hairline weight in the same frame as
+    LinkedIn's "in", so the two sit side by side as a pair. */
+export function ResearchGateIcon({ className = "" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" focusable="false">
+      <rect x="1.5" y="1.5" width="21" height="21" rx="3.5" {...STROKE} />
+      {/* R: stem, bowl and leg */}
+      <path d="M5.6 17.5 V6.5 H8.3 C9.9 6.5 10.8 7.5 10.8 8.95 C10.8 10.4 9.9 11.4 8.3 11.4 H5.6 M8.4 11.4 L11 17.5" {...STROKE} />
+      {/* G: the open ring and its bar */}
+      <path d="M18.9 8.3 C18.3 7.1 17.3 6.4 16 6.4 C13.8 6.4 12.6 8.8 12.6 12 C12.6 15.2 13.8 17.6 16 17.6 C17.9 17.6 19 16.3 19.1 14.3 V12.9 H16.4" {...STROKE} />
+    </svg>
+  );
+}
+
 export function LinkedInIcon({ className = "" }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden="true" focusable="false">
