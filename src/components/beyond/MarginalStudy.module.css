@@ -38,6 +38,10 @@
    CLAUDE.md §1a puts on any mark a reader is meant to see. At .70 they are
    3.45:1, which is the least that clears it with anything in hand. */
 .detail { opacity: .7; }
+.fine { opacity: .46; stroke-width: .78; }
+.shade { fill: currentColor; fill-opacity: .13; stroke: none; }
+.glass { fill: currentColor; fill-opacity: .08; stroke: none; }
+.highlight { stroke: var(--color-paper); stroke-width: .9; opacity: .9; }
 /* The line being written is the figure's subject, not one of the page's printed
    rules. Set in the same band as the rules, 6px from two of them and drawn with
    the same curve, it could not be told from them, so the drawing showed a nib

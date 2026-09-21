@@ -3,11 +3,11 @@ import BookLink from "@/components/book/BookLink";
 import Settle from "@/components/Settle";
 import Portrait from "@/components/Portrait";
 import Journey from "@/components/journey/Journey";
-import { LinkedInIcon, MailIcon } from "@/components/icons";
-import { ExternalLink, PageHeader, Section } from "@/components/ui";
+import { ManuscriptRegion } from "@/components/manuscript/ManuscriptMargins";
+import { PageHeader, Section } from "@/components/ui";
 
-/* The front page is not a numbered document, and its two headings no longer
-   pretend to be: sections I and II sat under three sections that have no
+/* The front page is not a numbered document, and its heading no longer
+   pretends to be: sections I and II sat under three sections that have no
    heading at all, which reads as a numbering with the beginning missing. The
    CV and the research page are enumerated because they really are records with
    parts; this page is one piece of prose and a figure.
@@ -48,23 +48,25 @@ export default function Home() {
           longer sets the name at all — its mark carries it as an accessible
           name — so on this page the surname is in the title bar and nowhere
           else, which is on purpose: this line is for the reader. */}
-      <PageHeader
-        id="top"
-        rail="Introduction"
-        display
-        title={<>Hi, I&rsquo;m Amin.</>}
-        aside={<Portrait />}
-      >
-        <p className="text-lede italic">
-          I work on robots and AI — computer vision, eye tracking and control
-          of real machines — and on explaining what a model has learned.
-        </p>
-      </PageHeader>
+      <ManuscriptRegion kind="polyhedron">
+        <PageHeader
+          id="top"
+          rail="Introduction"
+          display
+          title={<>Hi, I&rsquo;m Amin.</>}
+          aside={<Portrait />}
+        >
+          <p className="text-lede italic">
+            I work on robots and AI — computer vision, eye tracking and control
+            of real machines — and on explaining what a model has learned.
+          </p>
+        </PageHeader>
+      </ManuscriptRegion>
 
       <Section id="background" rail="Background">
         <div className="leaf-text">
           <Settle>
-            <p className="drop-cap max-w-measure">
+            <p className="drop-cap">
               At the moment I am a master&rsquo;s student in Automation and
               Control at RPTU Kaiserslautern, writing my thesis with Fraunhofer
               IOSB and KIT on explaining graph neural networks. A prediction is
@@ -76,7 +78,7 @@ export default function Home() {
           </Settle>
 
           <Settle>
-            <p className="max-w-measure">
+            <p>
               I came to this from mechanical engineering, by way of a robotics
               lab — where the work on a paraplegic exoskeleton became my first
               paper — and four years building software professionally. I came
@@ -110,49 +112,6 @@ export default function Home() {
             </li>
           ))}
         </ul>
-      </Section>
-
-      <Section id="contact" title="Get in touch">
-        {/* On the heading's own edge, not the inner one. The house rule puts
-            running text on the inner edge so that it ends where the section
-            rules end; here it left the closing paragraph and its two icons
-            indented under a flush heading with nothing in the margin beside
-            them, and Amin asked for it squared up. The measure still holds. */}
-        <div className="max-w-measure">
-          <p>
-            I am glad to hear from anyone working on related problems — and
-            especially from groups with doctoral openings.
-          </p>
-          {/* Two ways to reach me, as icons. The address is the university
-              one, never a personal mailbox: it is published on a page this
-              crawlable, and it will be harvested. Each icon link names
-              itself for screen readers and shows a tooltip on hover and
-              focus. No rule above them: the section's own rule is a line
-              away, and a second one here read as a section of its own. */}
-          <ul className="mt-6 flex list-none flex-wrap items-center gap-x-5 gap-y-8 p-0 pb-6">
-            <li>
-              <a
-                className="contact-icon"
-                href="mailto:rax06jud@rptu.de"
-                aria-label="Email: rax06jud@rptu.de"
-                data-tip="rax06jud@rptu.de"
-              >
-                <MailIcon className="h-[1.6rem] w-auto" />
-              </a>
-            </li>
-            <li>
-              <ExternalLink
-                className="contact-icon"
-                href="https://www.linkedin.com/in/amin-dariani/"
-                rel="me"
-                label="LinkedIn profile"
-                tip="LinkedIn"
-              >
-                <LinkedInIcon className="h-[1.75rem] w-[1.75rem]" />
-              </ExternalLink>
-            </li>
-          </ul>
-        </div>
       </Section>
     </BookPage>
   );

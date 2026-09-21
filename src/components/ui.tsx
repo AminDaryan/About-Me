@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from "react";
+import { LinkedInIcon, MailIcon } from "./icons";
 
 /* Shared presentational pieces. None of them holds state or runs an effect, so
    each renders on the server or inside a client figure alike. (Entry lives in
@@ -66,14 +67,14 @@ export function PageHeader({
       >
         {title}
       </h1>
-      {/* The lines under the title stand on the title's own edge, at the
-          measure. They were moved in to the inner edge once, so that they
-          would end where the rules below end, and that left a hole a margin
-          wide under the title with the drop cap floating at the far side of
-          it: the head read as two blocks that had slipped apart. A page head
-          is a title block, not a section, and a title and the paragraph that
-          opens under it share one edge. */}
-      {children && <div className="mt-8 max-w-measure">{children}</div>}
+      {/* The lines under the title stand on the title's own edge and run the
+          width of the page. They were moved in to the inner edge once, so that
+          they would end where the rules below end, and that left a hole a
+          margin wide under the title with the drop cap floating at the far
+          side of it; then they were held at the measure, and stopped a margin
+          short of every rule below them. Beside the portrait they are bounded
+          by the column they share with it. */}
+      {children && <div className="mt-8">{children}</div>}
     </div>
   );
 
@@ -278,12 +279,55 @@ export function Labelled({
   );
 }
 
+/**
+ * The foot of every page is the way to reach Amin: two words and two icons,
+ * set as quietly as the line they replaced.
+ *
+ * It was a line of caps under a hairline — the town, and the month of the last
+ * update — and Get in touch was a full section at the end of the home page
+ * alone, so a reader who came in on /cv or /research and read to the end found
+ * a date and no address. Amin asked for the invitation in the footer's place,
+ * on every page, as unassuming as the footer was; then for its sentence to go
+ * and the icons to stand beside the words. The town is in the CV's head, and a
+ * month stamped on the foot of a page is one more fact to keep true by hand.
+ *
+ * The icons stand on the left with the words rather than across the row from
+ * them: in the right-hand corner they sat under the back-to-top button, which
+ * is fixed there, and it covered their tooltips. The heading carries the id Fig.
+ * 1's last stop links to, so the arrival hairline marks it like any other h2.
+ */
 export function Footer() {
   return (
     <footer className="no-print mt-[clamp(3rem,8vw,5.5rem)] border-t border-rule">
-      <Wrap className="label flex flex-wrap justify-between gap-x-8 gap-y-2 pt-[1.9rem] pb-[2.6rem]">
-        <span>Kaiserslautern, Germany</span>
-        <span>Updated September 2026</span>
+      <Wrap className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-[1.3rem] pb-[2rem]">
+        <h2 id="contact" className="label">
+          Get in touch
+        </h2>
+        {/* The address is the university one, never a personal mailbox: it is
+            published on a page this crawlable, and it will be harvested. */}
+        <ul className="m-0 flex list-none items-center gap-x-3 p-0">
+          <li>
+            <a
+              className="contact-icon"
+              href="mailto:rax06jud@rptu.de"
+              aria-label="Email: rax06jud@rptu.de"
+              data-tip="rax06jud@rptu.de"
+            >
+              <MailIcon className="h-[1.6rem] w-auto" />
+            </a>
+          </li>
+          <li>
+            <ExternalLink
+              className="contact-icon"
+              href="https://www.linkedin.com/in/amin-dariani/"
+              rel="me"
+              label="LinkedIn profile"
+              tip="LinkedIn"
+            >
+              <LinkedInIcon className="h-[1.75rem] w-[1.75rem]" />
+            </ExternalLink>
+          </li>
+        </ul>
       </Wrap>
     </footer>
   );

@@ -23,8 +23,10 @@ import {
 
 /* The record: what and when, one line per item, laid out to print. The why and
    the how of each project live on /research, and are linked rather than
-   repeated. No phone number, no email and no referee contact details — they are
-   on the PDF CV, which goes to people, not to crawlers. */
+   repeated. No phone number, no personal email and no referee contact details
+   — they are on the PDF CV, which goes to people, not to crawlers. The
+   university address reaches this page only through the footer every page
+   shares, which does not print. */
 
 export const metadata: Metadata = {
   alternates: { canonical: "/cv" },
@@ -507,14 +509,14 @@ export default function CV() {
         </Entries>
       </Section>
 
-      {/* On the section's own edge, with the heading and the rule above it.
-          Set on the inner edge the two quotations stood alone in the middle of
-          the sheet with an empty margin beside them, because a reference has
-          nothing to hang there — no date and no mark — and Amin asked for them
-          squared up. The measure still holds each one. */}
+      {/* On the section's own edge, with the heading and the rule above it,
+          and the width of the page. Set on the inner edge the two quotations
+          stood alone in the middle of the sheet with an empty margin beside
+          them, because a reference has nothing to hang there — no date and no
+          mark; held at the measure, they stopped a margin short of the rule. */}
       <Section num="VII" title="References">
         {REFERENCES.map((r) => (
-          <Settle key={r.name} className="max-w-measure">
+          <Settle key={r.name}>
             <figure className="m-0 mb-10 border-l border-rule pl-6 lg:mb-6">
               <blockquote className="m-0">
                 <p className="italic">&ldquo;{r.quote}&rdquo;</p>
@@ -525,7 +527,7 @@ export default function CV() {
             </figure>
           </Settle>
         ))}
-        <Settle className="max-w-measure">
+        <Settle>
           <p>
             Further references, from my master&rsquo;s project advisor at RPTU
             and my thesis supervisor at Fraunhofer IOSB, are available on

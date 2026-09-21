@@ -54,7 +54,10 @@ export function QuillWriting({ ornament = false }: { ornament?: boolean }) {
         )}
       </g>
       <g data-motion="quill" className={ornament ? styles.ornamentQuill : styles.bookQuill}>
-        <g transform={ornament ? "scale(.68)" : "rotate(20) scale(.66)"}><Quill /></g>
+        {/* The reader's plume is fractionally larger than the ornamental one:
+            here it has to be recognised as a quill at margin-study scale, not
+            merely as a dark diagonal above the live line. */}
+        <g transform={ornament ? "scale(.68)" : "rotate(20) scale(.74)"}><Quill /></g>
       </g>
     </>
   );

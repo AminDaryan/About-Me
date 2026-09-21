@@ -65,15 +65,18 @@ const WORDS = [
 
 const BASELINE_SHIFTS = [0, -0.3, 0.4, -0.1, 0.25];
 const LINE_ENDS = [138, 126, 135, 115];
+const LETTER_SCALE = 1.3;
 
-function annotationLine(variant: number, row: number) {
+function annotationLine(variant: number, row: number, lines: number) {
   let x = (variant + row * 2) % 4;
-  const baseline = 6.5 + row * 7.7;
+  // Larger handwriting uses fewer words, keeping each note in its margin.
+  const lineSpacing = lines === 4 ? 6.3 : 7.7;
+  const baseline = 6.9 + (row * lineSpacing) / LETTER_SCALE;
   const paths: string[] = [];
 
   for (let wordIndex = 0; wordIndex < 7; wordIndex += 1) {
     const word = WORDS[(variant * 3 + row * 5 + wordIndex * 7) % WORDS.length];
-    if (x + word.width > LINE_ENDS[row]) break;
+    if (x + word.width > LINE_ENDS[row] / LETTER_SCALE) break;
     const y = baseline + BASELINE_SHIFTS[(wordIndex + row) % BASELINE_SHIFTS.length];
     paths.push(`M${x} ${y}${word.stroke}`);
     x += word.width + 4 + ((variant + wordIndex + row) % 3);
@@ -89,6 +92,7 @@ export function PenNote({ variant = 0, lines = 3, className }: PenNoteProps) {
   return (
     <g
       className={className}
+      transform={`scale(${LETTER_SCALE})`}
       fill="none"
       stroke="currentColor"
       strokeWidth="0.8"
@@ -97,7 +101,7 @@ export function PenNote({ variant = 0, lines = 3, className }: PenNoteProps) {
       aria-hidden="true"
     >
       {Array.from({ length: lines }, (_, row) => (
-        <path key={row} d={annotationLine(seed, row)} />
+        <path key={row} d={annotationLine(seed, row, lines)} />
       ))}
     </g>
   );

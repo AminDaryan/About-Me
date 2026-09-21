@@ -1,3 +1,5 @@
+.region { position: relative; }
+
 .margins {
   display: none;
   pointer-events: none;
@@ -38,9 +40,12 @@
   .placement[data-position="middle"] { top: 43%; transform: rotate(4deg); }
   .placement[data-position="later"] { top: 62%; transform: rotate(-3deg); }
   .placement[data-position="closing"] { top: 78%; transform: rotate(-7deg); }
-  .margins[data-page="/"] .placement[data-position="opening"] { top: 28rem; }
   .margins[data-page="/research"] .placement[data-position="middle"] { top: 34%; }
   .margins[data-page="/beyond"] .placement[data-position="opening"] { top: 5rem; }
+
+  /* A study is at most 17rem tall, rotation included. The inset and local
+     clipping keep every stroke inside the introductory or closing section. */
+  .regionPlacement { top: 2rem; transform: rotate(-5deg); }
 }
 
 /* Only this wider gap can hold a sketch between the fixed contents rail and

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { BookRoute } from "../book/route-order";
 import { PenNote } from "./PenNotes";
 import { GearStudy, PolyhedronStudy, SpiralStudy } from "./StudyDrawings";
@@ -7,11 +8,8 @@ type StudyKind = "optics" | "pulley" | "wing" | "polyhedron" | "gear" | "spiral"
 type StudyPosition = "opening" | "middle" | "later" | "closing";
 
 const PAGE_STUDIES: Record<BookRoute, readonly { kind: StudyKind; position: StudyPosition }[]> = {
-  "/": [
-    { kind: "polyhedron", position: "opening" },
-    { kind: "gear", position: "middle" },
-    { kind: "wing", position: "closing" },
-  ],
+  // Home anchors its studies to quiet sections, leaving the route's margin clear.
+  "/": [],
   "/research": [
     { kind: "optics", position: "opening" },
     { kind: "spiral", position: "middle" },
@@ -137,6 +135,20 @@ export function ManuscriptStudy({ kind, className = "" }: { kind: StudyKind; cla
         className={styles.annotation}
       />
     </svg>
+  );
+}
+
+/** The local boundary prevents a study drifting alongside a neighbouring figure. */
+export function ManuscriptRegion({ kind, children }: { kind: StudyKind; children: ReactNode }) {
+  return (
+    <div className={styles.region}>
+      <div className={styles.margins} aria-hidden="true">
+        <div className={`${styles.placement} ${styles.regionPlacement}`}>
+          <ManuscriptStudy kind={kind} />
+        </div>
+      </div>
+      {children}
+    </div>
   );
 }
 

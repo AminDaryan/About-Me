@@ -71,8 +71,10 @@
   --text-subhead: 1.35rem;
   --text-subhead--line-height: 1.3;
   /* Set a shade larger and looser than a screen would ask for, because a page
-     read at arm's length in no hurry wants a book's measure rather than an
-     interface's: 17.4px on a 68-character line, leading at 1.76. */
+     read at arm's length in no hurry wants a book's size rather than an
+     interface's: 17.4px, leading at 1.76. The line it was set for was 68
+     characters; the full-width lines Amin chose run nearer 100, and the loose
+     leading is what keeps the eye's way back to the next line findable. */
   --text-body: 1.09rem;
   --text-body--line-height: 1.76;
   --text-meta: 0.95rem;
@@ -148,24 +150,17 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Paper sits behind the ink: its fibres and uneven tone must never wash
-     over text, portraits or controls. These static layers need no script. */
+  /* A scanned-style rag texture gives the paper real fibres and mottling.
+     It stays behind the ink, and repeats at a fixed scale on every screen. */
   body::before {
     content: "";
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    mix-blend-mode: multiply;
-    opacity: 0.16;
-    background-image:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.035' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23f)' opacity='0.75'/%3E%3C/svg%3E"),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='420' height='420' filter='url(%23m)' opacity='0.55'/%3E%3C/svg%3E");
-    background-size:
-      140px 140px,
-      300px 300px,
-      420px 420px;
+    opacity: 0.72;
+    background-image: url("/textures/rag-paper.webp");
+    background-size: 48rem 48rem;
   }
 
   /* Uneven honey-coloured edges suggest an old working sheet. The centre
@@ -195,8 +190,8 @@
      full ink (above), and deliberate emphasis opts in with text-ink; labels,
      glosses and captions carry their own classes, which outrank this layer.
      Paragraphs only: a list item often inherits a deliberate style from its
-     list (the letterspaced link row under Get in touch, say), and a rule here
-     would override that inheritance. Lists of running text set it themselves. */
+     list (a signpost's note, say), and a rule here would override that
+     inheritance. Lists of running text set it themselves. */
   main p {
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
@@ -262,7 +257,6 @@
   }
   .signpost-note {
     grid-area: 2 / 1 / 3 / -1;
-    max-width: var(--spacing-measure);
     margin-top: 0.2rem;
     font-size: var(--text-meta);
     line-height: var(--text-meta--line-height);
@@ -496,8 +490,8 @@
   }
 
   /* -- Body copy rhythm ---------------------------------------------------
-     The measure is the whole of readability before anything else is: a line
-     the eye cannot sweep in one movement is a line the eye loses. */
+     The measure held this copy until 2026-09-21; Amin chose full-width text,
+     and CLAUDE.md §1a records the decision and what it costs. */
   .copy > p { margin-bottom: 1.35em; }
   .copy > p:last-child { margin-bottom: 0; }
 
@@ -629,7 +623,6 @@
   @media (min-width: 640px) {
     .entry-mark { width: 3.4rem; }
   }
-  .entry-body { max-width: var(--spacing-measure); }
 
   @media (min-width: 64rem) {
     /* The date stands on the title's baseline. It used to hang from a fixed
@@ -718,11 +711,18 @@
   /* -- Technical skills: a mark, a heading and a short list, one per row ----
      The marks are decorative and the heading beside each one names the group.
      One group under the other: the section is read straight down, and the
-     marks are what give the eye a place to land. */
+     marks are what give the eye a place to land.
+
+     The same at every width: the mark on the headings' edge and its group's
+     name right beside it, the list under the name and as wide as the page.
+     On a desk the marks used to hang in the margin column with the names and
+     lists at the measure, the way an entry hangs its crest — but a crest
+     identifies a record and these only decorate a heading, and once the margin
+     ranged left each mark stood alone on the page's edge, a hand's width from
+     the words it belonged to. */
   .skills {
     display: grid;
     gap: 1.5rem;
-    max-width: var(--spacing-measure);
   }
   .skill {
     display: grid;
@@ -739,26 +739,6 @@
     color: var(--color-ink-faint);
   }
 
-  /* On the page's one grid, like the records either side of it: the mark
-     hangs in the margin, where an entry hangs its institution's, and the
-     group's name and its list are set at the measure. Held at the measure on
-     the headings' edge, this was the one section of the CV that stopped a
-     margin's width short of the rest. The name stays with its list rather than
-     joining the mark: in ten rem of margin "Machine learning and computer
-     vision" broke over four lines. */
-  @media (min-width: 64rem) {
-    .skills { max-width: none; }
-    .skill {
-      grid-template-columns: var(--spacing-margin-col) minmax(0, var(--spacing-measure));
-      column-gap: 3.5rem;
-    }
-    .skill-mark {
-      grid-area: 1 / 1 / 3 / 2;
-      justify-self: start;
-      width: 1.35rem;
-      padding-top: 0.05rem;
-    }
-  }
   .skill-mark svg {
     display: block;
     width: 100%;
@@ -858,8 +838,9 @@
      plates run wider than the type block, often the full width of the page,
      and here they run the full width of the column the page is built on: the
      margin and the measure together, so a plate's left edge is the same edge
-     the section headings and the entry rules use. Two edges on a page, each
-     meaning one thing — prose here, everything else there. */
+     the section headings and the entry rules use. Two edges on a page: a
+     record's text on the inner one, and everything else — headings, rules,
+     plates and any text with nothing in the margin — on the outer. */
   .plate { margin: clamp(1.9rem, 3.6vw, 2.6rem) 0 0; }
 
   /* Only a plate inside an entry has to break out: an entry's text is indented
@@ -1481,9 +1462,10 @@
     content: attr(data-tip);
     position: absolute;
     top: calc(100% + 0.2rem);
-    /* Anchored to the icon's left edge, not centred on it: the first icon sits
-       on the column edge, and a centred tooltip wider than the icon would hang
-       off the left of a phone screen. */
+    /* Anchored to the icon's left edge, not centred on it: a centred tooltip
+       wider than its icon hangs out on both sides, and on a phone, where the
+       footer's row wraps and the icons can start on the column's edge, it
+       would hang off the left of the screen. */
     left: 0;
     transform: translateY(-0.2rem);
     white-space: nowrap;
@@ -1816,6 +1798,7 @@
     .road-pin { transition: none; }
     .rail a { transition: none; }
     .rail { transition: none; }
+    .contact-icon::after { transform: none; transition: opacity 0.2s ease; }
     .choice-word { transition: none; }
     .graph-edge, .graph-halo { transition: none; }
     .figure-said, .figure-said-now { transition: none; }

@@ -29,8 +29,8 @@ const same = (a: Item[], b: Item[]) =>
  * to the foot of the window over the last screenful. Without that, the closing
  * section of a page is never the one you are on: it is shorter than the window,
  * so its heading stops short of the mark and no amount of scrolling will bring
- * it any nearer — which is exactly what happened to "Get in touch", the one
- * section on the home page that most wants to be pointed at.
+ * it any nearer, and a page's last section is often the one a reader came
+ * down to find.
  */
 function readingLine(left: number, height: number) {
   return height - Math.min(Math.max(left, 0), height - REACHED);

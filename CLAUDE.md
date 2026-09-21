@@ -48,17 +48,22 @@ contrast, size and hierarchy, and all four can be had inside the character.
   and no mark a reader is meant to see — a rule, a dashed outline, a meter's
   track — under **3:1**. With age a lens scatters more light, so the contrast
   reaching the retina is lower than the contrast measured on the page.
-- **The measure is the first thing, before any of the rest.** Running text is
-  capped at `--spacing-measure` — 36rem, which at the body size is about 72
-  characters to the line. The number is not arbitrary and it is not mine:
-  45–75 characters is the range every typographer since Bringhurst gives, 66
-  is the figure he calls ideal, and 80 is where the W3C stops. A line the eye
-  cannot sweep in one movement is a line the eye loses.
-- **But the measure applies to prose, and only to prose.** A drawing is not a
-  sentence. Plates run the full width of the column the page is built on — the
-  margin and the measure together — so a plate's instruments stand on the
-  page's outer edge and the page does not read as a narrow strip down one side
-  of a wide sheet.
+- **Every text runs the full width of the page.** That is Amin's decision,
+  taken on 2026-09-21 against the advice that stood here, and it is kept
+  because it is his: a block that ended a margin's width short of the rule
+  above it read to him as unfinished. What it costs is measured, not guessed —
+  prose on the outer edge now runs about 100 characters to the line on a
+  desk, where 45–75 is the range every typographer since Bringhurst gives and
+  80 is where the W3C stops. `--spacing-measure` (36rem, about 72 characters)
+  survives as the text column of the two-column grid, where a record stands
+  beside its date and already ends on the rule, and as the cap on a figure's
+  running sentence, which shares its band with the instruments. If he asks for the
+  lines to be shortened again, that is the number to go back to, and the
+  outer-edge blocks are the ones to hold to it.
+- **Plates run the full column too, and did first.** A drawing is not a
+  sentence, and plates were given the full width of the column the page is
+  built on — the margin and the measure together — while prose was still held
+  at the measure, so a plate's instruments stand on the page's outer edge.
 - **The drawing on a plate is held to a frame of its own.** `--spacing-plate`:
   40rem across and at most half that tall, centred on the plate. When the
   drawings ran the column too, each came out a screen tall, and a figure the
@@ -90,36 +95,43 @@ Every page is one grid, and the grid means something.
   it. A `.note` inside a `<Leaf>` hangs there too. Nothing else goes in it: if
   every left edge does the same job, none of them says anything.
 - **What hangs there ranges left, with the headings.** The dates, the crests,
-  the wordmarks, the skills' marks and a `.note` gloss were ranged right, hard
-  against the measure, and the page had a ragged outer edge: a date, a crest
-  and a lockup each began somewhere different, and none of them began where the
-  section title above them did. Amin asked for them squared up. The signposts'
-  names had already been moved for the same reason. The one thing still ranged
+  the wordmarks and a `.note` gloss were ranged right, hard against the
+  measure, and the page had a ragged outer edge: a date, a crest and a lockup
+  each began somewhere different, and none of them began where the section
+  title above them did. Amin asked for them squared up. The signposts' names
+  had already been moved for the same reason. The skills' marks were among
+  them until 2026-09-21, when they left the margin altogether (see below). The one thing still ranged
   right is `/beyond`'s marginal drawing (`.figure-note`), which is a picture
   set against the line it illustrates rather than a label on the page's edge.
-- **So a page has exactly two left edges.** Headings, entry rules and plates
-  stand on the outer one; running text stands on the inner one, with whatever
-  identifies it in the margin between. A plate inside an entry steps back over
+- **So a page has two left edges.** Headings, entry rules, plates and any
+  text with nothing to hang in the margin stand on the outer one; a record's
+  text stands on the inner one, with whatever identifies it in the margin
+  between. The skills are the one exception: each group's name and list stand
+  a mark's width in from the outer edge, behind the mark that decorates them. A plate inside an entry steps back over
   the margin to reach the outer edge (`.copy .plate`); a plate that already
   stands there — Fig. 1 and Fig. 6 sit straight in the `<Wrap>` — is left
   alone, or it walks off the side of the sheet.
 - **Every section is the same width.** Its content spans the margin and the
   measure and ends on the right where the section rule ends — whatever the
-  content is. Running text that is not in an `<Entry>` goes in a `<Leaf>`, and a
-  list of records (the signposts, the skills) is laid on the same two columns.
-  A block held at the measure on the outer edge stops a margin's width short of
-  everything around it, and "Read on" did exactly that.
+  content is. A record with something to hang in the margin — an entry, a
+  gloss, a signpost's name — is laid on the two columns; anything else stands
+  on the outer edge and runs to the rule. A block held at the measure on the
+  outer edge stops a margin's width short of everything around it, and "Read
+  on" and then the CV's references did exactly that.
 - **Unless there is nothing to hang in the margin.** A `<Leaf>` with an empty
   margin column is not a grid, it is an indent: Get in touch and the CV's
   references stood alone in the middle of the sheet under a flush heading, and
   Amin asked for both to be squared up. A block that identifies itself — a
   record with a date, a gloss with its drawing — keeps the two columns; a
-  closing paragraph or a quotation with nothing beside it stands on the outer
-  edge, at the measure.
-- **The page head is the exception.** It is a title block, not a section: the
-  lines under its title stand on the title's own edge, at the measure. Set on
-  the inner edge they left a hole a margin wide under the title, with the drop
-  cap floating at the far side of it, and Amin called the head messy.
+  paragraph or a quotation with nothing beside it stands on the outer edge and
+  runs the width of the page. The skills are the second kind: their marks
+  decorate a heading rather than identify a record, so each stands beside its
+  group's name on the outer edge, at every width.
+- **The page head is a title block, not a section**: the lines under its
+  title stand on the title's own edge and run the width of the page, or of the
+  column they share with the portrait. Set on the inner edge they left a hole a
+  margin wide under the title, with the drop cap floating at the far side of
+  it, and Amin called the head messy.
 - **The rules are ranked, and the ranking is load-bearing.** A section opens on
   a thick-and-thin double rule the width of the column (`.section-title`) — a
   different kind of line, not only a darker one, because in a view of a whole
@@ -212,8 +224,11 @@ once and used by name.
   `--color-accent-deep`. Never write a hex value in a component. The accent is
   scarce on purpose — it marks the one live or chosen thing in a view, and
   loses its meaning the moment a second thing in the same view takes it.
-- **Measure.** Running text is capped at `--spacing-measure` (36rem). Do not
-  let a paragraph run the full page width.
+- **Measure.** Text runs the full width of the page — see §1a for the
+  decision and what it costs. `--spacing-measure` (36rem) is the text column
+  of the two-column grid, and the cap on a plate's `.figure-said`, which shares
+  its band with the instruments; do not cap any other block on the outer edge
+  with it unless Amin asks for shorter lines again.
 - **Spacing** comes from the Tailwind scale and the `clamp()` section rhythm
   already in use. Match the neighbouring section rather than inventing a value.
 - No webfont ships. The serif stack resolves to fonts the visitor already has —
