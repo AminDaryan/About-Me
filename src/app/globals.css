@@ -1572,21 +1572,6 @@
       transform: none;
     }
   }
-  /* A phone has no hover to show the address in a tooltip, and a tap on the
-     envelope opens whichever mail app the phone happens to have — a reader
-     who uses another could neither see the address nor copy it. So on a touch
-     screen it is set beside the envelope, in the footer's quiet size. The
-     link's own name already says it to a screen reader. */
-  .contact-address { display: none; }
-  @media (hover: none) {
-    .contact-address {
-      display: inline;
-      margin-left: 0.5rem;
-      font-size: var(--text-meta);
-      color: var(--color-ink-soft);
-    }
-    .contact-icon[href^="mailto:"]::after { content: none; }
-  }
 
   /* -- Journey (Fig. 1): the road -----------------------------------------
      A two-lane road, drawn in once on first view: verge, tarmac, edge lines
