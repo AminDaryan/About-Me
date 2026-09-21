@@ -1,5 +1,5 @@
 import styles from "./MarginalStudy.module.css";
-import { QuillWriting } from "./Quill";
+import { BookWriting, QuillWriting } from "./Quill";
 import { board, knightFrom, knightPose, knightTo, ring } from "./board";
 
 export type Subject = "reading" | "psychology" | "archery" | "chess" | "ornament";
@@ -15,54 +15,42 @@ export const descriptions: Record<Subject, string> = {
 function Reading() {
   return (
     <>
-      {/* A single desk rule anchors the still life. Its faint echo gives the
-          book a little weight without turning this margin drawing into a frame. */}
-      <path className={styles.detail} d="M27 126H201" />
-      <path className={styles.fine} d="M39 123.2Q70 126.2 104 123.4Q140 126.2 170 123.2" />
-
-      {/* The low dark shape is the book's closed boards seen beneath the open
-          leaves. Keeping it behind the paper makes the volume read as a real
-          object rather than a flat book pictogram. */}
-      <path className={styles.shade} d="M31 113Q67 105 104 124Q141 105 177 113V118Q141 110 104 130Q67 110 31 118Z" />
-      <path className={styles.paper} d="M31 53Q66 40 104 62Q142 40 177 53V115Q141 106 104 126Q67 106 31 115Z" />
-      <path className={styles.detail} d="M31 53Q66 40 104 62Q142 40 177 53" />
-      <path className={styles.fine} d="M35 56Q68 44 101 64M107 64Q141 44 173 56" />
-
-      {/* Separate leaves make the gutter, the page block, and the slightly
-          proud boards legible even at the drawing's compact rendered size. */}
-      <path className={styles.paper} d="M38 59Q69 48 102.5 66.5V112Q70 101 38 109Z" />
-      <path className={styles.paper} d="M105.5 66.5Q139 48 170 59V109Q139 101 105.5 112Z" />
-      <path className={styles.fine} d="M39 108Q70 99 102.5 112M105.5 112Q139 99 169 108" />
-      <path className={styles.fine} d="M40 111Q70 102 102.5 115M105.5 115Q139 102 169 111" />
-      <path d="M104 62Q101.7 91 104 123Q106.3 91 104 62" />
-      <path className={styles.hatching} d="M100.8 119.4L104 122.2L107.2 119.4" />
-
-      {/* These are printed page marks, not a block of regular rules: their
-          unequal lengths leave room for the quill's live line on the right. */}
-      <path className={styles.detail} d="M46 77Q71 68.5 96 82.5M46 87Q71 78.5 94 91.5M46 97Q68 89.5 94 102M110 80Q133 71.5 157 75M110 89Q132 80.5 153 84.5" />
-      <path className={styles.fine} d="M47 102.5Q69 96 88 104M111 97Q127 90.8 141 92.4" />
-      <QuillWriting />
+      {/* One ground line, drawn first and running past both feet, as every
+          other study on the site has: the book's spine rests on it and the
+          inkwell stands on it. The table line used to exist under the well
+          alone, so the book hovered beside it and the two read as two drawings
+          that happened to overlap. */}
+      <path className={styles.detail} d="M28 126H192" />
+      {/* The boards: one closed silhouette, six units proud of the pages, with
+          the tone of their near face lying between the two. They were an open
+          U before — a foot and two verticals that began in mid-air, and the
+          right one ran down into the inkwell's mouth, where a line that enters
+          an object and stops reads as a rod standing in the pot. */}
+      <path className={styles.paper} d="M32 53Q66 41 104 62Q142 41 176 53V115Q142 107 104 126Q66 107 32 115Z" />
+      <path className={styles.detail} fill="currentColor" stroke="none" d="M32 115Q66 107 104 126Q142 107 176 115L170 110Q140 102 104 121Q68 102 38 110Z" />
+      <path className={styles.paper} d="M38 59Q68 47 104 67Q140 47 170 59V110Q140 102 104 121Q68 102 38 110Z" />
+      <path d="M104 67V121" />
+      {/* Three rules on the left page and two on the right, so that the third
+          line of the right page is left to the one being written. */}
+      <path className={styles.detail} d="M46 77Q72 68 96 83M46 87Q72 78 96 93M46 97Q72 88 96 103M107 80Q133 70 157 75M107 90Q133 80 157 85" />
+      <BookWriting />
       <Inkwell />
     </>
   );
 }
 
-/** A compact cut-glass well. The ink is visible through a faceted shoulder and
-    a single paper-coloured glint keeps it from becoming a small black bottle. */
+/** A squat glass inkwell standing on the table line, with ink in its neck. It
+    stands clear of the boards rather than in front of them: overlapped, an edge
+    of the book ended somewhere on its silhouette, and the edge that ended at
+    its rim was read as a rod standing in the pot. */
 function Inkwell() {
   return (
     <>
-      <ellipse className={styles.fine} cx="187" cy="125" rx="12.3" ry="2.1" />
-      <path className={styles.glass} d="M178 106Q174 110 173 116L175 125Q187 128 199 125L201 116Q200 110 196 106Z" />
-      <path className={styles.paper} d="M178 106Q174 110 173 116L175 125Q187 127.5 199 125L201 116Q200 110 196 106Z" />
-      <path className={styles.fine} d="M173 116Q187 121 201 116M175 124Q187 126.4 199 124" />
-      <path className={styles.paper} d="M180 106V101.8H194V106" />
-      <path className={styles.paper} d="M182 101.8V99.7H192V101.8" />
-      <ellipse className={styles.paper} cx="187" cy="99.7" rx="6.9" ry="2" />
-      <ellipse cx="187" cy="100" rx="5.6" ry="1.12" fill="currentColor" stroke="none" />
-      <path className={styles.detail} d="M180.2 99.7Q187 97.8 193.8 99.7" />
-      <path className={styles.hatching} d="M178.5 112Q176.4 118 178.8 123.5M181.5 109.5Q180 117 182.5 124.4M195.5 109.5Q197.3 117 195.8 123.8" />
-      <path className={styles.highlight} d="M184.1 111.4Q182.4 116.5 184.2 120" />
+      <path className={styles.paper} d="M176 126Q170 113 178 106H196Q204 113 198 126Z" />
+      <path className={styles.paper} d="M181 106V101.5H193V106" />
+      <path d="M178.5 101.5H195.5" />
+      <ellipse cx="187" cy="101.5" rx="4.4" ry="1.25" fill="currentColor" stroke="none" />
+      <path className={styles.hatching} d="M179 114Q177.5 119 179.5 124M182 112Q181 118 183 124" />
     </>
   );
 }
@@ -119,7 +107,7 @@ function Chess() {
   );
 }
 
-function Ornament() { return <QuillWriting ornament />; }
+function Ornament() { return <QuillWriting />; }
 
 export const drawings = { reading: Reading, psychology: Psychology, archery: Archery, chess: Chess, ornament: Ornament };
 

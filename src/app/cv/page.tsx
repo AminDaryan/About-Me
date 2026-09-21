@@ -230,7 +230,7 @@ function Modules({ items }: { items: Module[] }) {
             )}
             {m.project && (
               <BookLink className="link grades-project" href={m.project.href}>
-                {m.project.title} →
+                {m.project.title}&nbsp;→
               </BookLink>
             )}
           </li>
@@ -254,7 +254,7 @@ export default function CV() {
           {PROFILES.map((p) => (
             <span key={p.href}>
               {" · "}
-              <ExternalLink href={p.href} rel="me">
+              <ExternalLink href={p.href} rel="me" className="link whitespace-nowrap">
                 {p.label}
               </ExternalLink>
             </span>
@@ -340,7 +340,7 @@ export default function CV() {
             </p>
           </Entry>
           <Entry
-            title="Student Research Assistant, Gaze-based Activity Recognition"
+            title="Student Research Assistant, Gaze‑based Activity Recognition"
             when="Sep 2024 – Feb 2026"
             where="German Research Center for Artificial Intelligence (DFKI) · Kaiserslautern, Germany"
             mark={
@@ -354,7 +354,7 @@ export default function CV() {
           >
             <p>
               Gaze-based human activity recognition for industrial settings:
-              study design, data collection on HoloLens 2, and evaluation of
+              study design, data collection on HoloLens&nbsp;2, and evaluation of
               classification models.
             </p>
           </Entry>
@@ -412,7 +412,7 @@ export default function CV() {
           <Entry when="In preparation">
             <p>
               A. Amir-B.D., S. Walunj. Manuscript on gaze-based classification
-              of industrial activities from HoloLens 2 eye tracking, 2026.
+              of industrial activities from HoloLens&nbsp;2 eye tracking, 2026.
             </p>
           </Entry>
         </Entries>
@@ -421,7 +421,7 @@ export default function CV() {
       <Section num="IV" title="Selected projects">
         <Entries>
           <Entry
-            title="Eye Movement Classification from HoloLens 2 Eye Tracking"
+            title="Eye Movement Classification from HoloLens 2 Eye Tracking"
             when="Mar 2026"
             where="Master's project · RPTU / DFKI · advisors Prof. D. Görges, S. Walunj"
           >
@@ -435,7 +435,7 @@ export default function CV() {
                 page's head and left them to find the project for themselves. */}
             <p className="no-print">
               <BookLink className="link" href="/research#gaze">
-                The gaze study in full →
+                The gaze study in full&nbsp;→
               </BookLink>
             </p>
           </Entry>
@@ -452,7 +452,7 @@ export default function CV() {
             </p>
             <p className="no-print">
               <BookLink className="link" href="/research#pick-and-place">
-                The project lab in full →
+                The project lab in full&nbsp;→
               </BookLink>
             </p>
           </Entry>

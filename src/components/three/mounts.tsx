@@ -13,14 +13,29 @@ import { Plate } from "@/components/ui";
    these means renumbering every figure under it — four files, last time.
    Both plates here are captioned the one way, through <Plate>. */
 
+/* The arm's placeholder holds the room its instruments will take as well as
+   its drawing. The band of seven step words, the sentence and the button is
+   rendered by the same lazy module, so it arrived with three.js, a second or
+   more after the page; on an iPhone, where Safari keeps no scroll anchor, a
+   link to /research#exoskeleton or #pendulum — Fig. 1's own links among them
+   — landed on its heading and then saw it pushed 277px down the screen. The
+   heights are the band's as measured at each width (24px of margin, then
+   253px on a phone, 148 from 640px, 124 from 768); if the band's words
+   change, measure it again. The pendulum sits under its entry, so its band
+   moves nothing a link lands on. */
 const ArmScene = dynamic(() => import("./ArmScene"), {
   ssr: false,
-  loading: () => <div className="plate-drawing aspect-[4/3] sm:aspect-[2/1]" />,
+  loading: () => (
+    <div>
+      <div className="plate-drawing aspect-[4/3] sm:aspect-[2/1]" />
+      <div className="mt-6 h-[15.8rem] sm:h-[9.25rem] md:h-[7.75rem]" />
+    </div>
+  ),
 });
 
 const PendulumScene = dynamic(() => import("./PendulumScene"), {
   ssr: false,
-  loading: () => <div className="plate-drawing h-[19rem] sm:h-[20rem]" />,
+  loading: () => <div className="plate-drawing aspect-[3/2] sm:aspect-auto sm:h-[20rem]" />,
 });
 
 export function ArmFigure() {

@@ -600,9 +600,8 @@
   /* -- The margin of an entry ----------------------------------------------
      Its date, and the institution's mark where there is one. Above 64rem the
      page is one grid — a margin column and the measure — and this hangs in the
-     margin, right-ranged against the text like a shoulder note. Below it there
-     is no margin to hang anything in, so the two run along above the title as
-     a dateline.
+     margin, the mark over the date. Below it there is no margin to hang
+     anything in, so the two stand above the title in the same order.
 
      The logos are alpha masks, so they take the page's ink rather than their
      own colours, and warm to the accent while the entry is pointed at. They
@@ -614,11 +613,22 @@
     gap: 0.35rem 1rem;
     margin-bottom: 0.85rem;
   }
+  /* The mark over its date, as the margin hangs them on a desk. Set side by
+     side, the date ran through the middle of the RPTU signet's staggered
+     letters, stood 90px off the DFKI mark in its wide box, and began at three
+     different places down the page. */
+  .entry-marked .entry-aside {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
   .entry-when {
     line-height: 1.6;
     color: var(--color-ink-faint);
     white-space: nowrap;
   }
+  /* A title that wraps breaks evenly, not with one word left alone. */
+  .entry-body > h3 { text-wrap: pretty; }
   .entry-mark { flex: 0 0 auto; width: 2.6rem; }
   @media (min-width: 640px) {
     .entry-mark { width: 3.4rem; }
@@ -680,7 +690,14 @@
   .entry-marked:hover .uni-mark { background-color: var(--color-accent); }
   /* The mark is a link to the institution. It is the only thing in the box, so
      the box is the target: no padding games, and a visible ring when focused. */
-  .uni-link { display: block; border-radius: 3px; }
+  .uni-link { position: relative; display: block; border-radius: 3px; }
+  /* The mark is the whole link, and a 24px wordmark is half a thumb. The
+     target grows around it to 44px; nothing on the page moves. */
+  .uni-link::after {
+    content: "";
+    position: absolute;
+    inset: min(0px, calc((100% - 2.75rem) / 2));
+  }
   .uni-link:hover .uni-mark { background-color: var(--color-accent-deep); }
   .uni-link:focus-visible {
     outline: 2px solid var(--color-accent);
@@ -786,10 +803,14 @@
   .grades li {
     display: grid;
     grid-template-columns: minmax(0, max-content) minmax(1.25rem, 1fr) auto;
-    align-items: baseline;
+    align-items: last baseline;
     column-gap: 0.55rem;
     padding: 0.2rem 0;
   }
+  /* A module name that wraps hangs its second line, as a table of contents
+     does, and the grade closes the row where the name ends: flush, the
+     second line read as a module of its own with no grade. */
+  .grades li > span:first-child { padding-left: 1em; text-indent: -1em; }
   .grades-leader {
     border-bottom: 1px dotted var(--color-rule);
     transform: translateY(-0.3em);
@@ -873,6 +894,12 @@
     max-width: var(--spacing-plate);
     height: auto;
     max-height: calc(var(--spacing-plate) / 2);
+    /* And never more than about half the screen's height: on a phone held
+       sideways the screen under the masthead is 320px, and every drawing on
+       /research was taller than that, so the drawing and the control that
+       moves it were never on screen together. In portrait and on a desk the
+       first cap is the one that holds. */
+    max-height: min(calc(var(--spacing-plate) / 2), 55svh);
     margin-inline: auto;
   }
 
@@ -914,6 +941,7 @@
     font-size: var(--text-meta);
     line-height: 1.5;
     color: var(--color-ink-faint);
+    text-wrap: balance;
   }
   .readout b {
     margin-left: 0.3rem;
@@ -941,11 +969,22 @@
     cursor: pointer;
     transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease;
   }
-  .control:hover,
-  .control:focus-visible {
+  /* Hover is kept to devices that hover. iOS leaves :hover on the last thing
+     tapped, so a pressed control stayed lit in the accent, like a switch left
+     on, and put the accent on a second thing in the view. A touch gets its
+     feedback from :active instead, for as long as the finger is down. */
+  .control:focus-visible,
+  .control:active {
     border-color: var(--color-accent);
     color: var(--color-accent-deep);
     background-color: color-mix(in srgb, var(--color-accent) 7%, transparent);
+  }
+  @media (hover: hover) {
+    .control:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent-deep);
+      background-color: color-mix(in srgb, var(--color-accent) 7%, transparent);
+    }
   }
 
   /* -- One of a set -------------------------------------------------------
@@ -966,6 +1005,9 @@
     display: inline-flex;
     align-items: center;
     min-height: 44px;
+    /* A four-letter word in caps is a box 35px wide; the word stays where it
+       is and the target grows to its right. */
+    min-width: 44px;
     margin: 0;
     padding: 0;
     border: 0;
@@ -978,10 +1020,16 @@
     padding-bottom: 0.14rem;
     transition: color 0.25s ease, border-color 0.25s ease;
   }
-  .choice:hover .choice-word,
-  .choice:focus-visible .choice-word {
+  .choice:focus-visible .choice-word,
+  .choice:active .choice-word {
     color: var(--color-ink);
     border-bottom-color: var(--color-rule);
+  }
+  @media (hover: hover) {
+    .choice:hover .choice-word {
+      color: var(--color-ink);
+      border-bottom-color: var(--color-rule);
+    }
   }
   /* The deeper accent, not the accent: this is where the accent has to carry
      letterspaced capitals at caption size, and 5.2:1 is not enough for that.
@@ -1002,6 +1050,11 @@
     gap: 0.2rem 1.15rem;
     margin-top: 1.1rem;
     line-height: 1.6;
+    /* When the steps wrap, the step that opens the second row still carries
+       its arrow, and it hung in the page's gutter, left of every other edge.
+       Anything drawn past the list's own left edge is clipped, leaving room
+       for a focus ring. */
+    clip-path: inset(-1rem -1rem -1rem -0.3rem);
   }
   .pipeline li { position: relative; }
   /* An arrow between the words, drawn rather than typed so it cannot be read
@@ -1075,6 +1128,7 @@
      accent is on one thing only: the point the eye is resting on, which is the
      one thing in the figure that is alive. */
   .gaze-frame {
+    vector-effect: non-scaling-stroke;
     fill: none;
     stroke: var(--color-rule);
     stroke-width: 1.2;
@@ -1112,6 +1166,7 @@
   /* Dashed, because the line of sight is not a thing in the drawing but a
      relation between two of them. */
   .gaze-sight {
+    vector-effect: non-scaling-stroke;
     stroke: var(--color-ink-faint);
     stroke-width: 1;
     stroke-dasharray: 2 4;
@@ -1121,6 +1176,7 @@
      eye went and how far it travelled to get there — so it is drawn to be
      followed rather than sensed. */
   .gaze-trail {
+    vector-effect: non-scaling-stroke;
     fill: none;
     stroke: var(--color-ink-soft);
     stroke-width: 1.3;
@@ -1128,6 +1184,7 @@
     opacity: 0.62;
   }
   .gaze-fix {
+    vector-effect: non-scaling-stroke;
     fill: none;
     stroke: var(--color-ink);
     stroke-width: 1.2;
@@ -1301,6 +1358,20 @@
     font-size: 9.5px;
     font-style: italic;
   }
+
+  /* Two things only a phone needs. The sentences under Figs. 2 and 4 run to
+     three and four lines at a phone's width, and the block held open for two
+     let the plate change height as they changed, so everything under it —
+     the arm's own button among it — jumped a line several times a round. And
+     the exoskeleton's one label is sized in the drawing's units, so on a
+     320px plate it came out at 8px; it is set larger where the drawing is
+     drawn smaller, and still fits over the trace it names. */
+  @media (max-width: 39.99rem) {
+    .graph-said { --said-lines: 4; }
+    .arm-said { --said-lines: 3; }
+    .exo-label { font-size: 13.5px; }
+  }
+
   .exo-trace {
     fill: none;
     stroke: var(--color-accent-deep);
@@ -1433,10 +1504,16 @@
     transform: none;
     pointer-events: auto;
   }
-  .to-top:hover,
-  .to-top:focus-visible {
+  .to-top:focus-visible,
+  .to-top:active {
     color: var(--color-accent-deep);
     border-color: var(--color-accent);
+  }
+  @media (hover: hover) {
+    .to-top:hover {
+      color: var(--color-accent-deep);
+      border-color: var(--color-accent);
+    }
   }
   .to-top svg { width: 1.1rem; height: 1.1rem; }
 
@@ -1454,9 +1531,12 @@
     color: var(--color-ink);
     transition: color 0.28s ease;
   }
-  .contact-icon:hover,
-  .contact-icon:focus-visible {
+  .contact-icon:focus-visible,
+  .contact-icon:active {
     color: var(--color-accent-deep);
+  }
+  @media (hover: hover) {
+    .contact-icon:hover { color: var(--color-accent-deep); }
   }
   .contact-icon::after {
     content: attr(data-tip);
@@ -1477,10 +1557,30 @@
     pointer-events: none;
     transition: opacity 0.2s ease, transform 0.2s ease;
   }
-  .contact-icon:hover::after,
   .contact-icon:focus-visible::after {
     opacity: 1;
     transform: none;
+  }
+  @media (hover: hover) {
+    .contact-icon:hover::after {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  /* A phone has no hover to show the address in a tooltip, and a tap on the
+     envelope opens whichever mail app the phone happens to have — a reader
+     who uses another could neither see the address nor copy it. So on a touch
+     screen it is set beside the envelope, in the footer's quiet size. The
+     link's own name already says it to a screen reader. */
+  .contact-address { display: none; }
+  @media (hover: none) {
+    .contact-address {
+      display: inline;
+      margin-left: 0.5rem;
+      font-size: var(--text-meta);
+      color: var(--color-ink-soft);
+    }
+    .contact-icon[href^="mailto:"]::after { content: none; }
   }
 
   /* -- Journey (Fig. 1): the road -----------------------------------------
@@ -1727,6 +1827,22 @@
     cursor: pointer;
   }
   .road-hit:focus-visible { outline-offset: -2px; }
+
+  /* Fig. 1's two columns — the road, and the story beside it — come from the
+     stylesheet, on the same query as WIDE in Journey.tsx. They used to come
+     from the script alone, and the server renders the wide layout, so until
+     the script ran a phone was given a 16rem story column and a road squeezed
+     to 54px beside it, with a 552px drawing running off the right of the
+     screen. Where the script never runs, it stays a phone layout. */
+  .journey-layout { display: block; }
+  @media (min-width: 768px) and (min-height: 40rem) {
+    .journey-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 16rem;
+      align-items: start;
+      gap: 2.5rem;
+    }
+  }
 
   /* The panel's text fades in on every change; its drawing redraws itself
      through the .ink rules above. The fade hangs off the attribute rather than

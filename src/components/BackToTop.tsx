@@ -16,10 +16,24 @@ export default function BackToTop() {
   const link = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
+    /* Below the two-column grid the text runs to within a gutter of the
+       screen's edge, and a mark fixed in the corner sat on the last words of
+       every screen the reader scrolled through. There it shows only on the
+       way back up, which is when it is wanted — not at the foot of the page
+       either, where the footer's icons now run to the corner. */
+    const narrow = window.matchMedia("(max-width: 63.99rem)");
     let frame = 0;
+    let lastY = window.scrollY;
+    let up = false;
     const mark = () => {
       frame = 0;
-      link.current?.toggleAttribute("data-show", window.scrollY > AFTER);
+      const y = window.scrollY;
+      // A few pixels either way is the page settling, not the reader turning.
+      if (Math.abs(y - lastY) > 4) {
+        up = y < lastY;
+        lastY = y;
+      }
+      link.current?.toggleAttribute("data-show", y > AFTER && (!narrow.matches || up));
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(mark);

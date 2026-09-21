@@ -275,7 +275,25 @@ link.
   later. Every animated rule in `globals.css` has an entry in the reduced-motion
   block; keep that true.
 - Touch targets ≥ 44 × 44 px. Fig. 1's stop buttons and the car's handle are
-  sized for this.
+  sized for this; the masthead's links and the CV's logo links reach it with
+  an `::after` that grows the target without moving anything drawn.
+- **A phone is checked by looking at it.** Every page photographed at 360,
+  390 and 430px and on its side found faults no overflow check did — see
+  *Changed on 2026-09-21 (later)* in the ledger. Four rules came out of it:
+  - Layout that differs between a phone and a desk comes from the stylesheet,
+    not from a script alone. The server renders one layout for every screen,
+    and Fig. 1 gave a phone the desk's until its script ran.
+  - A figure that can be dragged takes only the touches that land on a part
+    (`touch-action: pan-y` and a non-passive `touchstart`), never the whole
+    drawing, or a thumb that lands on it stops the page scrolling.
+  - A hover that changes a control's look sits in `@media (hover: hover)`,
+    with `:active` for a touch: iOS keeps `:hover` on the last thing tapped.
+  - Nothing is fixed over running text on a phone. The back-to-top disc shows
+    there only while the reader scrolls back up.
+- The build targets Safari 15 (`browserslist` in `package.json`). Next's
+  default is 16.4, and the one chunk every page loads would not parse on an
+  iPhone that cannot update past iOS 15 — the site's script failed outright.
+- No doodles below 1100px. The margin studies need a margin to stand in.
 - The site must be readable with JavaScript off — the `<noscript>` block in
   `layout.tsx` reveals everything the scroll animations would otherwise hide.
 

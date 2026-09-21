@@ -35,29 +35,48 @@ export function Quill() {
   );
 }
 
-export function QuillWriting({ ornament = false }: { ornament?: boolean }) {
+/** The quill writing a line in the open book: the line, the mask that reveals
+    it under the nib, and the quill. At rest the line is written and the nib
+    stands at its end — see the reading study in motion.ts for the cycle.
+
+    The lean is on the moving group, not baked into the drawing, so the quill
+    can straighten to dip in the inkwell and lean again to write. */
+export function BookWriting() {
   const maskId = useId();
-  const line = ornament ? ornamentPath : writingPath;
+  return (
+    <>
+      <defs>
+        {/* The reveal is a stroke along the line itself, three units wide:
+            enough to cover the ink, not so wide that it uncovers the next
+            letter before the nib gets there. */}
+        <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="210" height="140">
+          <path data-motion="writing-mask" d={writingPath} pathLength={1} stroke="white" strokeWidth="3" strokeDasharray="1" strokeDashoffset="0" />
+        </mask>
+      </defs>
+      <path data-motion="written-line" className={styles.writtenLine} d={writingPath} mask={`url(#${maskId})`} />
+      <g data-motion="quill" className={styles.bookQuill}>
+        <g transform="scale(.66)"><Quill /></g>
+      </g>
+    </>
+  );
+}
+
+/** The ornament's quill tracing its flourish. */
+export function QuillWriting() {
+  const maskId = useId();
   return (
     <>
       <defs>
         <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="144">
-          <path data-motion="writing-mask" d={line} pathLength={1} stroke="white" strokeWidth="5" strokeDasharray="1" strokeDashoffset="1" />
+          <path data-motion="writing-mask" d={ornamentPath} pathLength={1} stroke="white" strokeWidth="5" strokeDasharray="1" strokeDashoffset="1" />
         </mask>
       </defs>
-      <path className={styles.writtenLine} d={line} />
+      <path className={styles.writtenLine} d={ornamentPath} />
       <g data-motion="wet-ink" opacity="0" mask={`url(#${maskId})`}>
-        {ornament ? (
-          <path fill="currentColor" stroke="none" d="M25 71.8C70 46.8 113 94.8 172 69.8L172 70.4C113 97.3 70 49.3 25 72.3Z" />
-        ) : (
-          <path fill="currentColor" stroke="none" d="M107 99.8Q133 89.5 157 94.8L157 95.4Q133 90.8 107 100.4Z" />
-        )}
+        <path fill="currentColor" stroke="none" d="M25 71.8C70 46.8 113 94.8 172 69.8L172 70.4C113 97.3 70 49.3 25 72.3Z" />
       </g>
-      <g data-motion="quill" className={ornament ? styles.ornamentQuill : styles.bookQuill}>
-        {/* The reader's plume is fractionally larger than the ornamental one:
-            here it has to be recognised as a quill at margin-study scale, not
-            merely as a dark diagonal above the live line. */}
-        <g transform={ornament ? "scale(.68)" : "rotate(20) scale(.74)"}><Quill /></g>
+      <g data-motion="quill" className={styles.ornamentQuill}>
+        <g transform="scale(.68)"><Quill /></g>
       </g>
     </>
   );

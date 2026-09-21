@@ -1,6 +1,6 @@
 import type { MotionTrack } from "./useIllustrationLoop";
 import type { Subject } from "./StudyDrawings";
-import { writingCurve, writingReturn, ornamentCurve, ornamentReturn } from "./geometry";
+import { fromInkwell, inkwellDip, inkwellMouth, ornamentCurve, ornamentReturn, toInkwell, writingCurve } from "./geometry";
 import { knightFrom, knightPose, knightTo } from "./board";
 
 const round = (value: number) => Number(value.toFixed(5));
@@ -16,14 +16,62 @@ const frames = (sample: (phase: number) => Keyframe): Keyframe[] =>
 type Sample = (phase: number) => Keyframe;
 type Study = { duration: number; tracks: Record<string, Sample> };
 
-function writing(ornament: boolean): Study {
-  const inkCurve = ornament ? ornamentCurve : writingCurve;
-  const returnCurve = ornament ? ornamentReturn : writingReturn;
+/* The book's quill, one cycle, starting and ending where it rests: at the end
+   of the line it has just written, leaning back at 20°.
+
+   It used to rest at the start of a line that was already written in full ink,
+   then slide along it with a faint wet stroke drawn over the dry one — so the
+   quill looked to be going backwards at rest, and in motion nothing appeared
+   behind the nib at all. Now the line is really written: the nib dips in the
+   inkwell, the old line is gone by the time it comes back to the page, and the
+   ink appears under the nib as it moves.
+
+   A loop has to take the old line away somewhere. It fades while the nib is in
+   the inkwell, where the eye is; it is back at full ink only once the reveal
+   has hidden it, so it is never seen to reappear.
+
+     .00–.06  rest at the end of the line
+     .06–.20  lift and carry to the inkwell, straightening to upright
+     .20–.27  dip in and out; the old line fades as it does
+     .27–.43  arc back over the page to the start of the line, leaning again
+     .43–.86  write: the nib walks the line and the ink follows it
+     .86–1    rest */
+const LEAN = 20;
+const reading: Study = {
+  duration: 7200,
+  tracks: {
+    quill: p => {
+      let point = writingCurve(1);
+      let lean = LEAN;
+      if (p >= .06 && p < .2) {
+        point = toInkwell(segment(p, .06, .2));
+        lean = LEAN * (1 - segment(p, .06, .18));
+      } else if (p >= .2 && p < .27) {
+        const dip = (1 - Math.cos(2 * Math.PI * (p - .2) / .07)) / 2;
+        point = { x: inkwellMouth.x, y: inkwellMouth.y + inkwellDip * dip };
+        lean = 0;
+      } else if (p >= .27 && p < .43) {
+        point = fromInkwell(segment(p, .27, .43));
+        lean = LEAN * segment(p, .29, .41);
+      } else if (p >= .43 && p < .86) {
+        point = writingCurve(segment(p, .45, .86));
+      }
+      return { transform: `${translate(point.x, point.y)} rotate(${round(lean)}deg)` };
+    },
+    "written-line": p => ({ opacity: p < .2 || p >= .36 ? 1 : 1 - segment(p, .2, .26) }),
+    "writing-mask": p => ({
+      strokeDashoffset: p < .3 ? 0 : p < .45 ? 1 : round(1 - segment(p, .45, .86)),
+    }),
+  },
+};
+
+/** The ornament's flourish: the older cycle, kept as it was drawn for it. */
+function writing(): Study {
   return {
     duration: 6200,
     tracks: {
       quill: p => {
-        const point = p < .62 ? inkCurve(segment(p, .1, .58)) : returnCurve(segment(p, .62, .96));
+        const point = p < .62 ? ornamentCurve(segment(p, .1, .58)) : ornamentReturn(segment(p, .62, .96));
         return { transform: translate(point.x, point.y) };
       },
       "writing-mask": p => ({ strokeDashoffset: p > .9 ? segment(p, .9, .96) : 1 - segment(p, .1, .58) }),
@@ -34,8 +82,8 @@ function writing(ornament: boolean): Study {
 
 // A shared phase drives paired objects; no independently timed nock, pen or foot.
 export const studies: Record<Subject, Study> = {
-  reading: writing(false),
-  ornament: writing(true),
+  reading,
+  ornament: writing(),
   psychology: {
     duration: 5600,
     tracks: { thought: p => ({

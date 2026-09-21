@@ -464,13 +464,22 @@ export default function Explain() {
                   }}
                   data-now={i === 0 ? "" : undefined}
                   aria-current={i === 0 ? "step" : undefined}
-                  onPointerEnter={() => show(i)}
-                  onPointerLeave={() => show(null)}
+                  /* Only a mouse peeks. A tap fires enter, leave and then
+                     click, and the click used to leave the peek set; Safari
+                     never focuses a tapped button, so no blur ever cleared
+                     it, and the sentence stayed on that word while the
+                     figure ran on without it. A tap now only seeks, and the
+                     live sentence follows the figure there. */
+                  onPointerEnter={(e) => {
+                    if (e.pointerType === "mouse") show(i);
+                  }}
+                  onPointerLeave={(e) => {
+                    if (e.pointerType === "mouse") show(null);
+                  }}
                   onFocus={() => show(i)}
                   onBlur={() => show(null)}
                   onClick={() => {
                     clock.current = BEAT_AT[i];
-                    show(i);
                   }}
                 >
                   <span className="choice-word">{b.name}</span>

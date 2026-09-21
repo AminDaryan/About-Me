@@ -5,7 +5,7 @@ import type {} from "react/canary";
 import { ViewTransition, useLayoutEffect, useRef, type ReactNode } from "react";
 import { animateBookSnapshot, arriveAtBookPage, leaveBookPage, type BookTurn } from "./navigation";
 import type { BookRoute } from "./route-order";
-import ManuscriptMargins, { ManuscriptStudy } from "../manuscript/ManuscriptMargins";
+import ManuscriptMargins from "../manuscript/ManuscriptMargins";
 import "./book.css";
 
 /** One page is one browser snapshot. The live DOM and its canvas state stay React-owned. */
@@ -27,11 +27,6 @@ export default function BookPage({ page, children }: { page: BookRoute; children
       <div className="book-sheet" data-book-page={page}>
         <ManuscriptMargins page={page} />
         {children}
-        {page !== "/beyond" && (
-          <div className="manuscript-tail" aria-hidden="true">
-            <ManuscriptStudy kind={page === "/research" ? "spiral" : page === "/cv" ? "polyhedron" : "wing"} />
-          </div>
-        )}
       </div>
     </ViewTransition>
   );

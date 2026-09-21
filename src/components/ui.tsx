@@ -314,6 +314,9 @@ export function Footer() {
               data-tip="rax06jud@rptu.de"
             >
               <MailIcon className="h-[1.6rem] w-auto" />
+              <span className="contact-address" aria-hidden="true">
+                rax06jud@rptu.de
+              </span>
             </a>
           </li>
           <li>

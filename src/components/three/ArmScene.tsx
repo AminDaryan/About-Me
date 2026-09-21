@@ -738,8 +738,14 @@ export default function ArmScene() {
               }}
               data-now={i === 0 ? "" : undefined}
               aria-current={i === 0 ? "step" : undefined}
-              onPointerEnter={() => show(i)}
-              onPointerLeave={() => show(null)}
+              /* Only a mouse peeks; see the same buttons in Explain.tsx
+                 for what a tap on an iPhone did otherwise. */
+              onPointerEnter={(e) => {
+                if (e.pointerType === "mouse") show(i);
+              }}
+              onPointerLeave={(e) => {
+                if (e.pointerType === "mouse") show(null);
+              }}
               onFocus={() => show(i)}
               onBlur={() => show(null)}
               /* Pressing a step takes the figure to it. It deliberately does
@@ -748,7 +754,6 @@ export default function ArmScene() {
                  starts the loop is the one that says so. */
               onClick={() => {
                 setSeekTo({ at: STAGE_AT[i] });
-                show(i);
               }}
             >
               <span className="choice-word">{st.name}</span>
@@ -759,7 +764,7 @@ export default function ArmScene() {
       </ol>
 
       <div className="plate-row">
-        <p ref={said} className="figure-said">
+        <p ref={said} className="figure-said arm-said">
           <span ref={now} className="figure-said-now">
             {STAGES[0].name}
           </span>

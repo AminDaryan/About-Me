@@ -49,7 +49,12 @@ import { NOW, STEPS, type Step } from "./steps";
    mouse. The drawing itself is decorative and hidden from assistive technology;
    everything it says is in the buttons and the panel. */
 
-const WIDE = "(min-width: 768px)";
+/* The side-panel layout wants width and height both: its sticky panel is as
+   tall as the longest story, 520px with its drawing, and a phone on its side
+   is wide enough for the serpentine but not tall enough to show the foot of a
+   sticky panel that size. Keep in step with .journey-layout in globals.css,
+   which lays the figure out from the same query before the script runs. */
+const WIDE = "(min-width: 768px) and (min-height: 40rem)";
 const HOVER = "(hover: hover)";
 
 /** How long the car takes to turn round, in ms. */
@@ -139,7 +144,7 @@ export default function Journey() {
 
   const road = useMemo(() => serpentine(width, STEPS.length), [width]);
   const strip = useMemo(
-    () => ribbon(width, STEPS.length, active, gap + 26),
+    () => ribbon(width, STEPS.length, active, gap - 26),
     [width, active, gap],
   );
   const geo = wide ? road : strip;
@@ -184,7 +189,10 @@ export default function Journey() {
         setInView(entry.isIntersecting);
         if (entry.isIntersecting) setDrawn(true);
       },
-      { threshold: 0.15 },
+      // Drawn once the figure's top is 15% up the screen, whatever its
+      // height. A fraction of the element was a fraction of a ribbon 1,500px
+      // tall on a phone, so the road stayed blank paper for 230px of it.
+      { threshold: 0, rootMargin: "0px 0px -15% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -559,17 +567,24 @@ export default function Journey() {
       id="journey-panel"
       aria-labelledby={`journey-tab-${active}`}
       className={wide ? "" : "absolute right-0 pr-1"}
-      style={wide ? undefined : { top: geo.stops[active].y + 34, left: geo.labels[active].x }}
+      /* On the ribbon the story opens beside its badge, in the place of the
+         stop's own label: its date line is that label, and the badge already
+         carries the drawing. Set under the label, as it was, a phone showed
+         the date and the place twice and the drawing twice, one over the
+         other. The -18 puts the story's first line where the label's was. */
+      style={wide ? undefined : { top: geo.stops[active].y - 18, left: geo.labels[active].x }}
     >
-      <InkFigure
-        key={`art-${active}`}
-        paths={FIGURES[step.art]}
-        quiet={QUIET[step.art]}
-        viewBox="0 0 120 120"
-        width={wide ? 104 : 72}
-        label={step.alt}
-      />
-      <div className={wide ? "journey-panel-texts mt-4" : "mt-4"}>
+      {wide && (
+        <InkFigure
+          key={`art-${active}`}
+          paths={FIGURES[step.art]}
+          quiet={QUIET[step.art]}
+          viewBox="0 0 120 120"
+          width={104}
+          label={step.alt}
+        />
+      )}
+      <div className={wide ? "journey-panel-texts mt-4" : undefined}>
         {wide ? STEPS.map(story) : story(step, active)}
       </div>
     </div>
@@ -608,7 +623,7 @@ export default function Journey() {
         </>
       }
     >
-      <div className={wide ? "grid grid-cols-[minmax(0,1fr)_16rem] items-start gap-10" : ""}>
+      <div className="journey-layout">
         <div
           ref={boxRef}
           data-kind={geo.kind}
@@ -621,7 +636,7 @@ export default function Journey() {
             height={geo.height}
             viewBox={`0 0 ${geo.width} ${geo.height}`}
             aria-hidden="true"
-            className="absolute inset-0 block"
+            className="absolute inset-0 block max-w-full"
           >
             <defs>
               {/* The stretch of road behind the car, for lighting its centre line. */}
@@ -820,24 +835,30 @@ export default function Journey() {
                         </g>
                       </g>
                     </g>
-                    <text
-                      className="road-when"
-                      data-active={on || undefined}
-                      x={l.x}
-                      y={l.y}
-                      textAnchor={l.anchor}
-                    >
-                      {serp ? s.when : `${s.when} · ${city}`}
-                    </text>
-                    <text
-                      className="road-name"
-                      data-active={on || undefined}
-                      x={l.x}
-                      y={l.y + 18}
-                      textAnchor={l.anchor}
-                    >
-                      {s.name}
-                    </text>
+                    {/* On the ribbon the open stop's story stands in its
+                        label's place and says the same thing at more length. */}
+                    {(serp || !on) && (
+                      <>
+                        <text
+                          className="road-when"
+                          data-active={on || undefined}
+                          x={l.x}
+                          y={l.y}
+                          textAnchor={l.anchor}
+                        >
+                          {serp ? s.when : `${s.when} · ${city}`}
+                        </text>
+                        <text
+                          className="road-name"
+                          data-active={on || undefined}
+                          x={l.x}
+                          y={l.y + 18}
+                          textAnchor={l.anchor}
+                        >
+                          {s.name}
+                        </text>
+                      </>
+                    )}
                   </g>
                 );
               })}

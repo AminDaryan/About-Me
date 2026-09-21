@@ -7,7 +7,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Line, OrthographicCamera } from "@react-three/drei";
-import { useMemo, useRef, useState, type RefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import * as THREE from "three";
 import type { Line2 } from "three-stdlib";
 import { ACCENT, INK, RULE } from "./palette";
@@ -64,8 +64,25 @@ const GROUP_TILT = -0.2;
     cart. */
 const spanFor = (width: number) => (width < 560 ? 2.4 : 3.6);
 
+/** A readout figure: a value that rounds to zero shows as zero, not as a
+    "-0.000" that flickers at rest and changes the line's width, and a
+    negative one takes a true minus sign. */
+const fix = (value: number, places: number) =>
+  (Math.abs(value) < 0.5 * 10 ** -places ? 0 : value).toFixed(places).replace("-", "−");
+
+/** Height of world the machine needs on screen: from the tip standing up to
+    the motor's arrow under the cart, with a little air. */
+const VIEW_H = 1.7;
+
+/** Pixels per world unit: the span across the width, unless the canvas is too
+    short to show the machine at that, when the height decides. On a phone in
+    landscape the drawing is held to the screen's height, and fitted to width
+    alone its tip went off the top. */
+const zoomFor = (width: number, height: number) =>
+  Math.min(width / spanFor(width), height / VIEW_H);
+
 /** How far the target may be dragged, as a fraction of the visible span. */
-const xLimitFor = (width: number) => spanFor(width) * 0.34;
+const X_LIMIT = 0.34;
 
 const CART_W = 0.17;
 const CART_H = 0.085;
@@ -243,11 +260,12 @@ function Link({ length, held }: { length: number; held?: boolean }) {
     view refits on resize without anyone mutating the camera by hand. */
 function FitCamera() {
   const width = useThree((s) => s.size.width);
+  const height = useThree((s) => s.size.height);
   return (
     <OrthographicCamera
       makeDefault
       position={[0, 0, 6]}
-      zoom={width / spanFor(width)}
+      zoom={zoomFor(width, height)}
     />
   );
 }
@@ -491,9 +509,9 @@ export default function PendulumScene() {
   );
 
   const readout = (t1: number, t2: number, u: number, pull: number) => {
-    if (t1Ref.current) t1Ref.current.textContent = t1.toFixed(3);
-    if (t2Ref.current) t2Ref.current.textContent = t2.toFixed(3);
-    if (uRef.current) uRef.current.textContent = u.toFixed(1);
+    if (t1Ref.current) t1Ref.current.textContent = fix(t1, 3);
+    if (t2Ref.current) t2Ref.current.textContent = fix(t2, 3);
+    if (uRef.current) uRef.current.textContent = fix(u, 1);
     /* The pull's own row appears only while there is one, so the line does not
        carry a permanent 0.00 N for a force nobody is applying. */
     if (pullRow.current) {
@@ -506,7 +524,7 @@ export default function PendulumScene() {
       camera, then the Sim group's drop and tilt. */
   const toPlane = (clientX: number, clientY: number) => {
     const rect = wrapRef.current!.getBoundingClientRect();
-    const perPx = spanFor(rect.width) / rect.width;
+    const perPx = 1 / zoomFor(rect.width, rect.height);
     const wx = (clientX - rect.left - rect.width / 2) * perPx;
     const wy = (rect.top + rect.height / 2 - clientY) * perPx;
     return { x: wx, y: (wy - GROUP_Y) / Math.cos(GROUP_TILT), perPx, rect };
@@ -568,8 +586,8 @@ export default function PendulumScene() {
   };
 
   const moveTarget = (clientX: number) => {
-    const { x, rect } = toPlane(clientX, 0);
-    const limit = xLimitFor(rect.width);
+    const { x, rect, perPx } = toPlane(clientX, 0);
+    const limit = X_LIMIT * rect.width * perPx;
     xRef.current = Math.max(-limit, Math.min(limit, x));
   };
 
@@ -579,11 +597,32 @@ export default function PendulumScene() {
     setCursor("");
   };
 
+  /* A touch that lands on a part holds the page still for the drag; any other
+     touch scrolls it. The drawing used to refuse every touch outright, and a
+     reader flicking up the page with a thumb that landed on bare paper beside
+     the pendulum found the page stuck. The decision has to be made in the
+     touchstart itself, before the browser starts a pan, and React's touch
+     listeners are passive, so this one is added by hand. */
+  const pickRef = useRef(pick);
+  useEffect(() => {
+    pickRef.current = pick;
+  });
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const hold = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (t && pickRef.current(t.clientX, t.clientY, true)) e.preventDefault();
+    };
+    el.addEventListener("touchstart", hold, { passive: false });
+    return () => el.removeEventListener("touchstart", hold);
+  }, []);
+
   return (
     <div>
       <div
         ref={wrapRef}
-        className="plate-drawing relative h-[19rem] touch-none select-none sm:h-[20rem]"
+        className="plate-drawing relative aspect-[3/2] touch-pan-y select-none sm:aspect-auto sm:h-[20rem]"
         onPointerDown={(e) => {
           const grip = pick(e.clientX, e.clientY, e.pointerType !== "mouse");
           if (!grip) return;
@@ -638,15 +677,20 @@ export default function PendulumScene() {
 
       <div className="plate-foot">
         <div className="plate-row">
+        {/* The angles are symbols, not words, so they stay out of the caps,
+            which set θ as a capital Θ — a different symbol to any reader who
+            knows the notation. Each figure is tied to its unit, and the limit
+            is kept whole: on a phone the line broke inside "±30 N". */}
         <p className="readout">
-          <span className="label">θ₁</span>
-          <b ref={t1Ref}>0.000</b> rad
+          <span className="label normal-case tracking-normal">θ₁</span>
+          <b ref={t1Ref}>0.000</b>&nbsp;rad
           <span className="readout-sep">·</span>
-          <span className="label">θ₂</span>
-          <b ref={t2Ref}>0.000</b> rad
+          <span className="label normal-case tracking-normal">θ₂</span>
+          <b ref={t2Ref}>0.000</b>&nbsp;rad
           <span className="readout-sep">·</span>
           <span className="label">motor</span>
-          <b ref={uRef}>0.0</b> N (limit ±{UMAX} N)
+          <b ref={uRef}>0.0</b>&nbsp;N{" "}
+          <span className="whitespace-nowrap">(limit ±{UMAX}&nbsp;N)</span>
           <span ref={pullRow} hidden className="ml-2 text-accent-deep" />
         </p>
 

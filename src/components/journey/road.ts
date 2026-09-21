@@ -247,7 +247,9 @@ export function serpentine(width: number, count: number): Geometry {
 export function ribbon(width: number, count: number, open: number, gap: number): Geometry {
   const TOP = 84; // room above the first badge for the car, the line and the banner
   const STEP = 96;
-  const CX = 44;
+  // The road's centre, as near the plate's left edge as its shoulder allows:
+  // at 44 the story column on a 360px phone was 222px, 26 characters a line.
+  const CX = 36;
   const AMP = 13;
   const HEAD = 21;
 
@@ -258,8 +260,10 @@ export function ribbon(width: number, count: number, open: number, gap: number):
   // behind the start line, and for the banner to hang across the road over
   // the line without crowding the badge below.
   const yStart = TOP - 74;
-  // Below the last stop the road runs on, and fades out (see `fade`).
-  const yEnd = yOf(count - 1) + 128;
+  // Below the last stop the road runs on, and fades out (see `fade`). At 128
+  // the faint end of the fade and the box under it left a quarter of a phone
+  // screen of bare paper before the next section.
+  const yEnd = yOf(count - 1) + 100;
   const s = sampler();
   let d = "";
   for (let y = yStart; y <= yEnd + 0.001; y += 4) {
@@ -273,12 +277,15 @@ export function ribbon(width: number, count: number, open: number, gap: number):
     const x = xAt(y);
     return { x, y, len: lengthAt(s.samples, x, y) };
   });
-  const labelX = CX + AMP + HEAD + 20;
+  const labelX = CX + AMP + HEAD + 12;
 
   return {
     kind: "ribbon",
     width,
-    height: yEnd + 34,
+    // An open story makes room for itself by pushing the stops after it down.
+    // The last stop has none to push, so the box has to grow for its story
+    // instead, or the story ran out of the figure and over the next section.
+    height: Math.max(yEnd + 6, open === count - 1 ? yOf(count - 1) + gap + 34 : 0),
     d,
     total: s.length(),
     samples: s.samples,

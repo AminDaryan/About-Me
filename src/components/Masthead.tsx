@@ -27,7 +27,7 @@ export default function Masthead() {
 
   return (
     <header className="no-print sticky top-0 z-50 border-b border-rule bg-paper">
-      <div className="flex items-center justify-between gap-x-3 px-5 py-4 min-[360px]:gap-x-5 sm:px-gutter">
+      <div className="flex items-center justify-between gap-x-3 px-5 py-4 min-[360px]:gap-x-5 sm:px-gutter [@media(max-height:30rem)]:py-2">
         <nav
           aria-label="Primary"
           className="flex items-baseline gap-x-2.5 min-[360px]:gap-x-3.5 sm:gap-x-6"
@@ -50,12 +50,15 @@ export default function Masthead() {
 
                  The body size rather than the secondary one, because this is
                  the way through the site and the margin rail, a step below it
-                 at --text-meta, is the way through a page. */
+                 at --text-meta, is the way through a page. Each link's
+                 ::after is its touch target, 44px tall and never narrower
+                 than 44: bare, "CV" was a 23px sliver between two longer
+                 words. The drawn underline and the row do not move. */
               <BookLink
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`border-b pb-0.5 text-body whitespace-nowrap transition-colors ${
+                className={`relative border-b pb-0.5 text-body whitespace-nowrap transition-colors after:absolute after:-inset-y-[5px] after:left-1/2 after:w-[max(calc(100%+0.875rem),2.75rem)] after:-translate-x-1/2 active:text-ink ${
                   active
                     ? "border-accent text-accent-deep"
                     : "border-transparent text-ink-soft hover:border-rule hover:text-ink"

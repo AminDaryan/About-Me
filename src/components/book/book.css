@@ -2,18 +2,11 @@
 :root { view-transition-name: none; }
 .book-sheet { position: relative; display: flow-root; width: 100%; }
 
-/* A small closing study gives narrow sheets the same character without
-   floating a drawing over a paragraph where no outer margin exists. */
-.manuscript-tail {
-  width: 8rem;
-  margin: 0 auto 2.5rem;
-  pointer-events: none;
-  transform: rotate(-8deg);
-}
-.manuscript-tail svg { display: block; width: 100%; height: auto; }
-@media (min-width: 1100px), print {
-  .manuscript-tail { display: none; }
-}
+/* No doodles on a narrow sheet. The margin studies need an outer margin to
+   stand in, and ManuscriptMargins shows them only from 1100px, where there is
+   one; below that a closing study used to be centred under the last section,
+   and on a phone it read as clutter at the foot of the page, not as a margin
+   note. Amin asked for none on mobile. */
 
 /* Capture the stationary running head above the moving page snapshots. */
 body > header { view-transition-name: book-masthead; }
