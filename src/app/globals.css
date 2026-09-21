@@ -138,6 +138,8 @@
   }
 
   body {
+    position: relative;
+    min-height: 100vh;
     isolation: isolate;
     background: var(--color-paper);
     color: var(--color-ink);
@@ -150,24 +152,27 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* A scanned-style rag texture gives the paper real fibres and mottling.
-     It stays behind the ink, and repeats at a fixed scale on every screen. */
+  /* Both paper layers span the document, so fibres and aged edges travel with
+     the text. The tall texture keeps its proportions and grain size on every
+     screen, repeating seamlessly when the sheet runs beyond its length. */
   body::before {
     content: "";
-    position: fixed;
+    position: absolute;
     inset: 0;
     z-index: -1;
     pointer-events: none;
     opacity: 0.72;
-    background-image: url("/textures/rag-paper.webp");
-    background-size: 48rem 48rem;
+    background-image: url("/textures/rag-paper-long.webp");
+    background-position: center top;
+    background-size: 48rem auto;
+    background-repeat: repeat;
   }
 
   /* Uneven honey-coloured edges suggest an old working sheet. The centre
      stays pale, with no book fold or stain crossing the reading column. */
   body::after {
     content: "";
-    position: fixed;
+    position: absolute;
     inset: 0;
     z-index: -1;
     pointer-events: none;
